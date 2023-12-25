@@ -14,11 +14,11 @@ void printBoard();
 
 int main(void) {
     // Initialize Seed
-    srandom(time(NULL));
+    srand(time(NULL));
 
     // Put User Cats in Board
     for (int i = 0; i < Users; i++) {
-        Board[random() % SIZE][random() % SIZE] = 'C';
+        Board[rand() % SIZE][rand() % SIZE] = 'C';
     }
 
     printBoard();
