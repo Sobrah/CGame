@@ -3,8 +3,8 @@
 #include <time.h>
 
 // Const Global Variables
-#define SIZE 5 // Width & Height of the Board
-#define Users 2 // Number of Users
+#define SIZE 10 // Width & Height of the Board
+#define Users 4 // Number of Users
 
 // Global board array
 char Board[SIZE][SIZE] = {0};
@@ -27,7 +27,7 @@ int main(void) {
 void printBoard() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            printf("%c\t", Board[i][j] ? Board[i][j] : '0');
+            printf("%c  ", Board[i][j] ? Board[i][j] : '0');
         }
         puts("");
     }

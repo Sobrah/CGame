@@ -1,4 +1,5 @@
 .vscode/
 .idea/
 cgame
+graphic
 *.exe
