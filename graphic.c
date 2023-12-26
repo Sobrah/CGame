@@ -1,27 +1,7 @@
 #include <raylib.h>
 
-
-// Board Related Variables
-#define SCREEN_SIZE 750
-#define BOARD_SIZE 15
-#define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
-
-#define FRAME_PER_SECOND 30
-#define ITEMS 10
-
-
-char Names[][50] = {
-    "Images/Black Cat.svg\0",
-    "Images/Bush.svg\0",
-    "Images/Chocolate.svg\0",
-    "Images/Dog.svg\0",
-    "Images/Fish.svg\0",
-    "Images/House.svg\0",
-    "Images/Mouse.svg\0",
-    "Images/Poodle.svg\0",
-    "Images/Trap.svg\0",
-    "Images/Yellow Cat.svg\0"
-};
+// Information Essentials
+#include "info.c"
 
 
 // Prototypes
@@ -37,26 +17,29 @@ int main(void) {
     drawBoard(BROWN, DARKBROWN);
     
     // Load Item Images to the Memory
-    Texture2D Items[ITEMS];
-    for (int i = 0; i < ITEMS; i++) {
-        Image itemImage = LoadImageSvg(Names[i], CELL_SIZE, CELL_SIZE);
-        Items[i] = LoadTextureFromImage(itemImage);
+    Texture2D itemsTexture[ITEMS_NUMBER];
+    for (int i = 0; i < ITEMS_NUMBER; i++) {
+        Image itemImage = LoadImageSvg(Character[i].address, CELL_SIZE, CELL_SIZE);
+        itemsTexture[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
 
+    
+    // Rendering Frames Until When It Should Be Closed
     while (!WindowShouldClose()) {
         BeginDrawing();
-            for (int i = 0; i < ITEMS; i++) {
-                DrawTexture(Items[i], CELL_SIZE * i, CELL_SIZE * i, WHITE);
+            for (int i = 0; i < ITEMS_NUMBER; i++) {
+                DrawTexture(itemsTexture[i], Character[i].x * CELL_SIZE, Character[i].y * CELL_SIZE, WHITE);
             }
         EndDrawing();
     }
     
+   
     // Unload Texture From Memory
-    for (int i = 0; i < ITEMS; i++) {
-        UnloadTexture(Items[i]);
+    for (int i = 0; i < ITEMS_NUMBER; i++) {
+        UnloadTexture(itemsTexture[i]);
     }
-    
+
     CloseWindow();   
 }
 
