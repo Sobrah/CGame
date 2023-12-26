@@ -1,10 +1,12 @@
 #include <raylib.h>
 
 
-// Constant Global Variables
-#define SCREEN_SIZE 650
+// Board Related Variables
+#define SCREEN_SIZE 750
+#define BOARD_SIZE 15
+#define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
+
 #define FRAME_PER_SECOND 30
-#define TABLE_SIZE 15
 
 
 // Prototypes
@@ -20,14 +22,19 @@ int main(void) {
     drawBoard(BROWN, DARKBROWN);
     
     // Add Cat Image to the Board
-    Image catImage = LoadImage("Images/Yellow Cat.png");
-    ImageResize(&catImage, SCREEN_SIZE / TABLE_SIZE, SCREEN_SIZE / TABLE_SIZE);  
+    Image houseImage = LoadImageSvg("Images/House.svg", CELL_SIZE, CELL_SIZE);
+    Image catImage = LoadImageSvg("Images/Yellow Cat.svg", CELL_SIZE, CELL_SIZE);
+    
+    Texture2D HouseTexture = LoadTextureFromImage(houseImage);
     Texture2D catTexture = LoadTextureFromImage(catImage);
+
+    UnloadImage(houseImage);
     UnloadImage(catImage);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-            DrawTexture(catTexture, SCREEN_SIZE / TABLE_SIZE, SCREEN_SIZE / TABLE_SIZE, WHITE);
+            DrawTexture(HouseTexture, CELL_SIZE * (BOARD_SIZE / 2), CELL_SIZE * (BOARD_SIZE / 2), WHITE);
+            DrawTexture(catTexture, SCREEN_SIZE / BOARD_SIZE, SCREEN_SIZE / BOARD_SIZE, WHITE);
         EndDrawing();
     }
     
@@ -38,7 +45,7 @@ int main(void) {
 
 
 void drawBoard(Color backgroundColor, Color lineColor) {
-    int sideSize = SCREEN_SIZE / TABLE_SIZE;
+    int sideSize = CELL_SIZE;
     
     BeginDrawing();
     ClearBackground(backgroundColor);
