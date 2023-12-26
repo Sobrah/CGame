@@ -7,6 +7,21 @@
 #define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
 
 #define FRAME_PER_SECOND 30
+#define ITEMS 10
+
+
+char Names[][50] = {
+    "Images/Black Cat.svg\0",
+    "Images/Bush.svg\0",
+    "Images/Chocolate.svg\0",
+    "Images/Dog.svg\0",
+    "Images/Fish.svg\0",
+    "Images/House.svg\0",
+    "Images/Mouse.svg\0",
+    "Images/Poodle.svg\0",
+    "Images/Trap.svg\0",
+    "Images/Yellow Cat.svg\0"
+};
 
 
 // Prototypes
@@ -21,25 +36,27 @@ int main(void) {
     // Drawing Board Background
     drawBoard(BROWN, DARKBROWN);
     
-    // Add Cat Image to the Board
-    Image houseImage = LoadImageSvg("Images/House.svg", CELL_SIZE, CELL_SIZE);
-    Image catImage = LoadImageSvg("Images/Yellow Cat.svg", CELL_SIZE, CELL_SIZE);
-    
-    Texture2D HouseTexture = LoadTextureFromImage(houseImage);
-    Texture2D catTexture = LoadTextureFromImage(catImage);
-
-    UnloadImage(houseImage);
-    UnloadImage(catImage);
+    // Load Item Images to the Memory
+    Texture2D Items[ITEMS];
+    for (int i = 0; i < ITEMS; i++) {
+        Image itemImage = LoadImageSvg(Names[i], CELL_SIZE, CELL_SIZE);
+        Items[i] = LoadTextureFromImage(itemImage);
+        UnloadImage(itemImage);
+    }
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-            DrawTexture(HouseTexture, CELL_SIZE * (BOARD_SIZE / 2), CELL_SIZE * (BOARD_SIZE / 2), WHITE);
-            DrawTexture(catTexture, SCREEN_SIZE / BOARD_SIZE, SCREEN_SIZE / BOARD_SIZE, WHITE);
+            for (int i = 0; i < ITEMS; i++) {
+                DrawTexture(Items[i], CELL_SIZE * i, CELL_SIZE * i, WHITE);
+            }
         EndDrawing();
     }
     
     // Unload Texture From Memory
-    UnloadTexture(catTexture);
+    for (int i = 0; i < ITEMS; i++) {
+        UnloadTexture(Items[i]);
+    }
+    
     CloseWindow();   
 }
 
