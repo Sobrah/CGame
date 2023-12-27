@@ -17,9 +17,9 @@ int main(void) {
     drawBoard(BROWN, DARKBROWN);
     
     // Load Item Images to the Memory
-    Texture2D itemsTexture[ITEMS_NUMBER];
-    for (int i = 0; i < ITEMS_NUMBER; i++) {
-        Image itemImage = LoadImageSvg(Character[i].address, CELL_SIZE, CELL_SIZE);
+    Texture2D itemsTexture[CHARACTER_GROUP_LENGTH];
+    for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
+        Image itemImage = LoadImageSvg(CharactersGroup[i].address, CELL_SIZE, CELL_SIZE);
         itemsTexture[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
@@ -28,15 +28,17 @@ int main(void) {
     // Rendering Frames Until When It Should Be Closed
     while (!WindowShouldClose()) {
         BeginDrawing();
-            for (int i = 0; i < ITEMS_NUMBER; i++) {
-                DrawTexture(itemsTexture[i], Character[i].x * CELL_SIZE, Character[i].y * CELL_SIZE, WHITE);
+        for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
+            for (int j = 0; j < CharactersGroup[i].charactersNumber;  j++) {
+                DrawTexture(itemsTexture[i], CharactersGroup[i].Characters[j].x * CELL_SIZE, CharactersGroup[i].Characters[j].y * CELL_SIZE, WHITE);
             }
+        }
         EndDrawing();
     }
     
    
     // Unload Texture From Memory
-    for (int i = 0; i < ITEMS_NUMBER; i++) {
+    for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
         UnloadTexture(itemsTexture[i]);
     }
 
