@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <time.h>
+
 // Board Related Variables
 #define SCREEN_SIZE 750
 #define BOARD_SIZE 15
@@ -6,8 +9,10 @@
 // Other Variable
 #define FRAME_PER_SECOND 30
 #define CHARACTER_GROUP_LENGTH 10
-#define STRING_MAX_LENGTH
 #define MAX_CHARACTER 10
+
+
+char Board[BOARD_SIZE][BOARD_SIZE][2] = {0};
 
 
 // Store Each Character Properties
@@ -28,58 +33,46 @@ typedef struct CharacterSet {
 // Store Every Character Specifications In Character Array
 CharacterSet CharactersGroup[] = {
     {'H', "Images/House.svg\0", 1, {0, BOARD_SIZE / 2, BOARD_SIZE / 2}},
-    
-    {'C', "Images/Yellow Cat.svg\0", 1, {1, 5, 7}},
-    {'C', "Images/Black Cat.svg\0", 1, {2, 9, 7}},
 
-    {'D', "Images/Dog.svg\0", 1, {1, 1, 2}},
-    {'D', "Images/Poodle.svg\0", 1, {2, 1 , 3}},
+    {'C', "Images/Yellow Cat.svg\0", 1, {1, BOARD_SIZE / 2 + 1, BOARD_SIZE / 2}},
+    {'C', "Images/Black Cat.svg\0", 1, {2, BOARD_SIZE / 2 - 1, BOARD_SIZE / 2}},
 
-    {'P', "Images/Chocolate.svg\0", 8, {
-        {1, 14, 9},
-        {2, 12, 14},
-        {3, 7, 5},
-        {4, 4, 10},
-        {5, 1, 5},
-        {6, 1, 12},
-        {7, 0, 9},
-        {8, 13, 0}
-    }},
+    {'D', "Images/Dog.svg\0", 2},
+    {'D', "Images/Poodle.svg\0", 2},
 
-    {'F', "Images/Fish.svg\0", 10, {
-        {1, 13, 3},
-        {2, 13, 8},
-        {3, 9, 9},
-        {4, 8, 3},
-        {5, 12, 12},
-        {6, 5, 14},
-        {7, 4, 0},
-        {8, 2, 13},
-        {9, 1, 3},
-        {10, 3, 5},
-    }},
+    {'B', "Images/Bush.svg\0", 8},
 
-    {'B', "Images/Bush.svg\0", 8, {
-        {1, 1, 1},
-        {2, 2, 1},
-        {3, 3, 1},
-        {4, 3, 2},
-        {5, 10, 10},
-        {6, 9, 10},
-        {7, 8, 10},
-        {8, 8, 11}
-    }},
+    {'P', "Images/Chocolate.svg\0", 8},
 
-    {'M', "Images/Mouse.svg\0", 1, {0, 1, 7}},
+    {'F', "Images/Fish.svg\0", 8},
 
-    {'T', "Images/Trap.svg\0", 8, {
-        {1, 11, 4},
-        {2, 11, 8},
-        {3, 10, 13},
-        {4, 8, 1},
-        {5, 6, 3},
-        {6, 6, 13},
-        {7, 1, 1},
-        {8, 0, 11},
-    }}
+    {'M', "Images/Mouse.svg\0", 8},
+
+    {'T', "Images/Trap.svg\0", 8}
 };
+
+void randomizeBoard(void) {
+    Board[BOARD_SIZE / 2][BOARD_SIZE / 2][0] = 'H';
+    Board[BOARD_SIZE / 2 + 1][BOARD_SIZE / 2][0] = 'C';
+    Board[BOARD_SIZE / 2 - 1][BOARD_SIZE / 2][0] = 'C';
+
+    srand(time(NULL));
+
+    // House, Cat1, Cat2 Coordination Should Not Be Changed
+    for (int i = 3; i < CHARACTER_GROUP_LENGTH; i++) {
+        int length = CharactersGroup[i].charactersNumber;
+
+        for (int j = 0; j < length; j++) {
+            int x, y;
+            do {
+                x = rand() % BOARD_SIZE;
+                y = rand() % BOARD_SIZE;
+            } while(Board[x][y][0]);
+
+            CharactersGroup[i].Characters[j].x = x;
+            CharactersGroup[i].Characters[j].y = y;
+            Board[x][y][0] = CharactersGroup[i].identifier;
+            Board[x][y][1] = j;
+        }
+    }
+}

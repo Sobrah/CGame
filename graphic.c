@@ -14,6 +14,7 @@ int main(void) {
     SetTargetFPS(FRAME_PER_SECOND);
 
     // Drawing Board Background
+    randomizeBoard();
     drawBoard(BROWN, DARKBROWN);
     
     // Load Item Images to the Memory
