@@ -8,7 +8,7 @@
 void drawBoard(Color, Color);
 
 
-int main(void) {
+int main(void) { 
     // Initialize Window
     InitWindow(SCREEN_SIZE, SCREEN_SIZE, "Mr. Clobber's Backyard");
     SetTargetFPS(FRAME_PER_SECOND);
