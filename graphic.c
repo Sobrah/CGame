@@ -1,11 +1,11 @@
 #include <raylib.h>
 
 // Information Essentials
-#include "info.c"
+#include "logic.c"
 
 
 // Prototypes
-void drawBoard(Color, Color);
+void drawBoard(Color, Color, Texture[]);
 
 
 int main(void) { 
@@ -14,13 +14,12 @@ int main(void) {
     SetTargetFPS(FRAME_PER_SECOND);
 
     // Drawing Board Background
-    randomizeBoard();
-    drawBoard(BROWN, DARKBROWN);
-    
+    initBoard();
+
     // Load Item Images to the Memory
-    Texture2D itemsTexture[CHARACTER_GROUP_LENGTH];
-    for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
-        Image itemImage = LoadImageSvg(CharactersGroup[i].address, CELL_SIZE, CELL_SIZE);
+    Texture itemsTexture[CHARACTER_SET_LENGTH];
+    for (int i = 0; i < CHARACTER_SET_LENGTH; i++) {
+        Image itemImage = LoadImageSvg(CharacterSet[i].address, CELL_SIZE, CELL_SIZE);
         itemsTexture[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
@@ -29,21 +28,13 @@ int main(void) {
     // Rendering Frames Until When It Should Be Closed
     while (!WindowShouldClose()) {
         BeginDrawing();
-        for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
-            for (int j = 0; j < CharactersGroup[i].charactersNumber;  j++) {
-                DrawTexture(itemsTexture[i], CharactersGroup[i].Characters[j].x * CELL_SIZE, CharactersGroup[i].Characters[j].y * CELL_SIZE, WHITE);
-            }
-        }
-        Rectangle rec1 = {150, 150 - 5, 100, 10};
-        Rectangle rec2 = {250 - 5, 150, 10, 50};
-        DrawRectangleRounded(rec1, 10, 10, DARKGRAY);
-        DrawRectangleRounded(rec2, 10, 10, DARKGRAY);
+            drawBoard(BROWN, DARKBROWN, itemsTexture);
         EndDrawing();
     }
     
    
     // Unload Texture From Memory
-    for (int i = 0; i < CHARACTER_GROUP_LENGTH; i++) {
+    for (int i = 0; i < CHARACTER_SET_LENGTH; i++) {
         UnloadTexture(itemsTexture[i]);
     }
 
@@ -51,16 +42,24 @@ int main(void) {
 }
 
 
-void drawBoard(Color backgroundColor, Color lineColor) {
+void drawBoard(Color backgroundColor, Color borderColor, Texture itemsTexture[]) {
     int sideSize = CELL_SIZE;
     
-    BeginDrawing();
     ClearBackground(backgroundColor);
     
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
-            DrawRectangleLines(sideSize * i, sideSize * j, sideSize, sideSize, lineColor);
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            int x, y, location;
+            x = sideSize * i;
+            y = sideSize * j;
+            
+            DrawRectangleLines(x, y, sideSize, sideSize, borderColor);
+            if (Board[i][j].kind) {
+                for(location = 0; location < CHARACTER_SET_LENGTH; location++) {
+                    if (CharacterSet[location].kind == Board[i][j].kind) break;
+                }
+                DrawTexture(itemsTexture[location], x, y, WHITE);
+            }
         }
     }
-    EndDrawing();
 }
