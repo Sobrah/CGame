@@ -34,6 +34,10 @@ int main(void) {
                 DrawTexture(itemsTexture[i], CharactersGroup[i].Characters[j].x * CELL_SIZE, CharactersGroup[i].Characters[j].y * CELL_SIZE, WHITE);
             }
         }
+        Rectangle rec1 = {150, 150 - 5, 100, 10};
+        Rectangle rec2 = {250 - 5, 150, 10, 50};
+        DrawRectangleRounded(rec1, 10, 10, DARKGRAY);
+        DrawRectangleRounded(rec2, 10, 10, DARKGRAY);
         EndDrawing();
     }
     
