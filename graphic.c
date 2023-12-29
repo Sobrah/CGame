@@ -35,9 +35,13 @@ int main(void) {
             }
         }
         Rectangle rec1 = {150, 150 - 5, 100, 10};
-        Rectangle rec2 = {250 - 5, 150, 10, 50};
+        Rectangle rec2 = {250 - 5, 150, 10, 100};
+        Rectangle rec3 = {500, 500 - 5, 100, 10};
+        Rectangle rec4 = {500 - 5, 500, 10, 100};
         DrawRectangleRounded(rec1, 10, 10, DARKGRAY);
         DrawRectangleRounded(rec2, 10, 10, DARKGRAY);
+        DrawRectangleRounded(rec3, 10, 10, DARKGRAY);
+        DrawRectangleRounded(rec4, 10, 10, DARKGRAY);
         EndDrawing();
     }
     
