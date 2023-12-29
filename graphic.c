@@ -1,6 +1,6 @@
 #include <raylib.h>
 
-// Information Essentials
+// Logic Essentials
 #include "logic.c"
 
 
@@ -11,9 +11,9 @@ void drawBoard(Color, Color, Texture[]);
 int main(void) { 
     // Initialize Window
     InitWindow(SCREEN_SIZE, SCREEN_SIZE, "Mr. Clobber's Backyard");
-    SetTargetFPS(FRAME_PER_SECOND);
+    SetTargetFPS(TARGET_FPS);
 
-    // Drawing Board Background
+    // Initialize Board
     initBoard();
 
     // Load Item Images to the Memory

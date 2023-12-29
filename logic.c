@@ -2,27 +2,34 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 // Board Related Variables
 #define SCREEN_SIZE 750
 #define BOARD_SIZE 15
 #define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
 
-// Other Variable
-#define FRAME_PER_SECOND 60
+// Other Variables
+#define TARGET_FPS 60
 #define CHARACTER_SET_LENGTH (sizeof(CharacterSet) / sizeof(Character))
 
 
+// Board Cell Struct
 typedef struct Cell {
     char kind;
     int identifier;
     char wall;
 } Cell;
 
+// Character Category Struct
 typedef struct Character {
     char kind;
     char *address;
     int number;
 } Character;
+
+
+// Cell NULL_CELL;
+Cell Board[BOARD_SIZE][BOARD_SIZE];
 
 Character CharacterSet[] = {
     {'H', "Images/House.svg\0", 1},
@@ -42,10 +49,6 @@ Character CharacterSet[] = {
     {'T', "Images/Trap.svg\0", 8}
 };
 
-Cell NULL_CELL;
-Cell Board[BOARD_SIZE][BOARD_SIZE];
-
-
 
 void initBoard(void) {
     int middleCell = BOARD_SIZE / 2;
@@ -58,15 +61,17 @@ void initBoard(void) {
     Board[middleCell + 1][middleCell].identifier = 1;
 
     Board[middleCell - 1][middleCell].kind = 'C';
-    Board[middleCell - 1][middleCell].identifier = 2;
+    Board[middleCell - 1][middleCell].identifier = 1;
 
+    // Initialize Seed
     srand(time(NULL));
 
     // House, Cat1, Cat2 Coordination Should Not Be Changed
     for (int i = 3; i < CHARACTER_SET_LENGTH; i++) {
         int length = CharacterSet[i].number;
 
-        for (int j = 0; j < length; j++) {
+        for (int j = 1; j <= length; j++) {
+            // Finding Empty Random Cell
             int x, y;
             do {
                 x = rand() % BOARD_SIZE;
