@@ -1,3 +1,5 @@
+#include <raylib.h>
+
 // For Random Functionality
 #include <stdlib.h>
 #include <time.h>
@@ -6,10 +8,10 @@
 // Board Related Variables
 #define SCREEN_SIZE 750
 #define BOARD_SIZE 15
-#define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
+#define TARGET_FPS 60
 
 // Other Variables
-#define TARGET_FPS 60
+#define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
 #define CHARACTER_SET_LENGTH (sizeof(CharacterSet) / sizeof(Character))
 
 
@@ -18,6 +20,7 @@ typedef struct Cell {
     char kind;
     int identifier;
     char wall;
+    Texture *image;
 } Cell;
 
 // Character Category Struct
@@ -25,6 +28,7 @@ typedef struct Character {
     char kind;
     char *address;
     int number;
+    Texture image;
 } Character;
 
 
@@ -56,12 +60,16 @@ void initBoard(void) {
     // Fixed Position Characters
     Board[middleCell][middleCell].kind = 'H';
     Board[middleCell][middleCell].identifier = 1;
+    Board[middleCell][middleCell].image = &CharacterSet[0].image;
+
 
     Board[middleCell + 1][middleCell].kind = 'B';
     Board[middleCell + 1][middleCell].identifier = 1;
+    Board[middleCell + 1][middleCell].image = &CharacterSet[1].image;
 
     Board[middleCell - 1][middleCell].kind = 'C';
     Board[middleCell - 1][middleCell].identifier = 1;
+    Board[middleCell - 1][middleCell].image = &CharacterSet[2].image;
 
     // Initialize Seed
     srand(time(NULL));
@@ -80,6 +88,7 @@ void initBoard(void) {
 
             Board[x][y].kind = CharacterSet[i].kind;
             Board[x][y].identifier = j;
+            Board[x][y].image = &CharacterSet[i].image;
         }
     }
 }
