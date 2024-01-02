@@ -12,37 +12,43 @@
 
 // Other Variables
 #define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
-#define CHARACTER_SET_LENGTH (sizeof(CharacterSet) / sizeof(Character))
+#define CATEG_LENGTH (sizeof(Categories) / sizeof(CharacterType))
 
 
 // Board Cell Struct
 typedef struct Cell {
-    char kind;
-    int identifier;
+    int identity;
     char wall;
-    Texture *image;
 } Cell;
 
 // Character Category Struct
 typedef struct Character {
-    char kind;
-    char *address;
-    int number;
-    Texture image;
+    int identity;
+    char type;
+    int x, y;
+    Texture *texture;
 } Character;
 
+typedef struct CharacterType {
+    char type;
+    char *path;
+    int n;
+    Texture texture;
+} CharacterType;
 
-// Cell NULL_CELL;
+
+// Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE];
 
-Character CharacterSet[] = {
+// Game Character Categories
+CharacterType Categories[] = {
     {'H', "Images/House.svg\0", 1},
 
-    {'B', "Images/Yellow Cat.svg\0", 1},
+    {'C', "Images/Yellow Cat.svg\0", 1},
     {'C', "Images/Black Cat.svg\0", 1},
 
     {'D', "Images/Dog.svg\0", 2},
-    {'E', "Images/Poodle.svg\0", 2},
+    {'D', "Images/Poodle.svg\0", 2},
 
     {'P', "Images/Chocolate.svg\0", 8},
 
@@ -53,42 +59,43 @@ Character CharacterSet[] = {
     {'T', "Images/Trap.svg\0", 8}
 };
 
+// Game Characters
+Character Characters[39];
+
 
 void initBoard(void) {
+
     int middleCell = BOARD_SIZE / 2;
-    
-    // Fixed Position Characters
-    Board[middleCell][middleCell].kind = 'H';
-    Board[middleCell][middleCell].identifier = 1;
-    Board[middleCell][middleCell].image = &CharacterSet[0].image;
 
-
-    Board[middleCell + 1][middleCell].kind = 'B';
-    Board[middleCell + 1][middleCell].identifier = 1;
-    Board[middleCell + 1][middleCell].image = &CharacterSet[1].image;
-
-    Board[middleCell - 1][middleCell].kind = 'C';
-    Board[middleCell - 1][middleCell].identifier = 1;
-    Board[middleCell - 1][middleCell].image = &CharacterSet[2].image;
 
     // Initialize Seed
     srand(time(NULL));
 
-    // House, Cat1, Cat2 Coordination Should Not Be Changed
-    for (int i = 3; i < CHARACTER_SET_LENGTH; i++) {
-        int length = CharacterSet[i].number;
 
-        for (int j = 1; j <= length; j++) {
+    int id = 0;
+
+
+    // House, Cat1, Cat2 Coordination Should Not Be Changed
+    for (int i = 0; i < CATEG_LENGTH; i++) {
+        int length = Categories[i].n;
+
+        for (int j = 0; j < length; j++) {
+
             // Finding Empty Random Cell
             int x, y;
             do {
                 x = rand() % BOARD_SIZE;
                 y = rand() % BOARD_SIZE;
-            } while(Board[x][y].kind);
+            } while(Board[x][y].identity);
 
-            Board[x][y].kind = CharacterSet[i].kind;
-            Board[x][y].identifier = j;
-            Board[x][y].image = &CharacterSet[i].image;
+            Characters[id].identity = id + 1;
+            Characters[id].type = Categories[i].type;
+            Characters[id].x = x;
+            Characters[id].y = y;
+            Characters[id].texture = &Categories[i].texture;
+
+            Board[x][y].identity = Characters[id].identity;
+            id++;
         }
     }
 }

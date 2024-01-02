@@ -10,11 +10,11 @@ int main(void) {
     InitWindow(SCREEN_SIZE, SCREEN_SIZE, "Mr. Clobber's Backyard");
     SetTargetFPS(TARGET_FPS);
     
-    // Load Item Images to the Memory
-    for (int i = 0; i < CHARACTER_SET_LENGTH; i++) {
-        Image itemImage = LoadImageSvg(CharacterSet[i].address, CELL_SIZE, CELL_SIZE);
-        CharacterSet[i].image = LoadTextureFromImage(itemImage);
-        UnloadImage(itemImage);
+    // Load Category Images to the Memory
+    for (int i = 0; i < CATEG_LENGTH; i++) {
+        Image categoryImage = LoadImageSvg(Categories[i].path, CELL_SIZE, CELL_SIZE);
+        Categories[i].texture = LoadTextureFromImage(categoryImage);
+        UnloadImage(categoryImage);
     }
 
     // Initialize Board
@@ -25,13 +25,14 @@ int main(void) {
     while (!WindowShouldClose()) {
         BeginDrawing();
             drawBoard(BROWN, DARKBROWN);
+            drawCharacters();
         EndDrawing();
     }
     
    
     // Unload Texture From Memory
-    for (int i = 0; i < CHARACTER_SET_LENGTH; i++) {
-        UnloadTexture(CharacterSet[i].image);
+    for (int i = 0; i < CATEG_LENGTH; i++) {
+        UnloadTexture(Categories[i].texture);
     }
 
     CloseWindow();   
@@ -45,14 +46,19 @@ void drawBoard(Color backgroundColor, Color borderColor) {
     
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
-            int x, y;
-            x = sideSize * i;
-            y = sideSize * j;
-            
-            DrawRectangleLines(x, y, sideSize, sideSize, borderColor);
-            if (Board[i][j].kind) {
-                    DrawTexture(*Board[x][y].image, x, y, WHITE);
-            }
+            DrawRectangleLines(sideSize * i, sideSize * j, sideSize, sideSize, borderColor);
         }
+    }
+}
+
+
+void drawCharacters(void) {
+    for (int i = 0; i < 39; i++) {
+        DrawTexture(
+            *Characters[i].texture,
+            Characters[i].x * CELL_SIZE,
+            Characters[i].y * CELL_SIZE,
+            WHITE
+        );
     }
 }
