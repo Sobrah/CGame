@@ -2,63 +2,72 @@
 
 
 // Prototypes
-void drawBoard(Color, Color);
+void DrawBoard(Color, Color);
+void DrawCharacters(void);
 
 
 int main(void) { 
     // Initialize Window
     InitWindow(SCREEN_SIZE, SCREEN_SIZE, "Mr. Clobber's Backyard");
-    SetTargetFPS(TARGET_FPS);
+    SetTargetFPS(FRAME_PER_SECOND);
     
     // Load Category Images to the Memory
-    for (int i = 0; i < CATEG_LENGTH; i++) {
-        Image categoryImage = LoadImageSvg(Categories[i].path, CELL_SIZE, CELL_SIZE);
-        Categories[i].texture = LoadTextureFromImage(categoryImage);
+    for (int i = 0; i < SET_LENGTH; i++) {
+        Image categoryImage = LoadImageSvg(
+            CharacterSet[i].path,
+            CELL_SIZE,
+            CELL_SIZE
+        );
+        CharacterSet[i].texture = LoadTextureFromImage(categoryImage);
         UnloadImage(categoryImage);
     }
 
     // Initialize Board
-    initBoard();
+    InitBoard();
 
     
     // Rendering Frames Until When It Should Be Closed
     while (!WindowShouldClose()) {
         BeginDrawing();
-            drawBoard(BROWN, DARKBROWN);
-            drawCharacters();
+            DrawBoard(BROWN, DARKBROWN);
+            DrawCharacters();
         EndDrawing();
     }
     
-   
-    // Unload Texture From Memory
-    for (int i = 0; i < CATEG_LENGTH; i++) {
-        UnloadTexture(Categories[i].texture);
-    }
+
+    // Unload Textures From Memory
+    for (int i = 0; i < SET_LENGTH; i++)
+        UnloadTexture(CharacterSet[i].texture);
 
     CloseWindow();   
 }
 
 
-void drawBoard(Color backgroundColor, Color borderColor) {
-    int sideSize = CELL_SIZE;
-    
-    ClearBackground(backgroundColor);
+void DrawBoard(Color bgColor, Color borderColor) {
+    ClearBackground(bgColor);
     
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
-            DrawRectangleLines(sideSize * i, sideSize * j, sideSize, sideSize, borderColor);
+            DrawRectangleLines(
+                CELL_SIZE * i,
+                CELL_SIZE * j,
+                CELL_SIZE, CELL_SIZE, 
+                borderColor
+            );
         }
     }
 }
 
 
-void drawCharacters(void) {
-    for (int i = 0; i < 39; i++) {
-        DrawTexture(
-            *Characters[i].texture,
-            Characters[i].x * CELL_SIZE,
-            Characters[i].y * CELL_SIZE,
-            WHITE
-        );
+void DrawCharacters(void) {
+    for (int i = 0; i < SET_LENGTH; i++) {
+        for (int j = 0; j < CharacterSet[i].n; j++) {
+            DrawTexture(
+                CharacterSet[i].texture,
+                CharacterSet[i].Characters[j].x * CELL_SIZE,
+                CharacterSet[i].Characters[j].y * CELL_SIZE,
+                WHITE
+            );
+        }
     }
 }

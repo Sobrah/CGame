@@ -5,34 +5,32 @@
 #include <time.h>
 
 
-// Board Related Variables
+//  Global Const Variables
 #define SCREEN_SIZE 750
+#define FRAME_PER_SECOND 60
 #define BOARD_SIZE 15
-#define TARGET_FPS 60
 
-// Other Variables
 #define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
-#define CATEG_LENGTH (sizeof(Categories) / sizeof(CharacterType))
+#define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 
 
 // Board Cell Struct
 typedef struct Cell {
-    int identity;
+    int primary;
+    int secondary;
     char wall;
 } Cell;
 
 // Character Category Struct
-typedef struct Character {
-    int identity;
-    char type;
+typedef struct Point {
     int x, y;
-    Texture *texture;
-} Character;
+} Point;
 
 typedef struct CharacterType {
     char type;
     char *path;
     int n;
+    Point Characters[BOARD_SIZE];
     Texture texture;
 } CharacterType;
 
@@ -40,8 +38,8 @@ typedef struct CharacterType {
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE];
 
-// Game Character Categories
-CharacterType Categories[] = {
+// Game Character Categories Storage
+CharacterType CharacterSet[] = {
     {'H', "Images/House.svg\0", 1},
 
     {'C', "Images/Yellow Cat.svg\0", 1},
@@ -56,28 +54,17 @@ CharacterType Categories[] = {
 
     {'M', "Images/Mouse.svg\0", 8},
 
-    {'T', "Images/Trap.svg\0", 8}
+    {'T', "Images/Trap.svg\0", 8},
 };
 
-// Game Characters
-Character Characters[39];
 
-
-void initBoard(void) {
-
-    int middleCell = BOARD_SIZE / 2;
-
-
+void InitBoard(void) {
+    
     // Initialize Seed
     srand(time(NULL));
 
-
-    int id = 0;
-
-
-    // House, Cat1, Cat2 Coordination Should Not Be Changed
-    for (int i = 0; i < CATEG_LENGTH; i++) {
-        int length = Categories[i].n;
+    for (int i = 0; i < SET_LENGTH; i++) {
+        int length = CharacterSet[i].n;
 
         for (int j = 0; j < length; j++) {
 
@@ -86,16 +73,14 @@ void initBoard(void) {
             do {
                 x = rand() % BOARD_SIZE;
                 y = rand() % BOARD_SIZE;
-            } while(Board[x][y].identity);
+            } while(Board[y][x].primary);
 
-            Characters[id].identity = id + 1;
-            Characters[id].type = Categories[i].type;
-            Characters[id].x = x;
-            Characters[id].y = y;
-            Characters[id].texture = &Categories[i].texture;
+            CharacterSet[i].Characters[j].x = x;
+            CharacterSet[i].Characters[j].y = y;
 
-            Board[x][y].identity = Characters[id].identity;
-            id++;
+            // Primary & Secondary Starts From One
+            Board[y][x].primary = i + 1;
+            Board[y][x].secondary = j + 1;
         }
     }
 }
