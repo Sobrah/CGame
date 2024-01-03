@@ -14,29 +14,39 @@
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 
 
+// Two Main Directions
+typedef enum Direction {
+    NORTH,
+    WEST,
+    DIRECTION_COUNT // For Flexibility Purposes
+} Direction;
+
 // Board Cell Struct
 typedef struct Cell {
     int primary;
     int secondary;
-    char wall;
+    Direction wall;
 } Cell;
 
 // Character Category Struct
-typedef struct Point {
+typedef struct Coordinate {
     int x, y;
-} Point;
+} Coordinate;
 
 typedef struct CharacterType {
     char type;
     char *path;
     int n;
-    Point Characters[BOARD_SIZE];
+    Coordinate Characters[BOARD_SIZE];
     Texture texture;
 } CharacterType;
 
 
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE];
+
+// Board Walls
+Coordinate Walls[BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
@@ -58,29 +68,52 @@ CharacterType CharacterSet[] = {
 };
 
 
+// Find Empty Cell Base On Wall Or Primary
+Coordinate RandCell(int start, char factor) {
+    int x, y, value;
+
+    do {
+        x = rand() % BOARD_SIZE + start;
+        y = rand() % BOARD_SIZE + start;
+
+        switch (factor) {
+            case 'P': value = Board[y][x].primary; break;
+            case 'W': value = Board[y][x].wall; break;
+        }
+    } while(value);
+
+    return (Coordinate){x, y};
+}
+
+
 void InitBoard(void) {
     
     // Initialize Seed
     srand(time(NULL));
 
+    // Initialize Characters And Board
     for (int i = 0; i < SET_LENGTH; i++) {
         int length = CharacterSet[i].n;
 
         for (int j = 0; j < length; j++) {
-
+            
             // Finding Empty Random Cell
-            int x, y;
-            do {
-                x = rand() % BOARD_SIZE;
-                y = rand() % BOARD_SIZE;
-            } while(Board[y][x].primary);
-
-            CharacterSet[i].Characters[j].x = x;
-            CharacterSet[i].Characters[j].y = y;
+            Coordinate point = RandCell(0, 'P');
+            CharacterSet[i].Characters[j] = point;
 
             // Primary & Secondary Starts From One
-            Board[y][x].primary = i + 1;
-            Board[y][x].secondary = j + 1;
+            Board[point.y][point.x].primary = i + 1;
+            Board[point.y][point.x].secondary = j + 1;
         }
+    }
+
+    // Initialize Walls
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        
+        // Zero Is Not Valid
+        Coordinate point = RandCell(1, 'W');
+        
+        Walls[i] = point;
+        Board[point.y][point.x].wall = rand() % DIRECTION_COUNT;
     }
 }

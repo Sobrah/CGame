@@ -4,6 +4,7 @@
 // Prototypes
 void DrawBoard(Color, Color);
 void DrawCharacters(void);
+void DrawWalls(int, Color);
 
 
 int main(void) { 
@@ -31,13 +32,15 @@ int main(void) {
         BeginDrawing();
             DrawBoard(BROWN, DARKBROWN);
             DrawCharacters();
+            DrawWalls(DIRECTION_COUNT, ORANGE);
         EndDrawing();
     }
     
 
     // Unload Textures From Memory
-    for (int i = 0; i < SET_LENGTH; i++)
+    for (int i = 0; i < SET_LENGTH; i++) {
         UnloadTexture(CharacterSet[i].texture);
+    }
 
     CloseWindow();   
 }
@@ -71,3 +74,21 @@ void DrawCharacters(void) {
         }
     }
 }
+
+
+void DrawWalls(int thick, Color bgColor) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        Vector2 endPoint, startPoint = {
+            CELL_SIZE * Walls[i].x,
+            CELL_SIZE * Walls[i].y
+        };
+        endPoint = startPoint;
+
+        switch (Board[Walls[i].y][Walls[i].x].wall) {
+            case NORTH: endPoint.x += CELL_SIZE; break;
+            case WEST: endPoint.y += CELL_SIZE; break;
+        }
+
+        DrawLineEx(startPoint, endPoint, thick, bgColor);
+    }
+} 
