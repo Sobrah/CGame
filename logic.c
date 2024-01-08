@@ -1,18 +1,19 @@
 #include <raylib.h>
-#include <stdbool.h>
 
 // For Random Functionality
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 //  Global Const Variables
-#define SCREEN_SIZE 750
-#define FRAME_PER_SECOND 60
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 750
 #define BOARD_SIZE 15
+#define FRAME_PER_SECOND 60
+#define USERS 2
 
-#define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
+#define CELL_SIZE (SCREEN_HEIGHT / BOARD_SIZE)
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
-
 #define MID_CELL (BOARD_SIZE / 2) 
 
 // Two Main Directions
@@ -53,21 +54,6 @@ Coordinate Walls[BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
-    {'H', "Images/House.svg\0", 1, 
-        {MID_CELL, MID_CELL}, 
-        true
-    },
-
-    {'C', "Images/Yellow Cat.svg\0", 1, 
-        {MID_CELL + 1, MID_CELL}, 
-        true
-    },
-    
-    {'C', "Images/Black Cat.svg\0", 1, 
-        {MID_CELL - 1, MID_CELL},
-        true
-    },
-
     {'D', "Images/Dog.svg\0", 2},
     {'D', "Images/Poodle.svg\0", 2},
 
@@ -77,7 +63,19 @@ CharacterType CharacterSet[] = {
 
     {'M', "Images/Mouse.svg\0", 8},
 
-    {'T', "Images/Trap.svg\0", 8}
+    {'T', "Images/Trap.svg\0", 8},
+
+    {'H', "Images/House.svg\0", 1, 
+        {MID_CELL, MID_CELL}, true
+    },
+
+    {'C', "Images/Black Cat.svg\0", 1, 
+        {MID_CELL - 1, MID_CELL},true
+    },
+
+    {'C', "Images/Yellow Cat.svg\0", 1, 
+        {MID_CELL + 1, MID_CELL}, true
+    }
 };
 
 
