@@ -34,6 +34,11 @@ int main(void) {
             DrawCharacters();
             DrawWalls(DIRECTION_COUNT, ORANGE);
         EndDrawing();
+
+        if (IsKeyPressed(KEY_RIGHT)) CharacterSet[1].Characters[0].x += 1;
+        if (IsKeyPressed(KEY_LEFT)) CharacterSet[1].Characters[0].x -= 1;
+        if (IsKeyPressed(KEY_UP)) CharacterSet[1].Characters[0].y -= 1;
+        if (IsKeyPressed(KEY_DOWN)) CharacterSet[1].Characters[0].y += 1;
     }
     
 

@@ -13,6 +13,7 @@
 #define CELL_SIZE (SCREEN_SIZE / BOARD_SIZE)
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 
+#define MID_CELL (BOARD_SIZE / 2) 
 
 // Two Main Directions
 typedef enum Direction {
@@ -50,10 +51,12 @@ Coordinate Walls[BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
-    {'H', "Images/House.svg\0", 1},
+    
+    {'H', "Images/House.svg\0", 1, {MID_CELL, MID_CELL}},
 
-    {'C', "Images/Yellow Cat.svg\0", 1},
-    {'C', "Images/Black Cat.svg\0", 1},
+    {'C', "Images/Yellow Cat.svg\0", 1, {MID_CELL + 1, MID_CELL}},
+    
+    {'C', "Images/Black Cat.svg\0", 1, {MID_CELL - 1, MID_CELL}},
 
     {'D', "Images/Dog.svg\0", 2},
     {'D', "Images/Poodle.svg\0", 2},
@@ -64,7 +67,7 @@ CharacterType CharacterSet[] = {
 
     {'M', "Images/Mouse.svg\0", 8},
 
-    {'T', "Images/Trap.svg\0", 8},
+    {'T', "Images/Trap.svg\0", 8}
 };
 
 
@@ -91,8 +94,12 @@ void InitBoard(void) {
     // Initialize Seed
     srand(time(NULL));
 
-    // Initialize Characters And Board
-    for (int i = 0; i < SET_LENGTH; i++) {
+    Board[BOARD_SIZE / 2][BOARD_SIZE / 2] = (Cell){1, 1};
+    Board[BOARD_SIZE / 2][BOARD_SIZE / 2 + 1] = (Cell){2, 1};
+    Board[BOARD_SIZE / 2][BOARD_SIZE / 2 - 1] = (Cell){3, 1};
+
+    // House, Yellow Cat And Black Cat Should Not Be Changed
+    for (int i = 3; i < SET_LENGTH; i++) {
         int length = CharacterSet[i].n;
 
         for (int j = 0; j < length; j++) {
