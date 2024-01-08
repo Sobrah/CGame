@@ -26,7 +26,6 @@ int main(void) {
     // Initialize Board
     InitBoard();
 
-    
     // Rendering Frames Until When It Should Be Closed
     while (!WindowShouldClose()) {
         BeginDrawing();

@@ -1,9 +1,9 @@
 #include <raylib.h>
+#include <stdbool.h>
 
 // For Random Functionality
 #include <stdlib.h>
 #include <time.h>
-
 
 //  Global Const Variables
 #define SCREEN_SIZE 750
@@ -17,13 +17,14 @@
 
 // Two Main Directions
 typedef enum Direction {
-    NORTH,
-    WEST,
+    NORTH = -1,
+    WEST = +1,
     DIRECTION_COUNT // For Flexibility Purposes
 } Direction;
 
 // Board Cell Struct
 typedef struct Cell {
+    bool fill;
     int primary;
     int secondary;
     Direction wall;
@@ -39,24 +40,33 @@ typedef struct CharacterType {
     char *path;
     int n;
     Coordinate Characters[BOARD_SIZE];
+    const bool fix;
     Texture texture;
 } CharacterType;
 
 
 // Game Board
-Cell Board[BOARD_SIZE][BOARD_SIZE];
+Cell Board[BOARD_SIZE][BOARD_SIZE] = {-1};
 
 // Board Walls
 Coordinate Walls[BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
-    
-    {'H', "Images/House.svg\0", 1, {MID_CELL, MID_CELL}},
+    {'H', "Images/House.svg\0", 1, 
+        {MID_CELL, MID_CELL}, 
+        true
+    },
 
-    {'C', "Images/Yellow Cat.svg\0", 1, {MID_CELL + 1, MID_CELL}},
+    {'C', "Images/Yellow Cat.svg\0", 1, 
+        {MID_CELL + 1, MID_CELL}, 
+        true
+    },
     
-    {'C', "Images/Black Cat.svg\0", 1, {MID_CELL - 1, MID_CELL}},
+    {'C', "Images/Black Cat.svg\0", 1, 
+        {MID_CELL - 1, MID_CELL},
+        true
+    },
 
     {'D', "Images/Dog.svg\0", 2},
     {'D', "Images/Poodle.svg\0", 2},
@@ -80,7 +90,7 @@ Coordinate RandCell(int start, char factor) {
         y = rand() % BOARD_SIZE + start;
 
         switch (factor) {
-            case 'P': value = Board[y][x].primary; break;
+            case 'F': value = Board[y][x].fill; break;
             case 'W': value = Board[y][x].wall; break;
         }
     } while(value);
@@ -92,25 +102,23 @@ Coordinate RandCell(int start, char factor) {
 void InitBoard(void) {
     
     // Initialize Seed
-    srand(time(NULL));
-
-    Board[BOARD_SIZE / 2][BOARD_SIZE / 2] = (Cell){1, 1};
-    Board[BOARD_SIZE / 2][BOARD_SIZE / 2 + 1] = (Cell){2, 1};
-    Board[BOARD_SIZE / 2][BOARD_SIZE / 2 - 1] = (Cell){3, 1};
+    // srand(time(NULL));
 
     // House, Yellow Cat And Black Cat Should Not Be Changed
-    for (int i = 3; i < SET_LENGTH; i++) {
+    for (int i = 0; i < SET_LENGTH; i++) {
         int length = CharacterSet[i].n;
 
         for (int j = 0; j < length; j++) {
+            Coordinate point;
             
-            // Finding Empty Random Cell
-            Coordinate point = RandCell(0, 'P');
-            CharacterSet[i].Characters[j] = point;
+            if (CharacterSet[i].fix) {
+                point = CharacterSet[i].Characters[j];
+            } else {
+                point = RandCell(0, 'F');
+                CharacterSet[i].Characters[j] = point;
+            } 
 
-            // Primary & Secondary Starts From One
-            Board[point.y][point.x].primary = i + 1;
-            Board[point.y][point.x].secondary = j + 1;
+            Board[point.y][point.x] = (Cell){true, i, j};
         }
     }
 
