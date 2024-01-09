@@ -19,7 +19,7 @@ int main(void) {
     // Initialize Board
     InitBoard();
 
-    // Main Screen Now
+    // Main Screen For Now
     PlayScreen();
     
     // Unload Textures From Memory

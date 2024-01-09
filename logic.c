@@ -6,11 +6,10 @@
 #include <stdbool.h>
 
 //  Global Const Variables
-#define SCREEN_WIDTH 1000
+#define SCREEN_WIDTH 1050
 #define SCREEN_HEIGHT 750
 #define BOARD_SIZE 15
 #define FRAME_PER_SECOND 60
-#define USERS 2
 
 #define CELL_SIZE (SCREEN_HEIGHT / BOARD_SIZE)
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
@@ -45,12 +44,23 @@ typedef struct CharacterType {
     Texture texture;
 } CharacterType;
 
+typedef struct User {
+    int score;
+    int strength;
+    int energy;
+} User;
+
 
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE] = {-1};
 
 // Board Walls
 Coordinate Walls[BOARD_SIZE];
+
+User Users[] = {
+    {0, 2, 5},
+    {0, 2, 5}
+};
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
@@ -77,56 +87,3 @@ CharacterType CharacterSet[] = {
         {MID_CELL + 1, MID_CELL}, true
     }
 };
-
-
-// Find Empty Cell Base On Wall Or Primary
-Coordinate RandCell(int start, char factor) {
-    int x, y, value;
-
-    do {
-        x = rand() % BOARD_SIZE + start;
-        y = rand() % BOARD_SIZE + start;
-
-        switch (factor) {
-            case 'F': value = Board[y][x].fill; break;
-            case 'W': value = Board[y][x].wall; break;
-        }
-    } while(value);
-
-    return (Coordinate){x, y};
-}
-
-
-void InitBoard(void) {
-    
-    // Initialize Seed
-    // srand(time(NULL));
-
-    // House, Yellow Cat And Black Cat Should Not Be Changed
-    for (int i = 0; i < SET_LENGTH; i++) {
-        int length = CharacterSet[i].n;
-
-        for (int j = 0; j < length; j++) {
-            Coordinate point;
-            
-            if (CharacterSet[i].fix) {
-                point = CharacterSet[i].Characters[j];
-            } else {
-                point = RandCell(0, 'F');
-                CharacterSet[i].Characters[j] = point;
-            } 
-
-            Board[point.y][point.x] = (Cell){true, i, j};
-        }
-    }
-
-    // Initialize Walls
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        
-        // Zero Is Not Valid
-        Coordinate point = RandCell(1, 'W');
-        
-        Walls[i] = point;
-        Board[point.y][point.x].wall = rand() % DIRECTION_COUNT;
-    }
-}
