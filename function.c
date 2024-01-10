@@ -6,44 +6,8 @@ void PlayScreen(void);
 void CheckMove(void);
 void DrawBoard(Color, int, Color);
 void DrawCharacters(void);
-void DrawWalls(int, Color);
 void DrawScoreBoard(int, Color);
-
-// Draw Score Board & Related Info
-void DrawScoreBoard(int thick, Color color) {
-    Font font = GetFontDefault();
-    int x, y;
-    
-    // Draw Table
-    y = CELL_SIZE;
-    DrawLineEx(
-        (Vector2){SCREEN_HEIGHT, y},
-        (Vector2){SCREEN_WIDTH, y},
-        thick, color
-    );
-    y = (BOARD_SIZE - 1) / 2 * CELL_SIZE;
-    DrawLineEx(
-        (Vector2){SCREEN_HEIGHT, y},
-        (Vector2){SCREEN_WIDTH, y}  ,
-        thick, color
-    );
-
-    // Draw Round
-    x = SCREEN_HEIGHT + (SCREEN_WIDTH - SCREEN_HEIGHT - MeasureText("Round 1", 20)) / 2;
-    y = (CELL_SIZE - font.baseSize) / 2;
-    DrawText(
-        TextFormat("ROUND %i", ScoreBoard.round),
-        x, y, 20, WHITE
-    );
-
-    DrawText(
-        TextFormat("%i\t%i\t%i", ScoreBoard.Users[0].score, ScoreBoard.Users[0].strength, ScoreBoard.Users[0].energy),
-        SCREEN_HEIGHT + 10,
-        2 * CELL_SIZE,
-        CELL_SIZE,
-        WHITE
-    );
-}
+void DrawUserInfo(void);
 
 // Play Screen
 void PlayScreen(void) {
@@ -60,26 +24,83 @@ void PlayScreen(void) {
     }
 }
 
+// Draw Score Board & Related Info
+void DrawScoreBoard(int thick, Color color) {
+    Font font = GetFontDefault();
+    int x, y;
+    
+    // Draw Table
+    y = CELL_SIZE;
+    DrawLineEx(
+        (Vector2){SCREEN_HEIGHT, y},
+        (Vector2){SCREEN_WIDTH, y},
+        thick, color
+    );
+    y = (MID_CELL + 1) * CELL_SIZE;
+    DrawLineEx(
+        (Vector2){SCREEN_HEIGHT, y},
+        (Vector2){SCREEN_WIDTH, y}  ,
+        thick, color
+    );
+
+    // Draw Round
+    x = SCREEN_HEIGHT + (SCREEN_WIDTH - SCREEN_HEIGHT - MeasureText("Round 1", 20)) / 2;
+    y = (CELL_SIZE - font.baseSize) / 2;
+    DrawText(
+        TextFormat("ROUND %i", ScoreBoard.round),
+        x, y, 20, WHITE
+    );
+
+    DrawUserInfo();
+}
+
+void DrawUserInfo(void) {
+    // TODO: Add Textures
+    int x = SCREEN_HEIGHT + (SCREEN_WIDTH - SCREEN_HEIGHT) / 2;
+
+    DrawText(TextFormat("%i", ScoreBoard.Users[0].score), x, 2 * CELL_SIZE, CELL_SIZE, WHITE);
+    DrawText(TextFormat("%i", ScoreBoard.Users[0].strength), x, 4 * CELL_SIZE, CELL_SIZE, WHITE);
+    DrawText(TextFormat("%i", ScoreBoard.Users[0].energy), x, 6 * CELL_SIZE, CELL_SIZE, WHITE);
+    
+    DrawText(TextFormat("%i", ScoreBoard.Users[1].score), x, 9 * CELL_SIZE, CELL_SIZE, WHITE);
+    DrawText(TextFormat("%i", ScoreBoard.Users[1].strength), x, 11 * CELL_SIZE, CELL_SIZE, WHITE);
+    DrawText(TextFormat("%i", ScoreBoard.Users[1].energy), x, 13 * CELL_SIZE, CELL_SIZE, WHITE);
+}
+
 // Check Board Movements
+int walkCount = 0;
 void CheckMove(void) {
-    Coordinate *point = &CharacterSet[1].Characters[0];
+    if (walkCount >= 3) {
+        ScoreBoard.turn = (ScoreBoard.turn + 1) % USER_NUMBER;
+        walkCount = 0;
+    }
+    
+    Coordinate *point = &CharacterSet[ScoreBoard.turn].Characters[0];
 
     switch (GetKeyPressed()) {
         case KEY_UP:
-            if (Board[point -> y][point -> x].wall != NORTH)
+            if (Board[point -> y][point -> x].wall != NORTH) {
                 point -> y -= 1;
+                walkCount ++;
+            }
             break;
         case KEY_LEFT:
-            if (Board[point -> y][point -> x].wall != WEST)
+            if (Board[point -> y][point -> x].wall != WEST) {
                 point -> x -= 1;
+                walkCount ++;
+            }
             break;
         case KEY_DOWN:
-            if (Board[point -> y + 1][point -> x].wall != NORTH)
+            if (Board[point -> y + 1][point -> x].wall != NORTH) {
                 point -> y += 1;
+                walkCount ++;
+            }
             break;
         case KEY_RIGHT:
-            if (Board[point -> y][point -> x + 1].wall != WEST)
+            if (Board[point -> y][point -> x + 1].wall != WEST) {
                 point -> x += 1;
+                walkCount ++;
+            }
             break;
     }
 }
@@ -96,7 +117,7 @@ void DrawBoard(Color borderColor, int thick, Color wallColor) {
                 borderColor
             );
 
-            // Draw Wall Part
+            // Draw Wall
             if (!Board[i][j].wall) continue;
 
             Vector2 endPoint, startPoint = {
@@ -184,14 +205,5 @@ void InitBoard(void) {
         Board[point.y][point.x].wall = (
             rand() % DIRECTION_COUNT ? WEST : NORTH
         );
-    }
-}
-
-// Initialize Score Board
-void InitScoreBoard(void) {
-    ScoreBoard.round = 1;
-    ScoreBoard.turn = 0;
-    for (int i = 0; i < USER_NUMBER; i++) {
-        ScoreBoard.Users[i] = (struct User){0, 2, 5};
     }
 }

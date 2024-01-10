@@ -30,7 +30,6 @@ typedef struct Cell {
     Direction wall;
 } Cell;
 
-// Character Category Struct
 typedef struct Coordinate {
     int x, y;
 } Coordinate;
@@ -44,42 +43,50 @@ typedef struct CharacterType {
     Texture texture;
 } CharacterType;
 
-struct {
+#define SCORE_TYPE_LENGTH 3
+typedef struct ScoreType {
     int round;
     int turn;
-    struct User {
+    struct {
         int score;
         int strength;
         int energy;
+        int catIndex;
     } Users[USER_NUMBER];
-} ScoreBoard;
+    char *paths[SCORE_TYPE_LENGTH];
+    Texture textures[SCORE_TYPE_LENGTH];
+} ScoreType;
 
 
 // Game Board
-Cell Board[BOARD_SIZE][BOARD_SIZE] = {-1};
+Cell Board[BOARD_SIZE][BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
-    {'H', "Images/House.svg\0", 1, 
-        {MID_CELL, MID_CELL}, true
-    },
-
-    {'C', "Images/Yellow Cat.svg\0", 1, 
+    {'C', "Images/Yellow Cat.svg", 1, 
         {MID_CELL + 1, MID_CELL}, true
     },
-
-    {'C', "Images/Black Cat.svg\0", 1, 
+    {'C', "Images/Black Cat.svg", 1, 
         {MID_CELL - 1, MID_CELL},true
     },
-    
-    {'D', "Images/Dog.svg\0", 2},
-    {'D', "Images/Poodle.svg\0", 2},
+    {'H', "Images/House.svg", 1, 
+        {MID_CELL, MID_CELL}, true
+    },
+    {'D', "Images/Dog.svg", 2},
+    {'D', "Images/Poodle.svg", 2},
+    {'P', "Images/Chocolate.svg", 8},
+    {'F', "Images/Fish.svg", 8},
+    {'M', "Images/Mouse.svg", 8},
+    {'T', "Images/Trap.svg", 8},
+};
 
-    {'P', "Images/Chocolate.svg\0", 8},
-
-    {'F', "Images/Fish.svg\0", 8},
-
-    {'M', "Images/Mouse.svg\0", 8},
-
-    {'T', "Images/Trap.svg\0", 8},
+ScoreType ScoreBoard = {
+    1, 0, {
+        {0, 2, 5, 0},
+        {0, 2, 5, 1}
+    }, {
+        "Images/Score.svg",
+        "Images/Strength.svg",
+        "Images/Energy.svg"
+    }
 };

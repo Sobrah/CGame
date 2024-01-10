@@ -5,20 +5,28 @@ int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Mr. Clobber's Backyard");
     SetTargetFPS(FRAME_PER_SECOND);
     
-    // Load Category Images to the Memory
+    // Load Textures to the Memory
     for (int i = 0; i < SET_LENGTH; i++) {
-        Image categoryImage = LoadImageSvg(
+        Image itemImage = LoadImageSvg(
             CharacterSet[i].path,
             CELL_SIZE,
             CELL_SIZE
         );
-        CharacterSet[i].texture = LoadTextureFromImage(categoryImage);
-        UnloadImage(categoryImage);
+        CharacterSet[i].texture = LoadTextureFromImage(itemImage);
+        UnloadImage(itemImage);
+    }
+    for (int i = 0; i < SCORE_TYPE_LENGTH; i++) {
+        Image itemImage = LoadImageSvg(
+            ScoreBoard.paths[i],
+            CELL_SIZE,
+            CELL_SIZE
+        );
+        ScoreBoard.textures[i] = LoadTextureFromImage(itemImage);
+        UnloadImage(itemImage);
     }
 
     // Initialization
     InitBoard();
-    InitScoreBoard();
 
     // Main Screen For Now
     PlayScreen();
@@ -26,6 +34,9 @@ int main(void) {
     // Unload Textures From Memory
     for (int i = 0; i < SET_LENGTH; i++) {
         UnloadTexture(CharacterSet[i].texture);
+    }
+    for (int i = 0; i < SCORE_TYPE_LENGTH; i++) {
+        UnloadTexture(ScoreBoard.textures[i]);
     }
 
     CloseWindow();   
