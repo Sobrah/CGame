@@ -18,7 +18,7 @@
 // Two Main Directions
 typedef enum Direction {
     NORTH = -1,
-    WEST = +1,
+    WEST = 1,
     DIRECTION_COUNT // For Flexibility Purposes
 } Direction;
 
@@ -57,9 +57,6 @@ struct {
 
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE] = {-1};
-
-// Board Walls
-Coordinate Walls[BOARD_SIZE];
 
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {

@@ -4,7 +4,7 @@
 // Graphical Function Prototypes
 void PlayScreen(void);
 void CheckMove(void);
-void DrawBoard(Color, Color);
+void DrawBoard(Color, int, Color);
 void DrawCharacters(void);
 void DrawWalls(int, Color);
 void DrawScoreBoard(int, Color);
@@ -51,9 +51,10 @@ void PlayScreen(void) {
         CheckMove();
         
         BeginDrawing();
-            DrawBoard(BROWN, DARKBROWN);
+            ClearBackground(BROWN);
+
             DrawCharacters();
-            DrawWalls(DIRECTION_COUNT, ORANGE);
+            DrawBoard(DARKBROWN, DIRECTION_COUNT, ORANGE);
             DrawScoreBoard(DIRECTION_COUNT, DARKBROWN);
         EndDrawing();
     }
@@ -84,17 +85,32 @@ void CheckMove(void) {
 }
 
 // Draw Board
-void DrawBoard(Color bgColor, Color borderColor) {
-    ClearBackground(bgColor);
-    
+void DrawBoard(Color borderColor, int thick, Color wallColor) { 
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
+            // Draw Cell
             DrawRectangleLines(
-                CELL_SIZE * i,
                 CELL_SIZE * j,
-                CELL_SIZE, CELL_SIZE, 
+                CELL_SIZE * i, 
+                CELL_SIZE, CELL_SIZE,
                 borderColor
             );
+
+            // Draw Wall Part
+            if (!Board[i][j].wall) continue;
+
+            Vector2 endPoint, startPoint = {
+            CELL_SIZE * j,
+            CELL_SIZE * i
+            };
+            endPoint = startPoint;
+
+            switch (Board[i][j].wall) {
+                case NORTH: endPoint.x += CELL_SIZE; break;
+                case WEST: endPoint.y += CELL_SIZE; break;
+            }
+
+            DrawLineEx(startPoint, endPoint, thick, wallColor);
         }
     }
 }
@@ -112,25 +128,6 @@ void DrawCharacters(void) {
         }
     }
 }
-
-// Draw Walls
-void DrawWalls(int thick, Color bgColor) {
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        Vector2 endPoint, startPoint = {
-            CELL_SIZE * Walls[i].x,
-            CELL_SIZE * Walls[i].y
-        };
-        endPoint = startPoint;
-
-        switch (Board[Walls[i].y][Walls[i].x].wall) {
-            case NORTH: endPoint.x += CELL_SIZE; break;
-            case WEST: endPoint.y += CELL_SIZE; break;
-        }
-
-        DrawLineEx(startPoint, endPoint, thick, bgColor);
-    }
-}
-
 
 // Logical Function Prototypes
 Coordinate RandCell(int, int, char);
@@ -184,7 +181,6 @@ void InitBoard(void) {
         // Zero Is Not Valid
         Coordinate point = RandCell(1, BOARD_SIZE - 1, 'W');
         
-        Walls[i] = point;
         Board[point.y][point.x].wall = (
             rand() % DIRECTION_COUNT ? WEST : NORTH
         );
