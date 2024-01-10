@@ -5,15 +5,20 @@
 #include <time.h>
 
 //  Global Const Variables
-#define SCREEN_WIDTH 1050
+#define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 750
 #define BOARD_SIZE 15
-#define FRAME_PER_SECOND 60
+#define FRAME_PER_SECOND 30
 #define USER_NUMBER 2
 
 #define CELL_SIZE (SCREEN_HEIGHT / BOARD_SIZE)
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
-#define MID_CELL (BOARD_SIZE / 2) 
+#define MID_CELL (BOARD_SIZE / 2)
+#define SCREEN_DELTA (SCREEN_WIDTH - SCREEN_HEIGHT)
+
+
+Font font;
+
 
 // Two Main Directions
 typedef enum Direction {
@@ -51,7 +56,6 @@ typedef struct ScoreType {
         int score;
         int strength;
         int energy;
-        int catIndex;
     } Users[USER_NUMBER];
     char *paths[SCORE_TYPE_LENGTH];
     Texture textures[SCORE_TYPE_LENGTH];
@@ -82,8 +86,8 @@ CharacterType CharacterSet[] = {
 
 ScoreType ScoreBoard = {
     1, 0, {
-        {0, 2, 5, 0},
-        {0, 2, 5, 1}
+        {0, 2, 5},
+        {0, 2, 5}
     }, {
         "Images/Score.svg",
         "Images/Strength.svg",

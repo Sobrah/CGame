@@ -1,5 +1,6 @@
 #include "function.c"
 
+
 int main(void) { 
     // Initialize Window
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Mr. Clobber's Backyard");
@@ -24,6 +25,7 @@ int main(void) {
         ScoreBoard.textures[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
+    font = LoadFontEx("Fonts/Roboto.ttf", CELL_SIZE / 2, 0, 0);
 
     // Initialization
     InitBoard();
@@ -38,6 +40,7 @@ int main(void) {
     for (int i = 0; i < SCORE_TYPE_LENGTH; i++) {
         UnloadTexture(ScoreBoard.textures[i]);
     }
+    UnloadFont(font);
 
     CloseWindow();   
 }
