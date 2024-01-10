@@ -16,8 +16,9 @@ int main(void) {
         UnloadImage(categoryImage);
     }
 
-    // Initialize Board
+    // Initialization
     InitBoard();
+    InitScoreBoard();
 
     // Main Screen For Now
     PlayScreen();

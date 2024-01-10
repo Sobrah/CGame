@@ -3,6 +3,7 @@
         "raylib.h": "c",
         "stdbool.h": "c",
         "type_traits": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "stdlib.h": "c"
     }
 }

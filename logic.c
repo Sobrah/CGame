@@ -3,13 +3,13 @@
 // For Random Functionality
 #include <stdlib.h>
 #include <time.h>
-#include <stdbool.h>
 
 //  Global Const Variables
 #define SCREEN_WIDTH 1050
 #define SCREEN_HEIGHT 750
 #define BOARD_SIZE 15
 #define FRAME_PER_SECOND 60
+#define USER_NUMBER 2
 
 #define CELL_SIZE (SCREEN_HEIGHT / BOARD_SIZE)
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
@@ -44,11 +44,15 @@ typedef struct CharacterType {
     Texture texture;
 } CharacterType;
 
-typedef struct User {
-    int score;
-    int strength;
-    int energy;
-} User;
+struct {
+    int round;
+    int turn;
+    struct User {
+        int score;
+        int strength;
+        int energy;
+    } Users[USER_NUMBER];
+} ScoreBoard;
 
 
 // Game Board
@@ -57,13 +61,20 @@ Cell Board[BOARD_SIZE][BOARD_SIZE] = {-1};
 // Board Walls
 Coordinate Walls[BOARD_SIZE];
 
-User Users[] = {
-    {0, 2, 5},
-    {0, 2, 5}
-};
-
 // Game Character Categories Storage
 CharacterType CharacterSet[] = {
+    {'H', "Images/House.svg\0", 1, 
+        {MID_CELL, MID_CELL}, true
+    },
+
+    {'C', "Images/Yellow Cat.svg\0", 1, 
+        {MID_CELL + 1, MID_CELL}, true
+    },
+
+    {'C', "Images/Black Cat.svg\0", 1, 
+        {MID_CELL - 1, MID_CELL},true
+    },
+    
     {'D', "Images/Dog.svg\0", 2},
     {'D', "Images/Poodle.svg\0", 2},
 
@@ -74,16 +85,4 @@ CharacterType CharacterSet[] = {
     {'M', "Images/Mouse.svg\0", 8},
 
     {'T', "Images/Trap.svg\0", 8},
-
-    {'H', "Images/House.svg\0", 1, 
-        {MID_CELL, MID_CELL}, true
-    },
-
-    {'C', "Images/Black Cat.svg\0", 1, 
-        {MID_CELL - 1, MID_CELL},true
-    },
-
-    {'C', "Images/Yellow Cat.svg\0", 1, 
-        {MID_CELL + 1, MID_CELL}, true
-    }
 };
