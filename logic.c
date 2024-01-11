@@ -43,7 +43,10 @@ typedef struct CharacterType {
     char type;
     char *path;
     int n;
-    Coordinate Characters[BOARD_SIZE];
+    struct {
+        Coordinate point;
+        bool isDead;
+    } Characters[BOARD_SIZE];
     const bool fix;
     Texture texture;
 } CharacterType;

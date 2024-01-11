@@ -3,11 +3,19 @@
 
 // Graphical Function Prototypes
 void PlayScreen(void);
-void CheckMove(void);
 void DrawBoard(Color, int, Color);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
 void DrawScoreBoardTable(int, Color);
+
+
+// Logical Function Prototypes
+Coordinate RandCell(int, int, char);
+void InitBoard(void);
+void InitScoreBoard(void);
+void CheckMove(void);
+void ProcessMove(Coordinate, Coordinate);
+
 
 // Play Screen
 void PlayScreen(void) {
@@ -77,39 +85,6 @@ void DrawScoreBoardTable(int thick, Color borderColor) {
     );
 }
 
-// Check Board Movements
-void CheckMove(void) {
-    
-    Coordinate *point = &CharacterSet[ScoreBoard.turn].Characters[0];
-
-    switch (GetKeyPressed()) {
-        case KEY_NULL:
-            break;
-        case KEY_UP:
-            if (Board[point -> y][point -> x].wall != NORTH) {
-                point -> y -= 1;
-            }
-            break;
-        case KEY_LEFT:
-            if (Board[point -> y][point -> x].wall != WEST) {
-                point -> x -= 1;
-            }
-            break;
-        case KEY_DOWN:
-            if (Board[point -> y + 1][point -> x].wall != NORTH) {
-                point -> y += 1;
-            }
-            break;
-        case KEY_RIGHT:
-            if (Board[point -> y][point -> x + 1].wall != WEST) {
-                point -> x += 1;
-            }
-            break;
-        case KEY_ENTER:
-            ScoreBoard.turn = (ScoreBoard.turn + 1) % USER_NUMBER;
-    }
-}
-
 // Draw Board
 void DrawBoard(Color borderColor, int thick, Color wallColor) { 
     // Board Outline
@@ -151,20 +126,23 @@ void DrawBoard(Color borderColor, int thick, Color wallColor) {
 void DrawCharacters(void) {
     for (int i = 0; i < SET_LENGTH; i++) {
         for (int j = 0; j < CharacterSet[i].n; j++) {
+        
+
+            if (CharacterSet[i].Characters[j].isDead) continue;
+
             DrawTexture(
                 CharacterSet[i].texture,
-                CharacterSet[i].Characters[j].x * CELL_SIZE,
-                CharacterSet[i].Characters[j].y * CELL_SIZE,
+                CharacterSet[i].Characters[j].point.x * CELL_SIZE,
+                CharacterSet[i].Characters[j].point.y * CELL_SIZE,
                 WHITE
             );
         }
     }
 }
 
-// Logical Function Prototypes
-Coordinate RandCell(int, int, char);
-void InitBoard(void);
-void InitScoreBoard(void);
+
+
+
 
 
 // Find Empty Cell Base On Wall Or Primary
@@ -197,10 +175,10 @@ void InitBoard(void) {
             Coordinate point;
             
             if (CharacterSet[i].fix) {
-                point = CharacterSet[i].Characters[j];
+                point = CharacterSet[i].Characters[j].point;
             } else {
                 point = RandCell(0, BOARD_SIZE, 'F');
-                CharacterSet[i].Characters[j] = point;
+                CharacterSet[i].Characters[j].point = point;
             } 
 
             Board[point.y][point.x] = (Cell){true, i, j};
@@ -216,5 +194,74 @@ void InitBoard(void) {
         Board[point.y][point.x].wall = (
             rand() % DIRECTION_COUNT ? WEST : NORTH
         );
+    }
+}
+
+// Check Board Movements
+void CheckMove(void) {
+    int key = GetKeyPressed();
+    Coordinate ePoint, sPoint;
+
+    ePoint = sPoint = CharacterSet[ScoreBoard.turn].Characters[0].point;
+
+    switch (key) {
+        case KEY_NULL:
+            break;
+        case KEY_UP:
+            if (Board[sPoint.y][sPoint.x].wall == NORTH) return;
+            ePoint.y --;
+            break;
+        case KEY_LEFT:
+            if (Board[sPoint.y][sPoint.x].wall == WEST) return;
+            ePoint.x --;
+            break;
+        case KEY_DOWN:
+            if (Board[sPoint.y + 1][sPoint.x].wall == NORTH) return;
+            ePoint.y ++;
+            break;
+        case KEY_RIGHT:
+            if (Board[sPoint.y][sPoint.x + 1].wall == WEST) return;
+            ePoint.x ++;
+            break;
+        case KEY_ENTER:
+            ScoreBoard.turn = (ScoreBoard.turn + 1) % USER_NUMBER;
+            return;
+    }
+
+    ProcessMove(sPoint,ePoint);
+}
+
+void ProcessMove(Coordinate sPoint, Coordinate ePoint) {
+    Cell *sCell, *eCell;
+    sCell = &Board[sPoint.y][sPoint.x];
+    eCell = &Board[ePoint.y][ePoint.x];
+
+    if (!eCell -> fill) {
+        CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
+
+        eCell -> fill = true;
+        eCell -> primary = sCell -> primary;
+        eCell -> secondary = sCell -> secondary;
+
+        Board[sPoint.y][sPoint.x].fill = false;
+        return;
+    }
+
+    switch(CharacterSet[eCell -> primary].type) {
+        case 'H':
+            break;
+        case 'M':
+            CharacterSet[eCell -> primary].Characters[eCell ->secondary].isDead = true;
+            ScoreBoard.Users[ScoreBoard.turn].score += 1;
+
+            CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
+            
+
+            eCell -> fill = true;
+            eCell -> primary = sCell -> primary;
+            eCell -> secondary = sCell -> secondary;
+
+            Board[sPoint.y][sPoint.x].fill = false;
+            return;
     }
 }
