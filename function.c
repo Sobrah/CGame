@@ -5,6 +5,7 @@
 void PlayScreen(void);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
+void ScoreBoardIcons(void);
 void DrawBoard(Color, int, Color);
 void DrawScoreBoardTable(int, Color);
 
@@ -68,9 +69,34 @@ void DrawScoreBoard(int thick, Color borderColor) {
         for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
             const char *text = TextFormat("%i", loopHelp[i][j]);
             DrawText(text, x - MeasureText(text, font.baseSize), y, CELL_SIZE, WHITE);
+
+            DrawTexture(ScoreBoard.textures[j],
+            x + 15,
+            y ,
+            WHITE
+            );
         }
         y += CELL_SIZE;
     }
+}
+
+// Draw Score Board Icons
+void ScoreBoardIcons(void){
+
+    int x = ((WINDOW_WIDTH + WINDOW_HEIGHT) /2)  ;
+    int y = 2 * CELL_SIZE;
+    for(int i = 0 ; i < USER_NUMBER ; i++){
+        for(int j = 0 ; j < SCORE_TYPE_MEMBER ; j++ , y += 2 * CELL_SIZE){
+            
+            DrawTexture(ScoreBoard.textures[j] ,
+            x * CELL_SIZE ,
+            y * CELL_SIZE ,
+            WHITE
+            );
+        }
+        y += CELL_SIZE;
+    }
+
 }
 
 // Draw Score Board Table
