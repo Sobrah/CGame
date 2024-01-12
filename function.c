@@ -16,9 +16,6 @@ Coordinate RandCell(int, int, char);
 void ProcessMove(Coordinate, Coordinate);
 
 
-// Initialize Seed // srand(time(NULL));
-
-
 // Play Screen
 void PlayScreen(void) {
     Color bgColor, borderColor, wallColor;
@@ -56,32 +53,42 @@ void DrawScoreBoard(int thick, Color borderColor) {
     
     int x = (WINDOW_HEIGHT + WINDOW_WIDTH) / 2;
     int y = 2 * CELL_SIZE;
-    int loopHelp[SCORE_TYPE_MEMBER] = {
-        ScoreBoard.Users[0].score,
-        ScoreBoard.Users[0].strength,
-        ScoreBoard.Users[0].energy
+    int loopHelp[2][SCORE_TYPE_MEMBER] = {
+        {
+            ScoreBoard.Users[0].score,
+            ScoreBoard.Users[0].strength,
+            ScoreBoard.Users[0].energy
+        }, {
+            ScoreBoard.Users[1].score,
+            ScoreBoard.Users[1].strength,
+            ScoreBoard.Users[1].energy
+        }
     };
     for (int i = 0; i < USER_NUMBER; i++) {
         for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
-            const char *text = TextFormat("%i", loopHelp[j]);
+            const char *text = TextFormat("%i", loopHelp[i][j]);
             DrawText(text, x - MeasureText(text, font.baseSize), y, CELL_SIZE, WHITE);
         }
         y += CELL_SIZE;
     }
 }
 
+// Draw Score Board Table
 void DrawScoreBoardTable(int thick, Color borderColor) {
     Vector2 position = {WINDOW_HEIGHT, 0};
     Vector2 size = {WINDOW_DELTA, CELL_SIZE};
 
+    // White Area
     DrawRectangleV(position, size, WHITE);
     position.y += size.y;
     size.y = (BOARD_SIZE - 1) * CELL_SIZE / 2;
     
+    // Red Area
     DrawRectangleV(position, size, MAROON);
     DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
     position.y += size.y;
 
+    // Blue Area
     DrawRectangleV(position, size, DARKBLUE);
     DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
 
@@ -105,18 +112,17 @@ void DrawBoard(Color borderColor, int thick, Color wallColor) {
 
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
-            int x, y;
-            x = CELL_SIZE * j;
-            y = CELL_SIZE * i;
+            int x = CELL_SIZE * j;
+            int y = CELL_SIZE * i;
 
             // Draw Cell
             DrawRectangleLines(
                 x, y, CELL_SIZE, CELL_SIZE, borderColor
             );
 
-            // Draw Wall
             if (!Board[i][j].wall) continue;
 
+            // Draw Wall
             Vector2 endPoint, startPoint = {x, y};
             endPoint = startPoint;
 
@@ -150,8 +156,6 @@ void DrawCharacters(void) {
 
 
 
-
-
 // Find Empty Cell Base On Wall Or Primary
 Coordinate RandCell(int start, int range, char factor) {
     int x, y;
@@ -162,8 +166,8 @@ Coordinate RandCell(int start, int range, char factor) {
         y = rand() % range + start;
 
         switch (factor) {
-            case 'P': value = (bool) Board[y][x].primary; break;
-            case 'W': value = (bool) Board[y][x].wall; break;
+            case 'P': value = Board[y][x].primary; break;
+            case 'W': value = Board[y][x].wall; break;
         }
     } while(value);
 
@@ -173,17 +177,15 @@ Coordinate RandCell(int start, int range, char factor) {
 // Initialize Board
 void InitBoard(void) {
     for (int i = 0; i < SET_LENGTH; i++) {
-        for (int j = 0; j < CharacterSet[i].n; j++) {
-            Coordinate point;
-            
-            if (CharacterSet[i].fix) {
-                point = CharacterSet[i].Characters[j].point;
-            } else {
-                point = RandCell(0, BOARD_SIZE, 'P');
-                CharacterSet[i].Characters[j].point = point;
-            } 
+        for (int j = 0; j < CharacterSet[i].n; j++) {            
+            Coordinate *point = &CharacterSet[i].Characters[j].point;
 
-            Board[point.y][point.x] = (Cell){&CharacterSet[i], &CharacterSet[i].Characters[j]};
+            if (!CharacterSet[i].fix) 
+                *point = RandCell(0, BOARD_SIZE, 'P');
+
+            Board[point -> y][point -> x] = (Cell){
+                &CharacterSet[i], &CharacterSet[i].Characters[j]
+            };
         }
     }
 
@@ -208,7 +210,7 @@ void CheckMove(void) {
 
     switch (key) {
         case KEY_NULL:
-            break;
+            return;
         case KEY_UP:
             if (Board[sPoint.y][sPoint.x].wall == NORTH) return;
             ePoint.y --;
@@ -229,6 +231,12 @@ void CheckMove(void) {
             ScoreBoard.turn = (ScoreBoard.turn + 1) % USER_NUMBER;
             return;
     }
+
+    // Check Board Limit
+    if (
+        ePoint.x < 0 || ePoint.x >= BOARD_SIZE ||
+        ePoint.y < 0 || ePoint.y >= BOARD_SIZE
+    ) return;
 
     ProcessMove(sPoint, ePoint);
 }

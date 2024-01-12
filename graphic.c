@@ -2,6 +2,7 @@
 
 
 int main(void) { 
+    
     // Initialize Window
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Mr. Clobber's Backyard");
     SetTargetFPS(FRAME_PER_SECOND);
@@ -27,6 +28,8 @@ int main(void) {
     }
     font = LoadFontEx("Fonts/Roboto.ttf", CELL_SIZE / 2, 0, 0);
 
+    // Initialize Seed // srand(time(NULL));
+    
     // Initialization
     InitBoard();
 
