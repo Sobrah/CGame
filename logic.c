@@ -5,18 +5,22 @@
 #include <time.h>
 
 //  Global Const Variables
-#define SCREEN_WIDTH 900
-#define SCREEN_HEIGHT 750
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 750
 #define BOARD_SIZE 15
 #define FRAME_PER_SECOND 30
 #define USER_NUMBER 2
+#define SCORE_TYPE_MEMBER 3
 
-#define CELL_SIZE (SCREEN_HEIGHT / BOARD_SIZE)
-#define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
+// For Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
-#define SCREEN_DELTA (SCREEN_WIDTH - SCREEN_HEIGHT)
+#define CELL_SIZE (WINDOW_HEIGHT / BOARD_SIZE)
+#define WINDOW_DELTA (WINDOW_WIDTH - WINDOW_HEIGHT)
+#define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 
 
+
+// Default Font
 Font font;
 
 
@@ -27,31 +31,35 @@ typedef enum Direction {
     DIRECTION_COUNT // For Flexibility Purposes
 } Direction;
 
-// Board Cell Struct
-typedef struct Cell {
-    bool fill;
-    int primary;
-    int secondary;
-    Direction wall;
-} Cell;
-
+// Coordinate Struct
 typedef struct Coordinate {
     int x, y;
 } Coordinate;
 
+// Character Struct
+typedef struct Character {
+    Coordinate point;
+    bool inactive;
+} Character;
+
+// Character Type Struct
 typedef struct CharacterType {
     char type;
-    char *path;
+    char *path; // Local Address
     int n;
-    struct {
-        Coordinate point;
-        bool isDead;
-    } Characters[BOARD_SIZE];
-    const bool fix;
+    Character Characters[BOARD_SIZE];
+    const bool fix; // Fix Positions
     Texture texture;
 } CharacterType;
 
-#define SCORE_TYPE_LENGTH 3
+// Board Cell Struct
+typedef struct Cell {
+    CharacterType *primary; // Point Character Type
+    Character *secondary; // Point Character 
+    Direction wall;
+} Cell;
+
+// Score Board Struct
 typedef struct ScoreType {
     int round;
     int turn;
@@ -60,21 +68,18 @@ typedef struct ScoreType {
         int strength;
         int energy;
     } Users[USER_NUMBER];
-    char *paths[SCORE_TYPE_LENGTH];
-    Texture textures[SCORE_TYPE_LENGTH];
+    char *paths[SCORE_TYPE_MEMBER];
+    Texture textures[SCORE_TYPE_MEMBER];
 } ScoreType;
 
 
-// Game Board
-Cell Board[BOARD_SIZE][BOARD_SIZE];
-
-// Game Character Categories Storage
+// Character Categories Storage
 CharacterType CharacterSet[] = {
     {'C', "Images/Yellow Cat.svg", 1, 
         {MID_CELL + 1, MID_CELL}, true
     },
     {'C', "Images/Black Cat.svg", 1, 
-        {MID_CELL - 1, MID_CELL},true
+        {MID_CELL - 1, MID_CELL}, true
     },
     {'H', "Images/House.svg", 1, 
         {MID_CELL, MID_CELL}, true
@@ -86,6 +91,9 @@ CharacterType CharacterSet[] = {
     {'M', "Images/Mouse.svg", 8},
     {'T', "Images/Trap.svg", 8},
 };
+
+// Game Board
+Cell Board[BOARD_SIZE][BOARD_SIZE];
 
 ScoreType ScoreBoard = {
     1, 0, {

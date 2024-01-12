@@ -3,31 +3,40 @@
 
 // Graphical Function Prototypes
 void PlayScreen(void);
-void DrawBoard(Color, int, Color);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
+void DrawBoard(Color, int, Color);
 void DrawScoreBoardTable(int, Color);
 
 
 // Logical Function Prototypes
-Coordinate RandCell(int, int, char);
 void InitBoard(void);
-void InitScoreBoard(void);
 void CheckMove(void);
+Coordinate RandCell(int, int, char);
 void ProcessMove(Coordinate, Coordinate);
+
+
+// Initialize Seed // srand(time(NULL));
 
 
 // Play Screen
 void PlayScreen(void) {
+    Color bgColor, borderColor, wallColor;
+    int thick = DIRECTION_COUNT;
+    
+    bgColor = BROWN;
+    borderColor = DARKBROWN;
+    wallColor = ORANGE;
+    
     while (!WindowShouldClose()) {
         CheckMove();
         
         BeginDrawing();
-            ClearBackground(BROWN);
+            ClearBackground(bgColor);
 
             DrawCharacters();
-            DrawBoard(DARKBROWN, DIRECTION_COUNT, ORANGE);
-            DrawScoreBoard(DIRECTION_COUNT, DARKBROWN);
+            DrawBoard(borderColor, thick, wallColor);
+            DrawScoreBoard(thick, borderColor);
         EndDrawing();
     }
 }
@@ -40,20 +49,20 @@ void DrawScoreBoard(int thick, Color borderColor) {
     // Draw Round Text
     const char *text = TextFormat("Round\t%i", ScoreBoard.round);
     Vector2 position = {
-        (SCREEN_WIDTH + SCREEN_HEIGHT - MeasureText(text, font.baseSize)) / 2,
+        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, font.baseSize)) / 2,
         (CELL_SIZE - font.baseSize) / 2
     };
     DrawTextEx(font, text, position, font.baseSize, 0, BLACK); 
     
-    int x = (SCREEN_HEIGHT + SCREEN_WIDTH) / 2;
+    int x = (WINDOW_HEIGHT + WINDOW_WIDTH) / 2;
     int y = 2 * CELL_SIZE;
-    int loopHelp[SCORE_TYPE_LENGTH] = {
+    int loopHelp[SCORE_TYPE_MEMBER] = {
         ScoreBoard.Users[0].score,
         ScoreBoard.Users[0].strength,
         ScoreBoard.Users[0].energy
     };
     for (int i = 0; i < USER_NUMBER; i++) {
-        for (int j = 0; j < SCORE_TYPE_LENGTH; j++, y += 2 * CELL_SIZE) {
+        for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
             const char *text = TextFormat("%i", loopHelp[j]);
             DrawText(text, x - MeasureText(text, font.baseSize), y, CELL_SIZE, WHITE);
         }
@@ -62,54 +71,53 @@ void DrawScoreBoard(int thick, Color borderColor) {
 }
 
 void DrawScoreBoardTable(int thick, Color borderColor) {
-    Vector2 position = {SCREEN_HEIGHT, 0};
-    Vector2 size = {SCREEN_DELTA, CELL_SIZE};
+    Vector2 position = {WINDOW_HEIGHT, 0};
+    Vector2 size = {WINDOW_DELTA, CELL_SIZE};
 
     DrawRectangleV(position, size, WHITE);
     position.y += size.y;
     size.y = (BOARD_SIZE - 1) * CELL_SIZE / 2;
     
     DrawRectangleV(position, size, MAROON);
-    DrawLineEx(position, (Vector2){SCREEN_WIDTH, position.y}, thick, borderColor);
+    DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
     position.y += size.y;
 
     DrawRectangleV(position, size, DARKBLUE);
-    DrawLineEx(position, (Vector2){SCREEN_WIDTH, position.y}, thick, borderColor);
+    DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
 
     // Score Board Outline
     DrawRectangleLinesEx(
         (Rectangle){
-            SCREEN_HEIGHT - thick, 0,
-            SCREEN_DELTA + thick, SCREEN_HEIGHT
+            WINDOW_HEIGHT - thick, 0,
+            WINDOW_DELTA + thick, WINDOW_HEIGHT
         }, thick, borderColor
     );
 }
 
 // Draw Board
 void DrawBoard(Color borderColor, int thick, Color wallColor) { 
+    
     // Board Outline
     DrawRectangleLinesEx(
-        (Rectangle){0, 0, SCREEN_HEIGHT, SCREEN_HEIGHT},
+        (Rectangle){0, 0, WINDOW_HEIGHT, WINDOW_HEIGHT},
         thick, borderColor
     );
 
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
+            int x, y;
+            x = CELL_SIZE * j;
+            y = CELL_SIZE * i;
+
             // Draw Cell
             DrawRectangleLines(
-                CELL_SIZE * j,
-                CELL_SIZE * i, 
-                CELL_SIZE, CELL_SIZE,
-                borderColor
+                x, y, CELL_SIZE, CELL_SIZE, borderColor
             );
 
             // Draw Wall
             if (!Board[i][j].wall) continue;
 
-            Vector2 endPoint, startPoint = {
-            CELL_SIZE * j,
-            CELL_SIZE * i
-            };
+            Vector2 endPoint, startPoint = {x, y};
             endPoint = startPoint;
 
             switch (Board[i][j].wall) {
@@ -126,9 +134,8 @@ void DrawBoard(Color borderColor, int thick, Color wallColor) {
 void DrawCharacters(void) {
     for (int i = 0; i < SET_LENGTH; i++) {
         for (int j = 0; j < CharacterSet[i].n; j++) {
-        
 
-            if (CharacterSet[i].Characters[j].isDead) continue;
+            if (CharacterSet[i].Characters[j].inactive) continue;
 
             DrawTexture(
                 CharacterSet[i].texture,
@@ -147,15 +154,16 @@ void DrawCharacters(void) {
 
 // Find Empty Cell Base On Wall Or Primary
 Coordinate RandCell(int start, int range, char factor) {
-    int x, y, value;
+    int x, y;
+    bool value;
 
     do {
         x = rand() % range + start;
         y = rand() % range + start;
 
         switch (factor) {
-            case 'F': value = Board[y][x].fill; break;
-            case 'W': value = Board[y][x].wall; break;
+            case 'P': value = (bool) Board[y][x].primary; break;
+            case 'W': value = (bool) Board[y][x].wall; break;
         }
     } while(value);
 
@@ -164,24 +172,18 @@ Coordinate RandCell(int start, int range, char factor) {
 
 // Initialize Board
 void InitBoard(void) {
-    
-    // Initialize Seed
-    // srand(time(NULL));
-
     for (int i = 0; i < SET_LENGTH; i++) {
-        int length = CharacterSet[i].n;
-
-        for (int j = 0; j < length; j++) {
+        for (int j = 0; j < CharacterSet[i].n; j++) {
             Coordinate point;
             
             if (CharacterSet[i].fix) {
                 point = CharacterSet[i].Characters[j].point;
             } else {
-                point = RandCell(0, BOARD_SIZE, 'F');
+                point = RandCell(0, BOARD_SIZE, 'P');
                 CharacterSet[i].Characters[j].point = point;
             } 
 
-            Board[point.y][point.x] = (Cell){true, i, j};
+            Board[point.y][point.x] = (Cell){&CharacterSet[i], &CharacterSet[i].Characters[j]};
         }
     }
 
@@ -228,7 +230,7 @@ void CheckMove(void) {
             return;
     }
 
-    ProcessMove(sPoint,ePoint);
+    ProcessMove(sPoint, ePoint);
 }
 
 void ProcessMove(Coordinate sPoint, Coordinate ePoint) {
@@ -236,32 +238,27 @@ void ProcessMove(Coordinate sPoint, Coordinate ePoint) {
     sCell = &Board[sPoint.y][sPoint.x];
     eCell = &Board[ePoint.y][ePoint.x];
 
-    if (!eCell -> fill) {
+    if (!eCell -> primary) {
         CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
 
-        eCell -> fill = true;
         eCell -> primary = sCell -> primary;
         eCell -> secondary = sCell -> secondary;
 
-        Board[sPoint.y][sPoint.x].fill = false;
+        Board[sPoint.y][sPoint.x].primary = NULL;
         return;
     }
 
-    switch(CharacterSet[eCell -> primary].type) {
-        case 'H':
-            break;
+    switch(eCell -> primary -> type) {
         case 'M':
-            CharacterSet[eCell -> primary].Characters[eCell ->secondary].isDead = true;
+            eCell -> secondary -> inactive = true;
             ScoreBoard.Users[ScoreBoard.turn].score += 1;
 
             CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
             
-
-            eCell -> fill = true;
             eCell -> primary = sCell -> primary;
             eCell -> secondary = sCell -> secondary;
 
-            Board[sPoint.y][sPoint.x].fill = false;
+            Board[sPoint.y][sPoint.x].primary = NULL;
             return;
     }
 }
