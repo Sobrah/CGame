@@ -59,15 +59,18 @@ typedef struct Cell {
     Direction wall;
 } Cell;
 
+typedef struct User {
+    int score;
+    int strength;
+    int energy;
+    Character *mouse;
+} User;
+
 // Score Board Struct
 typedef struct ScoreType {
     int round;
     int turn;
-    struct {
-        int score;
-        int strength;
-        int energy;
-    } Users[USER_NUMBER];
+    User Users[USER_NUMBER];
     char *paths[SCORE_TYPE_MEMBER];
     Texture textures[SCORE_TYPE_MEMBER];
 } ScoreType;
@@ -87,7 +90,7 @@ CharacterType CharacterSet[] = {
     {'D', "Images/Dog.svg", 2},
     {'D', "Images/Poodle.svg", 2},
     {'P', "Images/Chocolate.svg", 8},
-    {'F', "Images/Fish.svg", 8},
+    {'F', "Images/Fish.svg", 3},
     {'M', "Images/Mouse.svg", 8},
     {'T', "Images/Trap.svg", 8},
 };

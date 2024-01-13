@@ -12,7 +12,7 @@ void DrawScoreBoardTable(int, Color);
 // Logical Function Prototypes
 void InitBoard(void);
 void CheckMove(void);
-Coordinate RandCell(int, int, char);
+Coordinate RandCell(Coordinate, int, char);
 void ProcessMove(Coordinate, Coordinate);
 
 
@@ -157,13 +157,13 @@ void DrawCharacters(void) {
 
 
 // Find Empty Cell Base On Wall Or Primary
-Coordinate RandCell(int start, int range, char factor) {
+Coordinate RandCell(Coordinate start, int range, char factor) {
     int x, y;
     bool value;
 
     do {
-        x = rand() % range + start;
-        y = rand() % range + start;
+        x = rand() % range + start.x;
+        y = rand() % range + start.y;
 
         switch (factor) {
             case 'P': value = Board[y][x].primary; break;
@@ -181,7 +181,7 @@ void InitBoard(void) {
             Coordinate *point = &CharacterSet[i].Characters[j].point;
 
             if (!CharacterSet[i].fix) 
-                *point = RandCell(0, BOARD_SIZE, 'P');
+                *point = RandCell((Coordinate){0, 0}, BOARD_SIZE, 'P');
 
             Board[point -> y][point -> x] = (Cell){
                 &CharacterSet[i], &CharacterSet[i].Characters[j]
@@ -193,7 +193,7 @@ void InitBoard(void) {
     for (int i = 0; i < BOARD_SIZE; i++) {
         
         // Zero Is Not Valid
-        Coordinate point = RandCell(1, BOARD_SIZE - 1, 'W');
+        Coordinate point = RandCell((Coordinate){1, 1}, BOARD_SIZE - 1, 'W');
         
         Board[point.y][point.x].wall = (
             rand() % DIRECTION_COUNT ? WEST : NORTH
@@ -203,12 +203,12 @@ void InitBoard(void) {
 
 // Check Board Movements
 void CheckMove(void) {
-    int key = GetKeyPressed();
     Coordinate ePoint, sPoint;
+    ePoint = sPoint = (
+        CharacterSet[ScoreBoard.turn].Characters[0].point
+    );
 
-    ePoint = sPoint = CharacterSet[ScoreBoard.turn].Characters[0].point;
-
-    switch (key) {
+    switch (GetKeyPressed()) {
         case KEY_NULL:
             return;
         case KEY_UP:
@@ -243,30 +243,48 @@ void CheckMove(void) {
 
 void ProcessMove(Coordinate sPoint, Coordinate ePoint) {
     Cell *sCell, *eCell;
+    User *user = &ScoreBoard.Users[ScoreBoard.turn];
     sCell = &Board[sPoint.y][sPoint.x];
     eCell = &Board[ePoint.y][ePoint.x];
 
-    if (!eCell -> primary) {
-        CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
+    if (eCell -> primary) switch(eCell -> primary -> type) {
+        case 'P':
+            eCell -> secondary -> inactive = true;
+            user -> strength ++;
+            break;
+        case 'F':
+            eCell -> secondary -> inactive = true;
+            int fishIndex = (eCell -> secondary) - (eCell -> primary -> Characters); 
+            user -> energy += (fishIndex % 3) + 2; // 2 to 4 Inclusive
 
-        eCell -> primary = sCell -> primary;
-        eCell -> secondary = sCell -> secondary;
+            int length, fishCount = 0;
+            length = eCell -> primary -> n;
+            for (int i = 0; i < length; i++) {
+                if (!eCell -> primary -> Characters[i].inactive) fishCount ++;
+            }
 
-        Board[sPoint.y][sPoint.x].primary = NULL;
-        return;
-    }
+            if (fishCount < USER_NUMBER) for (int i = 0; i < length; i++) {
+                eCell -> secondary -> inactive = false;
+                Coordinate *point = &eCell -> primary -> Characters[i].point;
+                *point = RandCell(*point, SCORE_TYPE_MEMBER, 'P');
+            }
 
-    switch(eCell -> primary -> type) {
+            break;
         case 'M':
             eCell -> secondary -> inactive = true;
-            ScoreBoard.Users[ScoreBoard.turn].score += 1;
-
-            CharacterSet[ScoreBoard.turn].Characters[0].point = ePoint;
-            
-            eCell -> primary = sCell -> primary;
-            eCell -> secondary = sCell -> secondary;
-
-            Board[sPoint.y][sPoint.x].primary = NULL;
+            user -> score ++;
+            break;
+        default:
             return;
     }
+    
+    // Move on Character Set
+    sCell -> secondary -> point = ePoint;
+
+    // Move on Board
+    eCell -> primary = sCell -> primary;
+    eCell -> secondary = sCell -> secondary;
+
+    // Remove from Last Cell
+    sCell -> primary = NULL;
 }
