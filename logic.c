@@ -19,11 +19,6 @@
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 
 
-
-// Default Font
-Font font;
-
-
 // Two Main Directions
 typedef enum Direction {
     NORTH = -1,

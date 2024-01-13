@@ -5,6 +5,7 @@
 void PlayScreen(void);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
+void ScoreBoardIcons(void);
 void DrawBoard(Color, int, Color);
 void DrawScoreBoardTable(int, Color);
 
@@ -43,15 +44,17 @@ void DrawScoreBoard(int thick, Color borderColor) {
 
     DrawScoreBoardTable(thick, borderColor);
 
-    // Draw Round Text
-    const char *text = TextFormat("Round\t%i", ScoreBoard.round);
-    Vector2 position = {
-        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, font.baseSize)) / 2,
-        (CELL_SIZE - font.baseSize) / 2
-    };
-    DrawTextEx(font, text, position, font.baseSize, 0, BLACK); 
+    // Draw Round
+    int fontSize = 0.6 * CELL_SIZE;
+    const char *text = TextFormat("Round %02i", ScoreBoard.round);
+    DrawText(
+        text,
+        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, fontSize)) / 2,
+        (CELL_SIZE - fontSize) / 2,
+        fontSize, BLACK
+    );
     
-    int x = (WINDOW_HEIGHT + WINDOW_WIDTH) / 2;
+    fontSize = 1.2 * CELL_SIZE;
     int y = 2 * CELL_SIZE;
     int loopHelp[2][SCORE_TYPE_MEMBER] = {
         {
@@ -66,12 +69,23 @@ void DrawScoreBoard(int thick, Color borderColor) {
     };
     for (int i = 0; i < USER_NUMBER; i++) {
         for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
-            const char *text = TextFormat("%i", loopHelp[i][j]);
-            DrawText(text, x - MeasureText(text, font.baseSize), y, CELL_SIZE, WHITE);
+            const char *text = TextFormat("%i ", loopHelp[i][j]);
+            int textWidth = MeasureText(text, fontSize);
+            int width = textWidth + CELL_SIZE;
+            int textX = (WINDOW_WIDTH + WINDOW_HEIGHT - width) / 2;
+            DrawText(text, textX, y, fontSize, WHITE);
+
+            // Draw Score Board Icons
+            DrawTexture(
+                ScoreBoard.textures[j], textX + textWidth, y, WHITE
+            );
         }
         y += CELL_SIZE;
     }
 }
+
+
+
 
 // Draw Score Board Table
 void DrawScoreBoardTable(int thick, Color borderColor) {
