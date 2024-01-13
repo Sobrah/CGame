@@ -44,13 +44,15 @@ void DrawScoreBoard(int thick, Color borderColor) {
 
     DrawScoreBoardTable(thick, borderColor);
 
-    // Draw Round Text
-    const char *text = TextFormat("Round\t%i", ScoreBoard.round);
-    Vector2 position = {
-        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, font.baseSize)) / 2,
-        (CELL_SIZE - font.baseSize) / 2
-    };
-    DrawTextEx(font, text, position, font.baseSize, 0, BLACK); 
+    // Draw Round
+    int fontSize = GetFontDefault().baseSize * 3;
+    const char *text = TextFormat("Round %02i", ScoreBoard.round)
+    DrawText(
+        text,
+        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, fontSize)) / 2,
+        (CELL_SIZE - fontSize) / 2,
+        fontSize, BLACK
+    );
     
     int x = (WINDOW_HEIGHT + WINDOW_WIDTH) / 2;
     int y = 2 * CELL_SIZE;
@@ -68,7 +70,7 @@ void DrawScoreBoard(int thick, Color borderColor) {
     for (int i = 0; i < USER_NUMBER; i++) {
         for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
             const char *text = TextFormat("%i", loopHelp[i][j]);
-            DrawText(text, x - MeasureText(text, font.baseSize), y, CELL_SIZE, WHITE);
+            DrawText(text, x - MeasureText(text, fontSize), y, CELL_SIZE, WHITE);
 
             // Draw Score Board Icons
             DrawTexture(ScoreBoard.textures[j],

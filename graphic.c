@@ -26,7 +26,6 @@ int main(void) {
         ScoreBoard.textures[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
-    font = LoadFontEx("Fonts/Roboto.ttf", CELL_SIZE / 2, 0, 0);
 
     // Initialize Seed // srand(time(NULL));
     
@@ -43,7 +42,6 @@ int main(void) {
     for (int i = 0; i < SCORE_TYPE_MEMBER; i++) {
         UnloadTexture(ScoreBoard.textures[i]);
     }
-    UnloadFont(font);
 
     CloseWindow();   
 }
