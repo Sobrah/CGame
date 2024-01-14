@@ -17,7 +17,7 @@ int main(void) {
         CharacterSet[i].texture = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
-    for (int i = 0; i < SCORE_TYPE_MEMBER; i++) {
+    for (int i = 0; i < SCORE_TYPE_COUNT; i++) {
         Image itemImage = LoadImageSvg(
             ScoreBoard.paths[i],
             CELL_SIZE,
@@ -39,7 +39,7 @@ int main(void) {
     for (int i = 0; i < SET_LENGTH; i++) {
         UnloadTexture(CharacterSet[i].texture);
     }
-    for (int i = 0; i < SCORE_TYPE_MEMBER; i++) {
+    for (int i = 0; i < SCORE_TYPE_COUNT; i++) {
         UnloadTexture(ScoreBoard.textures[i]);
     }
 

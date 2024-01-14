@@ -5,7 +5,6 @@
 void PlayScreen(void);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
-void ScoreBoardIcons(void);
 void DrawBoard(Color, int, Color);
 void DrawScoreBoardTable(int, Color);
 
@@ -13,8 +12,9 @@ void DrawScoreBoardTable(int, Color);
 // Logical Function Prototypes
 void InitBoard(void);
 void CheckMove(void);
-Coordinate RandCell(Coordinate, int, char);
+void MoveCharacter(Coordinate, Coordinate);
 void ProcessMove(Coordinate, Coordinate);
+Coordinate RandCell(Coordinate, int, char);
 
 
 // Play Screen
@@ -56,20 +56,10 @@ void DrawScoreBoard(int thick, Color borderColor) {
     
     fontSize = 1.2 * CELL_SIZE;
     int y = 2 * CELL_SIZE;
-    int loopHelp[2][SCORE_TYPE_MEMBER] = {
-        {
-            ScoreBoard.Users[0].score,
-            ScoreBoard.Users[0].strength,
-            ScoreBoard.Users[0].energy
-        }, {
-            ScoreBoard.Users[1].score,
-            ScoreBoard.Users[1].strength,
-            ScoreBoard.Users[1].energy
-        }
-    };
-    for (int i = 0; i < USER_NUMBER; i++) {
-        for (int j = 0; j < SCORE_TYPE_MEMBER; j++, y += 2 * CELL_SIZE) {
-            const char *text = TextFormat("%i ", loopHelp[i][j]);
+    for (int i = 0; i < 2; i++) {
+        int *n = &ScoreBoard.Users[ScoreBoard.turn].score;
+        for (int j = 0; j < SCORE_TYPE_COUNT; j++, y += 2 * CELL_SIZE, n++) {
+            const char *text = TextFormat("%i ", *n);
             int textWidth = MeasureText(text, fontSize);
             int width = textWidth + CELL_SIZE;
             int textX = (WINDOW_WIDTH + WINDOW_HEIGHT - width) / 2;
@@ -84,25 +74,22 @@ void DrawScoreBoard(int thick, Color borderColor) {
     }
 }
 
-
-
-
 // Draw Score Board Table
 void DrawScoreBoardTable(int thick, Color borderColor) {
+    
+    // White Area
     Vector2 position = {WINDOW_HEIGHT, 0};
     Vector2 size = {WINDOW_DELTA, CELL_SIZE};
-
-    // White Area
     DrawRectangleV(position, size, WHITE);
-    position.y += size.y;
-    size.y = (BOARD_SIZE - 1) * CELL_SIZE / 2;
     
     // Red Area
+    position.y += size.y;
+    size.y = (BOARD_SIZE - 1) * CELL_SIZE / 2;
     DrawRectangleV(position, size, MAROON);
     DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
-    position.y += size.y;
-
+    
     // Blue Area
+    position.y += size.y;
     DrawRectangleV(position, size, DARKBLUE);
     DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
 
@@ -242,13 +229,14 @@ void CheckMove(void) {
             ePoint.x ++;
             break;
         case KEY_ENTER:
-            ScoreBoard.turn = (ScoreBoard.turn + 1) % USER_NUMBER;
+            ScoreBoard.turn = (ScoreBoard.turn + 1) % USERS_NUMBER;
             return;
     }
 
     // Check Board Limit
     if (
-        ePoint.x < 0 || ePoint.x >= BOARD_SIZE ||
+        ePoint.x < 0 || ePoint.x >= BOARD_SIZE 
+        ||
         ePoint.y < 0 || ePoint.y >= BOARD_SIZE
     ) return;
 
@@ -261,37 +249,61 @@ void ProcessMove(Coordinate sPoint, Coordinate ePoint) {
     sCell = &Board[sPoint.y][sPoint.x];
     eCell = &Board[ePoint.y][ePoint.x];
 
-    if (eCell -> primary) switch(eCell -> primary -> type) {
+    if (!eCell -> primary) {
+        MoveCharacter(sPoint, ePoint);
+        return;
+    }
+    
+    switch(eCell -> primary -> type) {
         case 'P':
             eCell -> secondary -> inactive = true;
             user -> strength ++;
-            break;
+
+            MoveCharacter(sPoint, ePoint);
+            return;
         case 'F':
             eCell -> secondary -> inactive = true;
             int fishIndex = (eCell -> secondary) - (eCell -> primary -> Characters); 
             user -> energy += (fishIndex % 3) + 2; // 2 to 4 Inclusive
 
-            int length, fishCount = 0;
-            length = eCell -> primary -> n;
-            for (int i = 0; i < length; i++) {
-                if (!eCell -> primary -> Characters[i].inactive) fishCount ++;
-            }
+            CharacterType *fishSet = eCell -> primary;
+            MoveCharacter(sPoint, ePoint);
 
-            if (fishCount < USER_NUMBER) for (int i = 0; i < length; i++) {
-                eCell -> secondary -> inactive = false;
-                Coordinate *point = &eCell -> primary -> Characters[i].point;
-                *point = RandCell(*point, SCORE_TYPE_MEMBER, 'P');
+            int length, fishCount = 0;
+            length = fishSet -> n;
+            
+            // Count Active Fishes
+            for (int i = 0; i < length; i++) {
+                if (!fishSet -> Characters[i].inactive) fishCount ++;
             }
+            
+            // Reset Fishes
+            if (fishCount < USERS_NUMBER) 
+                for (int i = 0; i < length; i++) {
+                    Coordinate point = fishSet -> Characters[i].point;
+                    if (Board[point.y][point.x].primary) point = RandCell(point, 3, 'P');
+
+                    fishSet -> Characters[i] = (Character){point, false };
+                    Board[point.y][point.x].primary = fishSet;
+                    Board[point.y][point.x].secondary = &fishSet -> Characters[i];
+                }
 
             break;
         case 'M':
             eCell -> secondary -> inactive = true;
             user -> score ++;
+            MoveCharacter(sPoint, ePoint);
             break;
         default:
             return;
     }
-    
+}
+
+void MoveCharacter(Coordinate sPoint, Coordinate ePoint) {
+    Cell *sCell, *eCell;
+    sCell = &Board[sPoint.y][sPoint.x];
+    eCell = &Board[ePoint.y][ePoint.x];
+            
     // Move on Character Set
     sCell -> secondary -> point = ePoint;
 

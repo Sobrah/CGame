@@ -9,8 +9,8 @@
 #define WINDOW_HEIGHT 750
 #define BOARD_SIZE 15
 #define FRAME_PER_SECOND 30
-#define USER_NUMBER 2
-#define SCORE_TYPE_MEMBER 3
+#define USERS_NUMBER 4
+#define SCORE_TYPE_COUNT 3
 
 // For Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
@@ -58,26 +58,31 @@ typedef struct User {
     int score;
     int strength;
     int energy;
-    Character *mouse;
 } User;
 
 // Score Board Struct
 typedef struct ScoreType {
     int round;
     int turn;
-    User Users[USER_NUMBER];
-    char *paths[SCORE_TYPE_MEMBER];
-    Texture textures[SCORE_TYPE_MEMBER];
+    User Users[USERS_NUMBER];
+    char *paths[SCORE_TYPE_COUNT];
+    Texture textures[SCORE_TYPE_COUNT];
 } ScoreType;
 
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
-    {'C', "Images/Yellow Cat.svg", 1, 
+    {'C', "Images/Red Cat.svg", 1, 
         {MID_CELL + 1, MID_CELL}, true
     },
-    {'C', "Images/Black Cat.svg", 1, 
+    {'C', "Images/Blue Cat.svg", 1, 
         {MID_CELL - 1, MID_CELL}, true
+    },
+    {'C', "Images/Yellow Cat.svg", 1, 
+        {MID_CELL, MID_CELL + 1}, true
+    },
+    {'C', "Images/Green Cat.svg", 1, 
+        {MID_CELL, MID_CELL - 1}, true
     },
     {'H', "Images/House.svg", 1, 
         {MID_CELL, MID_CELL}, true
@@ -85,7 +90,7 @@ CharacterType CharacterSet[] = {
     {'D', "Images/Dog.svg", 2},
     {'D', "Images/Poodle.svg", 2},
     {'P', "Images/Chocolate.svg", 8},
-    {'F', "Images/Fish.svg", 3},
+    {'F', "Images/Fish.svg", 8},
     {'M', "Images/Mouse.svg", 8},
     {'T', "Images/Trap.svg", 8},
 };
