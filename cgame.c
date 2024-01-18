@@ -29,8 +29,9 @@ int main(void) {
 
     // Initialize Seed // srand(time(NULL));
     
-    // Initialization
+    // Initializations
     InitBoard();
+    InitScoreBoard();
 
     // Main Screen For Now
     PlayScreen();

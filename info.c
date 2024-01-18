@@ -43,7 +43,7 @@ typedef struct CharacterType {
     char *path; // Local Address
     int n;
     Character Characters[BOARD_SIZE];
-    const bool fix; // Fix Positions
+    const bool fix; // Fix Position at Start
     Texture texture;
 } CharacterType;
 
@@ -58,6 +58,7 @@ typedef struct User {
     int score;
     int strength;
     int energy;
+    Cell cat;
 } User;
 
 // Score Board Struct
@@ -72,17 +73,17 @@ typedef struct ScoreType {
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
-    {'C', "Images/Red Cat.svg", 1, 
-        {MID_CELL + 1, MID_CELL}, true
+    {'C', "Images/Purple Cat.svg", 1, 
+        {MID_CELL, MID_CELL, true}, true
     },
     {'C', "Images/Blue Cat.svg", 1, 
-        {MID_CELL - 1, MID_CELL}, true
+        {MID_CELL, MID_CELL, true}, true
     },
     {'C', "Images/Yellow Cat.svg", 1, 
-        {MID_CELL, MID_CELL + 1}, true
+        {MID_CELL, MID_CELL, true}, true
     },
     {'C', "Images/Green Cat.svg", 1, 
-        {MID_CELL, MID_CELL - 1}, true
+        {MID_CELL, MID_CELL, true}, true
     },
     {'H', "Images/House.svg", 1, 
         {MID_CELL, MID_CELL}, true
@@ -91,18 +92,17 @@ CharacterType CharacterSet[] = {
     {'D', "Images/Poodle.svg", 2},
     {'P', "Images/Chocolate.svg", 8},
     {'F', "Images/Fish.svg", 10},
-    {'M', "Images/Mouse.svg", 8},
+    {'M', "Images/Mouse.svg", BOARD_SIZE},
     {'T', "Images/Trap.svg", 8},
 };
 
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE];
 
+User DEFAULT_USER = {0, 2, 5};
 ScoreType ScoreBoard = {
-    1, 0, {
-        {0, 2, 5},
-        {0, 2, 5}
-    }, {
+    1, 0, 
+    .paths = {
         "Images/Score.svg",
         "Images/Strength.svg",
         "Images/Energy.svg"

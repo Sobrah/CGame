@@ -1,5 +1,6 @@
 #include "logic.c"
 
+
 // Graphical Function Prototypes
 void PlayScreen(void);
 void DrawCharacters(void);
@@ -22,6 +23,7 @@ void PlayScreen(void) {
         EndDrawing();
     }
 }
+
 
 // Draw Score Board & Related Info
 void DrawScoreBoard(int thick, Color borderColor) {
@@ -58,6 +60,7 @@ void DrawScoreBoard(int thick, Color borderColor) {
     }
 }
 
+
 // Draw Score Board Table
 void DrawScoreBoardTable(int thick, Color borderColor) {
     
@@ -85,6 +88,7 @@ void DrawScoreBoardTable(int thick, Color borderColor) {
         }, thick, borderColor
     );
 }
+
 
 // Draw Board
 void DrawBoard(Color borderColor, int thick, Color wallColor) { 
@@ -120,6 +124,7 @@ void DrawBoard(Color borderColor, int thick, Color wallColor) {
         }
     }
 }
+
 
 // Draw Characters
 void DrawCharacters(void) {
