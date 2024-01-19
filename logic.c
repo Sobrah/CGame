@@ -71,13 +71,6 @@ typedef struct ScoreType {
     Texture textures[SCORE_TYPE_MEMBER];
 } ScoreType;
 
-// Button Type Struct
-typedef struct ButtonType {
-    bool click;
-    char *lables[BUTTON_TYPE_MEMBER];
-
-}ButtonType;
-
 // Character Categories Storage
 CharacterType CharacterSet[] = {
     {'C', "Images/Yellow Cat.svg", 1, 
@@ -111,13 +104,3 @@ ScoreType ScoreBoard = {
     }
 };
 
-// Menu Buttons
-ButtonType MenuButtons = {
-    false , 
-    {
-        "New Game",
-        "Save Game",
-        "Load Game"
-    }
- 
-};

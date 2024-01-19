@@ -6,7 +6,7 @@ void MenuScreen(void);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
 void ScoreBoardIcons(void);
-void DrawBoard(Color, int);
+void DrawBoard(Color, int ,Color);
 void DrawScoreBoardTable(int, Color);
 
 
@@ -24,17 +24,22 @@ void MenuScreen(void) {
     
     bgColor = BROWN;
     borderColor = DARKBROWN;
-    
-    
+    char *btnlables[BUTTON_TYPE_MEMBER] ={
+        "New Game" ,
+        "Save Game",
+        "Load Game"
+    };
+
+    Rectangle *buttons[BUTTON_TYPE_MEMBER];
     while (!WindowShouldClose()) {
         CheckMove();
         
         BeginDrawing();
             ClearBackground(bgColor);
 
-            
-            DrawBoard(borderColor, thick);
-            
+            DrawBoard(borderColor, thick, ORANGE);
+            DrawMenuScreen(borderColor , thick , btnlables,buttons);
+            CheckCollisionBoxes
         EndDrawing();
     }
 }
@@ -84,9 +89,6 @@ void DrawScoreBoard(int thick, Color borderColor) {
     }
 }
 
-
-
-
 // Draw Score Board Table
 void DrawScoreBoardTable(int thick, Color borderColor) {
     Vector2 position = {WINDOW_HEIGHT, 0};
@@ -116,15 +118,56 @@ void DrawScoreBoardTable(int thick, Color borderColor) {
 }
 
 // Draw Board
-void DrawBoard(Color borderColor, int thick) { 
+void DrawBoard(Color borderColor, int thick , Color wallColor) { 
     
+     // Board Outline
+    DrawRectangleLinesEx(
+        (Rectangle){0, 0, WINDOW_HEIGHT, WINDOW_HEIGHT},
+        thick, borderColor
+    );
+
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            int x = CELL_SIZE * j;
+            int y = CELL_SIZE * i;
+
+            // Draw Cell
+            DrawRectangleLines(
+                x, y, CELL_SIZE, CELL_SIZE, borderColor
+            );
+
+            if (!Board[i][j].wall) continue;
+
+            // Draw Wall
+            Vector2 endPoint, startPoint = {x, y};
+            endPoint = startPoint;
+
+            switch (Board[i][j].wall) {
+                case NORTH: endPoint.x += CELL_SIZE; break;
+                case WEST: endPoint.y += CELL_SIZE; break;
+            }
+
+            DrawLineEx(startPoint, endPoint, thick, wallColor);
+        }
+    }
+    
+}
+
+// Draw Menu Screen 
+void DrawMenuScreen(Color borderColor , int thick ,
+ char *btnlables[],
+ Rectangle *buttons[]
+ )
+
+ {
+
     // Board Outline
     
-
     int x = (WINDOW_WIDTH / 3);
     int y = (WINDOW_HEIGHT / 3) - (4 * CELL_SIZE);
-    Color bgColor = DARKGRAY ;
+    Color bgColor = DARKBROWN ;
     borderColor = BLACK;
+    int fontSize = 1 * CELL_SIZE;
 
     for(int i = 0 ; i < BUTTON_TYPE_MEMBER ; i++ , y+= 5*CELL_SIZE){
 
@@ -143,14 +186,11 @@ void DrawBoard(Color borderColor, int thick) {
 
         // Draw Text
 
-        int fontSize = 1 * CELL_SIZE;
-
-        const char *text = TextFormat("%s", MenuButtons.lables[i]);
+        const char *text = TextFormat("%s", btnlables[i]);
         int textWidth = MeasureText( text , fontSize);
         int textX = (WINDOW_WIDTH/3)+(6*CELL_SIZE-textWidth)/2;
-        DrawText( text ,textX , y + CELL_SIZE ,fontSize , BLACK );
+        DrawText( text ,textX , y + CELL_SIZE ,fontSize , GOLD );
     }
-    
 }
 
 // Draw Characters
@@ -169,8 +209,6 @@ void DrawCharacters(void) {
         }
     }
 }
-
-
 
 
 // Find Empty Cell Base On Wall Or Primary
@@ -219,28 +257,19 @@ void InitBoard(void) {
 }
 
 // Check Buttons Clicks
-void CehckClick(void) {
+void CheckCollisionMouse(Rectangle *button) {
 
-    
+        Vector2 mouse = GetMousePosition();
+
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+
+            if(CheckCollisionPointRec(mouse, button))
+        }
 
 }
 
 // New Game 
 void NewGame(void) {
-
-
-
-}
-
-// Save Game
-void SaveGame() {
-
-
-
-}
-
-// Load Game 
-void LoadGame() {
 
 
 }
