@@ -1,7 +1,12 @@
 #include "info.c"
 
 
-// To Do: Fish Random Out of Board
+// For Random Functionality
+#include <stdlib.h>
+#include <time.h>
+
+
+// To Do: RandCell Return Coordinate Out of Board
 
 
 // Logical Function Prototypes
@@ -11,11 +16,96 @@ void RefreshFish(Cell);
 void InitScoreBoard(void);
 void ReviveCharacter(Cell);
 void ProcessMove(Coordinate);
+Coordinate ConfrontTrap(Coordinate);
 void MoveCharacter(Coordinate, Coordinate);
 Coordinate RandCell(Coordinate, int, char);
 
 
-Coordinate ConfrontTrap(Coordinate);
+void ConfrontCat(Coordinate endPoint) {
+    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
+    User *secondUser;
+
+    // Find the Second Cat
+    int i;
+    for (i = 0; i < USERS_NUMBER; i++) {
+        if (
+            ScoreBoard.Users[i].cat.secondary -> point.x == currentUser -> cat.secondary -> point.x
+            &&
+            ScoreBoard.Users[i].cat.secondary -> point.y == currentUser -> cat.secondary -> point.y
+        ) break;
+    }
+    secondUser = &ScoreBoard.Users[i];
+
+    if (currentUser -> strength / currentUser -> energy > secondUser -> strength / secondUser -> energy) {
+        for (;secondUser -> counter > 0; secondUser -> counter --, currentUser -> counter ++) {
+            currentUser -> mice[currentUser -> counter] = secondUser -> mice[secondUser -> counter];
+        }
+    }
+}
+
+
+void ProcessMove(Coordinate endPoint) {
+    Cell *endCell = &Board[endPoint.y][endPoint.x];
+    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
+
+    // Process Each Movement
+    if (endCell -> primary) {
+        switch (endCell -> primary -> type) {
+            case 'P':
+                currentUser -> strength ++;
+                endCell -> secondary -> inactive = true;
+                break;
+            case 'F':
+                // Index in the Character Array
+                int fishIndex = (
+                    endCell -> secondary - endCell -> primary -> Characters
+                );
+                currentUser -> energy += (
+                    fishIndex % SCORE_TYPE_COUNT + 2
+                );
+                RefreshFish(*endCell);
+                endCell -> secondary -> inactive = true;
+                break;
+            case 'M':
+                currentUser -> score += (
+                    (10 - endCell -> primary -> n) / 2
+                );
+                currentUser -> mice[currentUser -> counter] = *endCell;
+                currentUser -> counter ++;
+                endCell -> secondary -> inactive = true;
+                break;
+            case 'T':
+                endPoint = ConfrontTrap(endPoint);
+                endCell = &Board[endPoint.y][endPoint.x];
+                break;
+            case 'C':
+                ConfrontCat(endPoint);
+                break;
+            default: return;
+        }
+    }
+
+    // Move Character
+    Cell userCat = ScoreBoard.Users[ScoreBoard.turn].cat;
+
+    // Still in Middle Cell
+    if (userCat.secondary -> inactive) { 
+        userCat.secondary -> inactive = false;
+    } 
+
+    // Remove from Last Cell
+    else {
+        Coordinate point = userCat.secondary -> point;
+        Board[point.y][point.x].primary = NULL;
+    }
+    
+    // Move on Character Set
+    userCat.secondary -> point = endPoint;
+
+    // Move on Board
+    endCell -> primary = userCat.primary;
+    endCell -> secondary = userCat.secondary; 
+}
 
 
 // Check Board Movements
@@ -52,68 +142,6 @@ void CheckMove(void) {
     ) return;
  
     ProcessMove(endPoint);
-}
-
-
-void ProcessMove(Coordinate endPoint) {
-    Cell *endCell = &Board[endPoint.y][endPoint.x];
-    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
-
-    // Process Each Movement
-    if (endCell -> primary) {
-        switch (endCell -> primary -> type) {
-            case 'P':
-                currentUser -> strength ++;
-                endCell -> secondary -> inactive = true;
-                break;
-            case 'F':
-                
-                // Index in the Character Array
-                int fishIndex = (
-                    endCell -> secondary - endCell -> primary -> Characters
-                );
-                currentUser -> energy += (
-                    fishIndex % SCORE_TYPE_COUNT + 2
-                );
-                RefreshFish(*endCell);
-                endCell -> secondary -> inactive = true;
-                break;
-            case 'M':
-                currentUser -> score += (
-                    (10 - endCell -> primary -> n) / 2
-                );
-                currentUser -> mice[currentUser -> counter] = *endCell;
-                currentUser -> counter ++;
-                endCell -> secondary -> inactive = true;
-                break;
-            case 'T':
-                endPoint = ConfrontTrap(endPoint);
-                endCell = &Board[endPoint.y][endPoint.x];
-                break;
-            default: return;
-        }
-    }
-
-    // Move Character
-    Cell userCat = ScoreBoard.Users[ScoreBoard.turn].cat;
-
-    // Still in Middle Cell
-    if (userCat.secondary -> inactive) { 
-        userCat.secondary -> inactive = false;
-    } 
-
-    // Remove from Last Cell
-    else {
-        Coordinate point = userCat.secondary -> point;
-        Board[point.y][point.x].primary = NULL;
-    }
-    
-    // Move on Character Set
-    userCat.secondary -> point = endPoint;
-
-    // Move on Board
-    endCell -> primary = userCat.primary;
-    endCell -> secondary = userCat.secondary; 
 }
 
 

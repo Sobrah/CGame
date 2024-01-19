@@ -1,8 +1,5 @@
 #include <raylib.h>
 
-// For Random Functionality
-#include <stdlib.h>
-#include <time.h>
 
 //  Global Const Variables
 #define WINDOW_WIDTH 950
@@ -11,6 +8,7 @@
 #define FRAME_PER_SECOND 30
 #define USERS_NUMBER 4
 #define SCORE_TYPE_COUNT 3
+
 
 // For Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
@@ -45,6 +43,7 @@ typedef struct CharacterType {
     Character Characters[BOARD_SIZE];
     const bool fix; // Fix Position at Start
     Texture texture;
+    void *property;
 } CharacterType;
 
 // Board Cell Struct
@@ -72,6 +71,15 @@ typedef struct ScoreType {
     Texture textures[SCORE_TYPE_COUNT];
 } ScoreType;
 
+// Temporary
+struct {
+    int strength, energy, speed;
+} DOGS[] = {
+    {5, 30, 5},
+    {2, 15, 2},
+    {2, 20, 3},
+    {1, 5, 1}
+};
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
@@ -87,17 +95,23 @@ CharacterType CharacterSet[] = {
     {'C', "Images/Green Cat.svg", 1, 
         {MID_CELL, MID_CELL, true}, true
     },
+
     {'H', "Images/House.svg", 1, 
         {MID_CELL, MID_CELL}, true
     },
-    {'D', "Images/Dog.svg", 2},
-    {'D', "Images/Poodle.svg", 2},
-    {'P', "Images/Chocolate.svg", 8},
-    {'F', "Images/Fish.svg", 10},
+    
+    {'D', "Images/Poodle.svg", 1, .property = &DOGS[0]},
+    {'D', "Images/Dog.svg", 1, .property = &DOGS[1]},
+    {'D', "Images/Fox.svg", 1, .property = &DOGS[2]},
+    {'D', "Images/Wolf.svg", 1, .property = &DOGS[3]},
+    
     {'M', "Images/White Mouse.svg", 8},
     {'M', "Images/Blue Mouse.svg", 6},
     {'M', "Images/Purple Mouse.svg", 4},
+
     {'T', "Images/Trap.svg", 8},
+    {'P', "Images/Chocolate.svg", 8},
+    {'F', "Images/Fish.svg", 10}
 };
 
 // Game Board
