@@ -2,11 +2,11 @@
 
 
 // Graphical Function Prototypes
-void PlayScreen(void);
+void MenuScreen(void);
 void DrawCharacters(void);
 void DrawScoreBoard(int, Color);
 void ScoreBoardIcons(void);
-void DrawBoard(Color, int, Color);
+void DrawBoard(Color, int);
 void DrawScoreBoardTable(int, Color);
 
 
@@ -17,14 +17,14 @@ Coordinate RandCell(Coordinate, int, char);
 void ProcessMove(Coordinate, Coordinate);
 
 
-// Play Screen
-void PlayScreen(void) {
-    Color bgColor, borderColor, wallColor;
+// Menu Screen
+void MenuScreen(void) {
+    Color bgColor, borderColor;
     int thick = DIRECTION_COUNT;
     
     bgColor = BROWN;
     borderColor = DARKBROWN;
-    wallColor = ORANGE;
+    
     
     while (!WindowShouldClose()) {
         CheckMove();
@@ -32,9 +32,9 @@ void PlayScreen(void) {
         BeginDrawing();
             ClearBackground(bgColor);
 
-            DrawCharacters();
-            DrawBoard(borderColor, thick, wallColor);
-            DrawScoreBoard(thick, borderColor);
+            
+            DrawBoard(borderColor, thick);
+            
         EndDrawing();
     }
 }
@@ -116,38 +116,41 @@ void DrawScoreBoardTable(int thick, Color borderColor) {
 }
 
 // Draw Board
-void DrawBoard(Color borderColor, int thick, Color wallColor) { 
+void DrawBoard(Color borderColor, int thick) { 
     
     // Board Outline
-    DrawRectangleLinesEx(
-        (Rectangle){0, 0, WINDOW_HEIGHT, WINDOW_HEIGHT},
-        thick, borderColor
-    );
+    
 
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        for (int j = 0; j < BOARD_SIZE; j++) {
-            int x = CELL_SIZE * j;
-            int y = CELL_SIZE * i;
+    int x = (WINDOW_WIDTH / 3);
+    int y = (WINDOW_HEIGHT / 3) - (4 * CELL_SIZE);
+    Color bgColor = DARKGRAY ;
+    borderColor = BLACK;
 
-            // Draw Cell
-            DrawRectangleLines(
-                x, y, CELL_SIZE, CELL_SIZE, borderColor
-            );
+    for(int i = 0 ; i < BUTTON_TYPE_MEMBER ; i++ , y+= 5*CELL_SIZE){
 
-            if (!Board[i][j].wall) continue;
+        DrawRectangleRec(
+            (Rectangle){ 
+            x, y, 
+            6* CELL_SIZE , 3* CELL_SIZE} ,
+            bgColor
+        );
 
-            // Draw Wall
-            Vector2 endPoint, startPoint = {x, y};
-            endPoint = startPoint;
+        DrawRectangleLines(
+        x, y,
+        6* CELL_SIZE, 3* CELL_SIZE ,
+        borderColor
+        );
 
-            switch (Board[i][j].wall) {
-                case NORTH: endPoint.x += CELL_SIZE; break;
-                case WEST: endPoint.y += CELL_SIZE; break;
-            }
+        // Draw Text
 
-            DrawLineEx(startPoint, endPoint, thick, wallColor);
-        }
+        int fontSize = 1 * CELL_SIZE;
+
+        const char *text = TextFormat("%s", MenuButtons.lables[i]);
+        int textWidth = MeasureText( text , fontSize);
+        int textX = (WINDOW_WIDTH/3)+(6*CELL_SIZE-textWidth)/2;
+        DrawText( text ,textX , y + CELL_SIZE ,fontSize , BLACK );
     }
+    
 }
 
 // Draw Characters
@@ -213,6 +216,33 @@ void InitBoard(void) {
             rand() % DIRECTION_COUNT ? WEST : NORTH
         );
     }
+}
+
+// Check Buttons Clicks
+void CehckClick(void) {
+
+    
+
+}
+
+// New Game 
+void NewGame(void) {
+
+
+
+}
+
+// Save Game
+void SaveGame() {
+
+
+
+}
+
+// Load Game 
+void LoadGame() {
+
+
 }
 
 // Check Board Movements

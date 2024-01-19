@@ -33,7 +33,7 @@ int main(void) {
     InitBoard();
 
     // Main Screen For Now
-    PlayScreen();
+    MenuScreen();
     
     // Unload Textures From Memory
     for (int i = 0; i < SET_LENGTH; i++) {

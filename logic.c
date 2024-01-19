@@ -11,6 +11,7 @@
 #define FRAME_PER_SECOND 30
 #define USER_NUMBER 2
 #define SCORE_TYPE_MEMBER 3
+#define BUTTON_TYPE_MEMBER 3
 
 // For Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
@@ -70,6 +71,12 @@ typedef struct ScoreType {
     Texture textures[SCORE_TYPE_MEMBER];
 } ScoreType;
 
+// Button Type Struct
+typedef struct ButtonType {
+    bool click;
+    char *lables[BUTTON_TYPE_MEMBER];
+
+}ButtonType;
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
@@ -102,4 +109,15 @@ ScoreType ScoreBoard = {
         "Images/Strength.svg",
         "Images/Energy.svg"
     }
+};
+
+// Menu Buttons
+ButtonType MenuButtons = {
+    false , 
+    {
+        "New Game",
+        "Save Game",
+        "Load Game"
+    }
+ 
 };
