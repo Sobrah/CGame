@@ -59,6 +59,8 @@ typedef struct User {
     int strength;
     int energy;
     Cell cat;
+    int counter;
+    Cell mice[BOARD_SIZE];
 } User;
 
 // Score Board Struct
@@ -92,7 +94,9 @@ CharacterType CharacterSet[] = {
     {'D', "Images/Poodle.svg", 2},
     {'P', "Images/Chocolate.svg", 8},
     {'F', "Images/Fish.svg", 10},
-    {'M', "Images/Mouse.svg", BOARD_SIZE},
+    {'M', "Images/White Mouse.svg", 8},
+    {'M', "Images/Blue Mouse.svg", 6},
+    {'M', "Images/Purple Mouse.svg", 4},
     {'T', "Images/Trap.svg", 8},
 };
 
