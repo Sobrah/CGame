@@ -39,7 +39,7 @@ void MenuScreen(void) {
 
             DrawBoard(borderColor, thick, ORANGE);
             DrawMenuScreen(borderColor , thick , btnlables,buttons);
-            CheckCollisionBoxes
+            CheckCollisionMouse(buttons);
         EndDrawing();
     }
 }
@@ -168,19 +168,21 @@ void DrawMenuScreen(Color borderColor , int thick ,
     Color bgColor = DARKBROWN ;
     borderColor = BLACK;
     int fontSize = 1 * CELL_SIZE;
+    int recwidth =  6* CELL_SIZE ;
+    int recheight = 3* CELL_SIZE ;
 
     for(int i = 0 ; i < BUTTON_TYPE_MEMBER ; i++ , y+= 5*CELL_SIZE){
 
         DrawRectangleRec(
             (Rectangle){ 
             x, y, 
-            6* CELL_SIZE , 3* CELL_SIZE} ,
+            recwidth, recheight } ,
             bgColor
         );
 
         DrawRectangleLines(
         x, y,
-        6* CELL_SIZE, 3* CELL_SIZE ,
+        recwidth, recheight,
         borderColor
         );
 
@@ -190,6 +192,16 @@ void DrawMenuScreen(Color borderColor , int thick ,
         int textWidth = MeasureText( text , fontSize);
         int textX = (WINDOW_WIDTH/3)+(6*CELL_SIZE-textWidth)/2;
         DrawText( text ,textX , y + CELL_SIZE ,fontSize , GOLD );
+
+      
+        //set rectangles info
+    /*
+        buttons[i]->x = x;
+        buttons[i]->y = y;
+        buttons[i]->width = recwidth ;
+        buttons[i]->height = recheight;
+    */ 
+        
     }
 }
 
@@ -257,13 +269,15 @@ void InitBoard(void) {
 }
 
 // Check Buttons Clicks
-void CheckCollisionMouse(Rectangle *button) {
+void CheckCollisionMouse(Rectangle *buttons) {
 
         Vector2 mouse = GetMousePosition();
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
 
-            if(CheckCollisionPointRec(mouse, button))
+            if(CheckCollisionPointRec(mouse, buttons[0]));
+            if(CheckCollisionPointRec(mouse, buttons[1]));
+            if(CheckCollisionPointRec(mouse, buttons[2]));
         }
 
 }
