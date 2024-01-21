@@ -51,8 +51,10 @@ void DiceScreen(void) {
     while (!WindowShouldClose()) {
         
         // Set Textures Coordination
-        int x = 0;
-        int y = TEXTURE_SIZE;
+        int xspace = (WINDOW_WIDTH - 4 * TEXTURE_SIZE) / 5;
+        int x = xspace;
+        int y = TEXTURE_SIZE /2 ;
+
         
         BeginDrawing();
             ClearBackground(BROWN);
@@ -60,10 +62,53 @@ void DiceScreen(void) {
             // Draw Cat Textures
             for (int i = 0 ; i < CAT_LENGTH; i++) {
                 DrawTexture(CAT_TEXTURES[i], x, y, WHITE);
-                x += TEXTURE_SIZE;
+                x += xspace +TEXTURE_SIZE;
             }
-            DrawTexture(DICE_TEXTURES[0], 362 , 550, WHITE);
 
+            // Draw Dice Button
+
+            int xbtn = (WINDOW_WIDTH - TEXTURE_SIZE) / 2;
+            int ybtn = (4 * TEXTURE_SIZE) - CELL_SIZE;
+
+            DrawTexture(DICE_TEXTURES[0], xbtn , ybtn, WHITE);
+            
+            DrawRectangleLines(
+                xbtn , ybtn ,
+                TEXTURE_SIZE , TEXTURE_SIZE ,
+                BROWN
+             );
+
+            // CheckCollision
+            
+
+             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+
+                Vector2 mouse = GetMousePosition();
+
+                //If Click Button
+                if(CheckCollisionPointRec(mouse , 
+                (Rectangle){
+                xbtn , ybtn ,
+                TEXTURE_SIZE ,TEXTURE_SIZE}
+                )){
+                    
+                    // Set Dices Texture 
+                    int number = rand() % 6 + 1 ;
+                    
+                    int x = xspace;
+                    int y =  2 * TEXTURE_SIZE;
+
+                    if(!sizeof(diceNumbers)){
+
+                        diceNumbers[0] = number;
+                        DrawTexture(DICE_TEXTURES[number], x , y , WHITE);
+                    }
+                    else {
+                        // Search Repetitious Numbers & Load Dices Texture
+                    }
+                    
+                }
+             }
         EndDrawing();
     }
 }
