@@ -1,7 +1,8 @@
 #include "graphic.c"
 
-#define diceLength (sizeof(DICE_PATHS) / sizeof(char *))
-#define catlength (sizeof(CAT_PATHS) / sizeof(char *))
+#define TEXTURE_SIZE (3 * CELL_SIZE)
+#define CAT_LENGTH (sizeof(CAT_PATHS) / sizeof(char *))
+#define DICE_LENGTH (sizeof(DICE_PATHS) / sizeof(char *))
 
 char *DICE_PATHS[] = {
     "Images/Dice/Craps.svg",
@@ -20,51 +21,47 @@ char *CAT_PATHS[] = {
     "Images/Yellow Cat.svg"
 };
 
-Texture DICE_TEXTURES[diceLength];
-Texture CAT_TEXTURES[catlength];
+Texture DICE_TEXTURES[DICE_LENGTH];
+Texture CAT_TEXTURES[CAT_LENGTH];
+
 
 void DiceScreen(void) {
     
-    // Load Textures
-    for (int i = 0; i < diceLength; i++) {
+    // Load Dice Textures
+    for (int i = 0; i < DICE_LENGTH; i++) {
         Image itemImage = LoadImageSvg(
-            DICE_PATHS[i],
-            2 * CELL_SIZE,
-            2 * CELL_SIZE
+            DICE_PATHS[i], TEXTURE_SIZE, TEXTURE_SIZE
         );
         DICE_TEXTURES[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
-    for(int i = 0; i < catlength ; i++){
+    
+    // Cat Textures
+    for(int i = 0; i < CAT_LENGTH; i++){
         Image itemImage = LoadImageSvg(
-            CAT_PATHS[i],
-            2 * CELL_SIZE,
-            2 * CELL_SIZE
+            CAT_PATHS[i], TEXTURE_SIZE, TEXTURE_SIZE
         );
         CAT_TEXTURES[i] = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
 
-    // Set Textures Cordination
-    int x = 60;
-    int y = 2 *CELL_SIZE;
-
-    int dicenumbers[catlength];
-
-    
+    int diceNumbers[CAT_LENGTH];
 
 
     while (!WindowShouldClose()) {
+        
+        // Set Textures Coordination
+        int x = 0;
+        int y = TEXTURE_SIZE;
+        
         BeginDrawing();
             ClearBackground(BROWN);
-
-        
-        // Draw Cat Textures
-        for (int i = 0 ; i < catlength ; x += 60 + 2* CELL_SIZE, i++)
-        {
-            DrawTexture(CAT_TEXTURES[i], x ,y , WHITE);
-        }
-        
+            
+            // Draw Cat Textures
+            for (int i = 0 ; i < CAT_LENGTH; i++) {
+                DrawTexture(CAT_TEXTURES[i], x, y, WHITE);
+                x += TEXTURE_SIZE;
+            }
             DrawTexture(DICE_TEXTURES[0], 362 , 550, WHITE);
 
         EndDrawing();
