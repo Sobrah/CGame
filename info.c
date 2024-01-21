@@ -4,8 +4,8 @@
 //  Global Const Variables
 #define WINDOW_WIDTH 950
 #define WINDOW_HEIGHT 750
-#define BOARD_SIZE 15
 #define FRAME_PER_SECOND 30
+#define BOARD_SIZE 15
 #define USERS_NUMBER 4
 #define SCORE_TYPE_COUNT 3
 
@@ -43,7 +43,7 @@ typedef struct CharacterType {
     Character Characters[BOARD_SIZE];
     const bool fix; // Fix Position at Start
     Texture texture;
-    void *property;
+    int identity;
 } CharacterType;
 
 // Board Cell Struct
@@ -72,9 +72,10 @@ typedef struct ScoreType {
 } ScoreType;
 
 // Temporary
-struct {
+typedef struct Dog {
     int strength, energy, speed;
-} DOGS[] = {
+} Dog; 
+Dog Dogs[] = {
     {5, 30, 5},
     {2, 15, 2},
     {2, 20, 3},
@@ -84,26 +85,26 @@ struct {
 // Character Categories Storage
 CharacterType CharacterSet[] = {
     {'C', "Images/Purple Cat.svg", 1, 
-        {MID_CELL, MID_CELL, true}, true
+        {MID_CELL, MID_CELL, true}, true,
     },
     {'C', "Images/Blue Cat.svg", 1, 
-        {MID_CELL, MID_CELL, true}, true
+        {MID_CELL, MID_CELL, true}, true,
     },
     {'C', "Images/Yellow Cat.svg", 1, 
-        {MID_CELL, MID_CELL, true}, true
+        {MID_CELL, MID_CELL, true}, true,
     },
     {'C', "Images/Green Cat.svg", 1, 
-        {MID_CELL, MID_CELL, true}, true
+        {MID_CELL, MID_CELL, true}, true,
     },
 
     {'H', "Images/House.svg", 1, 
         {MID_CELL, MID_CELL}, true
     },
     
-    {'D', "Images/Poodle.svg", 1, .property = &DOGS[0]},
-    {'D', "Images/Dog.svg", 1, .property = &DOGS[1]},
-    {'D', "Images/Fox.svg", 1, .property = &DOGS[2]},
-    {'D', "Images/Wolf.svg", 1, .property = &DOGS[3]},
+    {'D', "Images/Poodle.svg", 1, .identity = 0},
+    {'D', "Images/Dog.svg", 1, .identity = 1},
+    {'D', "Images/Fox.svg", 1, .identity = 2},
+    {'D', "Images/Wolf.svg", 1, .identity = 3},
     
     {'M', "Images/White Mouse.svg", 8},
     {'M', "Images/Blue Mouse.svg", 6},

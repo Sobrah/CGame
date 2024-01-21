@@ -21,26 +21,28 @@ void MoveCharacter(Cell *, Coordinate);
 Coordinate RandCell(Coordinate, int, char);
 
 
-// Cat Face Cat
-void ConfrontCat(Coordinate endPoint) {
+// Cat Face Dog
+bool ConfrontDog(Coordinate endPoint) {
+    Cell *dogCell = &Board[endPoint.y][endPoint.x];
     User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
-    User *secondUser;
-
-    // Find the Second Cat
-    int i;
-    for (i = 0; i < USERS_NUMBER; i++) {
-        if (
-            ScoreBoard.Users[i].cat.secondary -> point.x == currentUser -> cat.secondary -> point.x
-            &&
-            ScoreBoard.Users[i].cat.secondary -> point.y == currentUser -> cat.secondary -> point.y
-        ) break;
-    }
-    secondUser = &ScoreBoard.Users[i];
-
-    if (currentUser -> strength / currentUser -> energy > secondUser -> strength / secondUser -> energy) {
-        for (;secondUser -> counter > 0; secondUser -> counter --, currentUser -> counter ++) {
-            currentUser -> mice[currentUser -> counter] = secondUser -> mice[secondUser -> counter];
+    
+    Dog *currentDog = &Dogs[dogCell -> primary -> identity];
+    
+    if (
+        (float) currentUser -> energy / currentUser -> strength
+        >=
+        (float) currentDog -> energy / currentDog -> strength
+    ) {
+        // currentUser -> energy -= currentDog -> strength * currentDog -> energy / currentUser -> strength;
+        dogCell -> secondary -> inactive = true;
+        dogCell -> primary = NULL;
+        return true;
+    } else {
+        for (int i = 0; i < currentUser -> counter; i++) {
+            ReviveCharacter(currentUser -> mice[i]);
         }
+        currentUser -> counter = 0;
+        return false;
     }
 }
 
@@ -85,7 +87,15 @@ void ProcessMove(Coordinate endPoint) {
                     SCORE_TYPE_COUNT, 'P'
                 );
                 break;
-            
+            case 'D':
+                if (!ConfrontDog(endPoint)) {
+                    endPoint = RandCell(
+                        (Coordinate){endPoint.x - 1, endPoint.y - 1},
+                        SCORE_TYPE_COUNT, 'P'
+                    );
+                }
+                break;
+
             default: return;
         }
     }
