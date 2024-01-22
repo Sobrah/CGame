@@ -72,7 +72,7 @@ typedef struct User {
 
 // Score Board Struct
 typedef struct ScoreType {
-    int round, turn;
+    int round, turn, walk;
     PathTexture PathTextures[PROPERTY_LENGTH];
     User Users[USERS_NUMBER];
 } ScoreType;
@@ -130,7 +130,7 @@ UserProperty Dogs[] = {
 
 // Score Board Information
 ScoreType ScoreBoard = {
-    1, 0, {
+    1, 0, 0, {
         {"Images/Score.svg"},
         {"Images/Strength.svg"},
         {"Images/Energy.svg"}

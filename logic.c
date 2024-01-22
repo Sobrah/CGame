@@ -30,13 +30,17 @@ Coordinate RandCell(Coordinate, int, char);
 
 // Check Board Movements
 void CheckMove(void) {
+    const int key = GetKeyPressed();
+    
+    // No Key Press
+    if (!key) return;
+
     Coordinate endPoint = (
         ScoreBoard.Users[ScoreBoard.turn].userCat.secondary -> point
     );
 
     // Processing Pressed Key
-    switch (GetKeyPressed()) {
-        case KEY_NULL: return;
+    switch (key) {  
         case KEY_UP:
             if (Board[endPoint.y][endPoint.x].wall == NORTH) return;
             endPoint.y --; break;
@@ -50,8 +54,8 @@ void CheckMove(void) {
             if (Board[endPoint.y][endPoint.x + 1].wall == WEST) return;
             endPoint.x ++; break;
         case KEY_ENTER:
-            ScoreBoard.turn = (ScoreBoard.turn + 1) % USERS_NUMBER;
-            return;
+            ScoreBoard.turn ++; break;
+        default: return;
     }
 
     // Check Board Limit
@@ -60,8 +64,30 @@ void CheckMove(void) {
         ||
         endPoint.y < 0 || endPoint.y >= BOARD_SIZE
     ) return;
- 
-    ProcessMove(endPoint);
+
+
+    if (key != KEY_ENTER) {
+        UserProperty *user = &ScoreBoard.Users[ScoreBoard.turn].property;
+        if (user -> energy) {
+            ProcessMove(endPoint);
+            ScoreBoard.walk ++;
+            user -> energy --;
+        } else {
+            ScoreBoard.turn ++;
+            ScoreBoard.walk = 0;
+        }
+    }
+    if (ScoreBoard.walk == PROPERTY_LENGTH) {
+        ScoreBoard.turn ++;
+        ScoreBoard.walk = 0;
+    }
+    if (ScoreBoard.turn == USERS_NUMBER) {
+        for (int i = 0; i < USERS_NUMBER; i++) {
+            ScoreBoard.Users[i].property.energy ++;
+        }
+        ScoreBoard.round ++;
+        ScoreBoard.turn = 0;
+    }
 }
 
 // Process Each Movement
