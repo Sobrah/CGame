@@ -45,8 +45,8 @@ void DiceScreen(void) {
         UnloadImage(itemImage);
     }
 
-    int diceNumbers[CAT_LENGTH];
 
+    int diceNumbers[CAT_LENGTH];
 
     while (!WindowShouldClose()) {
         
@@ -75,40 +75,46 @@ void DiceScreen(void) {
             DrawRectangleLines(
                 xbtn , ybtn ,
                 TEXTURE_SIZE , TEXTURE_SIZE ,
-                BROWN
+                BLACK
              );
 
             // CheckCollision
-            
 
-             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-
+                x = xspace;
+                y =  2 * TEXTURE_SIZE;
+                int index = 0;
                 Vector2 mouse = GetMousePosition();
 
-                //If Click Button
+                // Draw Dice Textrue
+                    for(int i = 0 ; i < CAT_LENGTH && diceNumbers[i]; i++,x += TEXTURE_SIZE){
+                        DrawTexture(DICE_TEXTURES[diceNumbers[i]+1], x,y,WHITE);
+                    }
+                
+
                 if(CheckCollisionPointRec(mouse , 
-                (Rectangle){
-                xbtn , ybtn ,
-                TEXTURE_SIZE ,TEXTURE_SIZE}
-                )){
-                    
-                    // Set Dices Texture 
-                    int number = rand() % 6 + 1 ;
-                    
-                    int x = xspace;
-                    int y =  2 * TEXTURE_SIZE;
+                  (Rectangle){
+                   xbtn , ybtn ,
+                   TEXTURE_SIZE ,TEXTURE_SIZE}
+                ))
+                {
 
-                    if(!sizeof(diceNumbers)){
-
-                        diceNumbers[0] = number;
-                        DrawTexture(DICE_TEXTURES[number], x , y , WHITE);
+                //If Click Button
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !diceNumbers[CAT_LENGTH]){
+                    int number = (rand() %6) +1;
+                    if(!diceNumbers[0]) diceNumbers[0] = number;
+                    else{
+                        for(int i = 0 ; i < CAT_LENGTH ; i++){
+                            if( diceNumbers[i]== number){
+                                i = 0;
+                                number = (rand()%6) +1;
+                            }
+                        }
+                        index++;
+                        diceNumbers[index] = number;
                     }
-                    else {
-                        // Search Repetitious Numbers & Load Dices Texture
-                    }
-                    
                 }
              }
+
         EndDrawing();
     }
 }
