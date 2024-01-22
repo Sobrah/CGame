@@ -43,8 +43,8 @@ void DrawScoreBoard(int thick, Color borderColor) {
     fontSize = 1.2 * CELL_SIZE;
     int y = 2 * CELL_SIZE;
     for (int i = 0; i < 2; i++) {
-        int *n = &ScoreBoard.Users[i].score;
-        for (int j = 0; j < SCORE_TYPE_COUNT; j++, y += 2 * CELL_SIZE, n++) {
+        int *n = &ScoreBoard.Users[i].property.score;
+        for (int j = 0; j < PROPERTY_LENGTH; j++, y += 2 * CELL_SIZE, n++) {
             const char *text = TextFormat("%i ", *n);
             int textWidth = MeasureText(text, fontSize);
             int width = textWidth + CELL_SIZE;
@@ -53,7 +53,7 @@ void DrawScoreBoard(int thick, Color borderColor) {
 
             // Draw Score Board Icons
             DrawTexture(
-                ScoreBoard.textures[j], textX + textWidth, y, WHITE
+                ScoreBoard.PathTextures[j].texture, textX + textWidth, y, WHITE
             );
         }
         y += CELL_SIZE;
@@ -134,7 +134,7 @@ void DrawCharacters(void) {
             if (CharacterSet[i].Characters[j].inactive) continue;
 
             DrawTexture(
-                CharacterSet[i].texture,
+                CharacterSet[i].pathTexture.texture,
                 CharacterSet[i].Characters[j].point.x * CELL_SIZE,
                 CharacterSet[i].Characters[j].point.y * CELL_SIZE,
                 WHITE
