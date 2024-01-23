@@ -1,4 +1,5 @@
 #include "graphic.c"
+#include <stdio.h>
 
 #define TEXTURE_SIZE (3 * CELL_SIZE)
 #define CAT_LENGTH (sizeof(CAT_PATHS) / sizeof(char *))
@@ -25,6 +26,18 @@ Texture DICE_TEXTURES[DICE_LENGTH];
 Texture CAT_TEXTURES[CAT_LENGTH];
 
 
+// Find Same DiceNumber
+int SameNumber(int diceNumbers[CAT_LENGTH], int cat_lenght , int &i , int &j){
+
+            for(i = 0 ; i < cat_lenght ; i++)
+                for(j = 0 ; j < cat_lenght ; j++){
+                    if(i != j && diceNumbers[i] == diceNumbers[j]) return 1; 
+                }
+
+            return 0;
+
+}
+
 void DiceScreen(void) {
     
     // Load Dice Textures
@@ -47,11 +60,13 @@ void DiceScreen(void) {
 
 
     int diceNumbers[CAT_LENGTH];
+    int index = 0 ;
+    int i  = 0 , j = 0 ;
 
     while (!WindowShouldClose()) {
         
         // Set Textures Coordination
-        int xspace = (WINDOW_WIDTH - 4 * TEXTURE_SIZE) / 5;
+        int xspace = (WINDOW_WIDTH - CAT_LENGTH * TEXTURE_SIZE) / (CAT_LENGTH+1);
         int x = xspace;
         int y = TEXTURE_SIZE /2 ;
 
@@ -71,7 +86,6 @@ void DiceScreen(void) {
             int ybtn = (4 * TEXTURE_SIZE) - CELL_SIZE;
 
             DrawTexture(DICE_TEXTURES[0], xbtn , ybtn, WHITE);
-            
             DrawRectangleLines(
                 xbtn , ybtn ,
                 TEXTURE_SIZE , TEXTURE_SIZE ,
@@ -82,12 +96,11 @@ void DiceScreen(void) {
 
                 x = xspace;
                 y =  2 * TEXTURE_SIZE;
-                int index = 0;
                 Vector2 mouse = GetMousePosition();
 
                 // Draw Dice Textrue
-                    for(int i = 0 ; i < CAT_LENGTH && diceNumbers[i]; i++,x += TEXTURE_SIZE){
-                        DrawTexture(DICE_TEXTURES[diceNumbers[i]+1], x,y,WHITE);
+                    for(int i = 0 ; i < CAT_LENGTH && diceNumbers[i];x += xspace +TEXTURE_SIZE , i++){
+                        DrawTexture(DICE_TEXTURES[diceNumbers[i]], x,y,WHITE);
                     }
                 
 
@@ -99,19 +112,28 @@ void DiceScreen(void) {
                 {
 
                 //If Click Button
-                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !diceNumbers[CAT_LENGTH]){
-                    int number = (rand() %6) +1;
-                    if(!diceNumbers[0]) diceNumbers[0] = number;
-                    else{
-                        for(int i = 0 ; i < CAT_LENGTH ; i++){
-                            if( diceNumbers[i]== number){
-                                i = 0;
-                                number = (rand()%6) +1;
-                            }
-                        }
-                        index++;
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    int number = rand() % 6 ;
+
+                    if(!diceNumbers[index]){
+
                         diceNumbers[index] = number;
+                        index = (index+1) % CAT_LENGTH;
                     }
+                    else{
+                        if(!SameNumber(diceNumbers,CAT_LENGTH,i,j)) break;
+                        else{
+                            do
+                            {
+                            SameNumber(diceNumbers,CAT_LENGTH,i,j);
+                            number = rand() % 6;
+                            diceNumbers[i] = number;
+                            } while (SameNumber(diceNumbers,CAT_LENGTH,i,j));
+                            
+                        }
+
+                    }
+                    
                 }
              }
 
