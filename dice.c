@@ -27,11 +27,12 @@ Texture CAT_TEXTURES[CAT_LENGTH];
 
 
 // Find Same DiceNumber
-int SameNumber(int diceNumbers[CAT_LENGTH], int cat_lenght , int &i , int &j){
+int SameNumber(int diceNumbers[CAT_LENGTH], int cat_lenght , int *i , int *j){
 
-            for(i = 0 ; i < cat_lenght ; i++)
-                for(j = 0 ; j < cat_lenght ; j++){
-                    if(i != j && diceNumbers[i] == diceNumbers[j]) return 1; 
+            int m ,n ;
+            for(m = 0 ; m < cat_lenght ; m++)
+                for(n = 0 ; n < cat_lenght ; n++){
+                    if(n != m && diceNumbers[m] == diceNumbers[n]){ *i = m ; *j = n; return 1;} 
                 }
 
             return 0;
@@ -121,14 +122,15 @@ void DiceScreen(void) {
                         index = (index+1) % CAT_LENGTH;
                     }
                     else{
-                        if(!SameNumber(diceNumbers,CAT_LENGTH,i,j)) break;
+                        if(!SameNumber(diceNumbers,CAT_LENGTH,&i,&j)) break;
+                        else if(SameNumber(diceNumbers,CAT_LENGTH,&i,&j) && diceNumbers[CAT_LENGTH]) PlayScreen();
                         else{
                             do
                             {
-                            SameNumber(diceNumbers,CAT_LENGTH,i,j);
+                            SameNumber(diceNumbers,CAT_LENGTH,&i,&j);
                             number = rand() % 6;
                             diceNumbers[i] = number;
-                            } while (SameNumber(diceNumbers,CAT_LENGTH,i,j));
+                            } while (SameNumber(diceNumbers,CAT_LENGTH,&i,&j));
                             
                         }
 
