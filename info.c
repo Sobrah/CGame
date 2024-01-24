@@ -50,10 +50,15 @@ typedef struct CharacterType {
     const bool fix; // Stable Position
 } CharacterType;
 
-// Board Cell Struct
-typedef struct Cell {
+// Conduct to a Character Struct
+typedef struct Conduct {
     CharacterType *primary;
     Character *secondary; 
+} Conduct;
+
+// Board Cell Struct
+typedef struct Cell {
+    Conduct route;
     Direction wall;
 } Cell;
 
@@ -65,56 +70,56 @@ typedef struct UserProperty {
 // User Struct
 typedef struct User {
     UserProperty property;
-    Cell userCat;
+    Conduct userCat;
     int n;
-    Cell rats[BOARD_SIZE];
+    Conduct Mice[BOARD_SIZE];
 } User;
 
 // Score Board Struct
-typedef struct ScoreType {
+typedef struct ScoreBoardType {
     int round, turn, walk;
     PathTexture PathTextures[PROPERTY_LENGTH];
     User Users[USERS_NUMBER];
-} ScoreType;
+} ScoreBoardType;
 
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
     
     // Cats
-    {'C', {"Images/Purple Cat.svg"}, 1, 
+    {'C', {"Images/Board/Purple Cat.svg"}, 1, 
         {MID_CELL, MID_CELL, true}, true,
     },
-    {'C', {"Images/Blue Cat.svg"}, 1, 
+    {'C', {"Images/Board/Blue Cat.svg"}, 1, 
         {MID_CELL, MID_CELL, true}, true,
     },
-    {'C', {"Images/Yellow Cat.svg"}, 1, 
+    {'C', {"Images/Board/Yellow Cat.svg"}, 1, 
         {MID_CELL, MID_CELL, true}, true,
     },
-    {'C', {"Images/Green Cat.svg"}, 1, 
+    {'C', {"Images/Board/Green Cat.svg"}, 1, 
         {MID_CELL, MID_CELL, true}, true,
     },
     
     // Dogs
-    {'D', {"Images/Poodle.svg"}, 1},
-    {'D', {"Images/Dog.svg"}, 1},
-    {'D', {"Images/Fox.svg"}, 1},
-    {'D', {"Images/Wolf.svg"}, 1},
-
-    // House
-    {'H', {"Images/House.svg"}, 1, 
-        {MID_CELL, MID_CELL}, true
-    },
+    {'D', {"Images/Board/Poodle.svg"}, 1},
+    {'D', {"Images/Board/Dog.svg"}, 1},
+    {'D', {"Images/Board/Fox.svg"}, 1},
+    {'D', {"Images/Board/Wolf.svg"}, 1},
     
     // Mice
-    {'M', {"Images/White Mouse.svg"}, 8},
-    {'M', {"Images/Blue Mouse.svg"}, 6},
-    {'M', {"Images/Purple Mouse.svg"}, 4},
+    {'M', {"Images/Board/White Mouse.svg"}, 8},
+    {'M', {"Images/Board/Blue Mouse.svg"}, 6},
+    {'M', {"Images/Board/Purple Mouse.svg"}, 4},
+
+    // House
+    {'H', {"Images/Board/House.svg"}, 1, 
+        {MID_CELL, MID_CELL}, true
+    },
 
     // Traps, Fish & Chocolates
-    {'T', {"Images/Trap.svg"}, 8},
-    {'F', {"Images/Fish.svg"}, 10},
-    {'P', {"Images/Chocolate.svg"}, 8}
+    {'T', {"Images/Board/Trap.svg"}, 8},
+    {'F', {"Images/Board/Fish.svg"}, 10},
+    {'P', {"Images/Board/Chocolate.svg"}, 8}
 };
 
 // Game Board
@@ -129,11 +134,11 @@ UserProperty Dogs[] = {
 };
 
 // Score Board Information
-ScoreType ScoreBoard = {
+ScoreBoardType ScoreBoard = {
     1, 0, 0, {
-        {"Images/Score.svg"},
-        {"Images/Strength.svg"},
-        {"Images/Energy.svg"}
+        {"Images/Score Board/Score.svg"},
+        {"Images/Score Board/Strength.svg"},
+        {"Images/Score Board/Energy.svg"}
     }
 };
 const UserProperty DEFAULT_USER_PROPERTY = {0, 2, 5};

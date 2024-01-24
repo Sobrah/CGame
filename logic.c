@@ -1,21 +1,8 @@
 #include "info.c"
 
-
 // For Random Functionality
 #include <stdlib.h>
 #include <time.h>
-
-
-// Movements
-void CheckMove(void);
-void ProcessMove(Coordinate);
-void MoveCharacter(Cell *, Coordinate);
-
-// Face Character
-void RefreshFish(Cell);
-void ConfrontTrap(void);
-bool ConfrontDog(Coordinate);
-void ReviveCharacter(Cell, Coordinate);
 
 
 // Initialization
@@ -26,255 +13,6 @@ void InitScoreBoard(void);
 int FindRadius(Coordinate);
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, int, char);
-
-
-// Check Board Movements
-void CheckMove(void) {
-    const int key = GetKeyPressed();
-    
-    // No Key Press
-    if (!key) return;
-
-    Coordinate endPoint = (
-        ScoreBoard.Users[ScoreBoard.turn].userCat.secondary -> point
-    );
-
-    // Processing Pressed Key
-    switch (key) {  
-        case KEY_UP:
-            if (Board[endPoint.y][endPoint.x].wall == NORTH) return;
-            endPoint.y --; break;
-        case KEY_LEFT:
-            if (Board[endPoint.y][endPoint.x].wall == WEST) return;
-            endPoint.x --; break;
-        case KEY_DOWN:
-            if (Board[endPoint.y + 1][endPoint.x].wall == NORTH) return;
-            endPoint.y ++; break;
-        case KEY_RIGHT:
-            if (Board[endPoint.y][endPoint.x + 1].wall == WEST) return;
-            endPoint.x ++; break;
-        case KEY_ENTER:
-            ScoreBoard.turn ++; break;
-        default: return;
-    }
-
-    // Check Board Limit
-    if (
-        endPoint.x < 0 || endPoint.x >= BOARD_SIZE 
-        ||
-        endPoint.y < 0 || endPoint.y >= BOARD_SIZE
-    ) return;
-
-
-    if (key != KEY_ENTER) {
-        UserProperty *user = &ScoreBoard.Users[ScoreBoard.turn].property;
-        if (user -> energy) {
-            ProcessMove(endPoint);
-            ScoreBoard.walk ++;
-            user -> energy --;
-        } else {
-            ScoreBoard.turn ++;
-            ScoreBoard.walk = 0;
-        }
-    }
-    if (ScoreBoard.walk == PROPERTY_LENGTH) {
-        ScoreBoard.turn ++;
-        ScoreBoard.walk = 0;
-    }
-    if (ScoreBoard.turn == USERS_NUMBER) {
-        for (int i = 0; i < USERS_NUMBER; i++) {
-            ScoreBoard.Users[i].property.energy ++;
-        }
-        ScoreBoard.round ++;
-        ScoreBoard.turn = 0;
-    }
-}
-
-// Process Each Movement
-void ProcessMove(Coordinate endPoint) {
-    Cell endCell = Board[endPoint.y][endPoint.x];
-    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
-
-    // Check Whether There Is Character
-    if (endCell.primary) {
-        switch (endCell.primary -> type) {
-            case 'P':
-                currentUser -> property.strength ++;
-                endCell.secondary -> inactive = true;
-                break;
-            case 'F':
-                
-                // Index in the Character Array
-                int fishIndex = (
-                    endCell.secondary - endCell.primary -> Characters
-                );
-                currentUser -> property.energy += (
-                    fishIndex % PROPERTY_LENGTH + 2
-                );
-                RefreshFish(endCell);
-                endCell.secondary -> inactive = true;
-                break;
-            case 'M':
-                currentUser -> property.score += (
-                    (10 - endCell.primary -> n) / 2
-                );
-                currentUser -> rats[currentUser -> n] = endCell;
-                currentUser -> n ++;
-                endCell.secondary -> inactive = true;
-                break;
-            case 'T':
-                ConfrontTrap();
-                
-                // New Cat Position
-                endPoint = RadiusRandCell(endPoint);
-                break;
-            case 'D':
-                if (ConfrontDog(endPoint)) {
-                    endPoint = RadiusRandCell(endPoint);
-                } else {
-                    endCell.secondary -> inactive = true;
-                }
-                break;
-
-            default: return;
-        }
-    }
-    
-    // Move Character
-    Coordinate point = currentUser -> userCat.secondary -> point;
-    Cell *startCell = &Board[point.y][point.x];
-    
-    // Middle Cell Case
-    Cell tCell = currentUser -> userCat;
-    if (currentUser -> userCat.secondary -> inactive) {
-        currentUser -> userCat.secondary -> inactive = false;
-        startCell = &tCell;
-    }
-
-    MoveCharacter(startCell, endPoint);
-}
-
-// Move Character
-void MoveCharacter(Cell *startCell, Coordinate endPoint) {
-    
-    Cell *endCell = &Board[endPoint.y][endPoint.x];
-    
-    // Move on Character Set
-    startCell -> secondary -> point = endPoint;
-
-    // Move on Board
-    endCell -> primary = startCell -> primary;
-    endCell -> secondary = startCell -> secondary; 
-
-    // Remove Start Cell from Board
-    startCell -> primary = NULL;
-}
-
-
-// Revive Dead Character
-void ReviveCharacter(Cell character, Coordinate point) {
-    point = RadiusRandCell(point);
-
-    // Update Character Position
-    character.secondary -> point = point;
-    character.secondary -> inactive = false;
-    Board[point.y][point.x].primary = character.primary;
-    Board[point.y][point.x].secondary = character.secondary;
-}
-
-// Cat Faces Dog
-bool ConfrontDog(Coordinate endPoint) {
-    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
-    UserProperty *catProperty = &currentUser -> property;
-    
-    Cell *dogCell = &Board[endPoint.y][endPoint.x];
-    int dogIndex = dogCell -> primary - CharacterSet;
-    UserProperty *dogProperty = &Dogs[dogIndex - USERS_NUMBER];
-    
-    if (
-        (float) dogProperty -> energy / dogProperty -> strength
-        >=
-        (float) catProperty -> energy / catProperty -> strength
-    ) {
-        for (int i = 0; i < currentUser -> n; i++) {
-            ReviveCharacter(currentUser -> rats[i], endPoint);
-        }
-        currentUser -> n = 0;
-        catProperty -> score = 0;
-        dogProperty -> energy -= (
-            catProperty -> strength * catProperty -> energy / dogProperty -> strength
-        );
-        return true;  
-    } else {
-        catProperty -> energy -= (
-            dogProperty -> strength * dogProperty -> energy / catProperty -> strength
-        );
-        return false;
-    }
-}
-
-// Cat Faces Trap
-void ConfrontTrap(void) {
-    User *currentUser = &ScoreBoard.Users[ScoreBoard.turn];
-    
-    // No Mouse to Release
-    if (!currentUser -> n) {
-        if (currentUser -> property.strength > 2) 
-            currentUser -> property.strength -= 2;
-        else 
-            currentUser -> property.energy -= 3;
-        return;
-    }
-    
-    // Find Best Mouse
-    int maxIndex = 0;
-    for (int i = 1; i < currentUser -> n; i++) {
-        if (currentUser -> rats[i].primary -> n < currentUser -> rats[maxIndex].primary -> n)
-            maxIndex = i;
-    }
-
-    // Return Mouse to Board
-    ReviveCharacter(
-        currentUser -> rats[maxIndex], 
-        currentUser -> rats[maxIndex].secondary -> point
-    );
-
-    // Reduce Score
-    currentUser -> property.score -= (
-        (10 - currentUser -> rats[maxIndex].primary -> n) / 2
-    );
-
-    // Remove from Eaten Mice
-    currentUser -> n --;
-    currentUser -> rats[maxIndex] = currentUser -> rats[currentUser -> n];
-}
-
-// Check Fish Number Status
-void RefreshFish(Cell fishCell) {    
-    Character *fishCharacters = fishCell.primary -> Characters;
-
-    // Count Active Fishes
-    int fishCount = 0;
-    int fishN = fishCell.primary -> n;
-
-    for (int i = 0; i < fishN; i++) {
-        if (!fishCharacters[i].inactive) fishCount ++;
-    }
-            
-    // Reset Fishes
-    if (fishCount <= USERS_NUMBER) {
-
-        // Revive Fishes
-        for (int i = 0; i < fishN; i++) {  
-            if (!fishCharacters[i].inactive) continue;
-            
-            ReviveCharacter(
-                (Cell){fishCell.primary, fishCharacters + i},
-                fishCharacters[i].point
-            );
-        }
-    }
-}
 
 
 // Initialize Board
@@ -290,7 +28,8 @@ void InitBoard(int walls) {
             }
 
             Board[point -> y][point -> x] = (Cell){
-                &CharacterSet[i], &CharacterSet[i].Characters[j]
+                CharacterSet + i, 
+                CharacterSet[i].Characters + j
             };
         }
 
@@ -323,9 +62,8 @@ void InitScoreBoard(void) {
     for (int i = 0; i < USERS_NUMBER; i++) {
         ScoreBoard.Users[i] = (User) {
             DEFAULT_USER_PROPERTY,
-            (Cell){
-                &CharacterSet[i],
-                &CharacterSet[i].Characters[0]
+            (Conduct){
+                CharacterSet + i, CharacterSet[i].Characters
             }
         };
     }
@@ -369,7 +107,7 @@ int FindRadius(Coordinate point) {
         
         for (; row.x <= row.y; row.x ++) {
             for (; col.x <= col.y; col.x ++) {
-                if (!Board[row.x][col.x].primary) return radius;
+                if (!Board[row.x][col.x].route.primary) return radius;
             }
         }
     }
@@ -391,7 +129,7 @@ Coordinate RandCell(Coordinate start, int range, char factor) {
         point.y = rand() % radius.y + start.y;
 
         switch (factor) {
-            case 'P': value = Board[point.y][point.x].primary; break;
+            case 'P': value = Board[point.y][point.x].route.primary; break;
             case 'W': value = Board[point.y][point.x].wall; break;
             default: exit(1); // Unknown Factor
         }

@@ -1,4 +1,4 @@
-#include "logic.c"
+#include "move.c"
 
 
 // Graphical Function Prototypes
