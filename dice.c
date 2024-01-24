@@ -107,33 +107,29 @@ void DiceScreen(void) {
 
                 if(CheckCollisionPointRec(mouse , 
                   (Rectangle){
-                   xbtn , ybtn ,
+                   xbtn , ybtn , 
                    TEXTURE_SIZE ,TEXTURE_SIZE}
                 ))
                 {
 
-                //If Click Button
+                //If Click Button 
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-                    int number = rand() % 6 ;
+                    int number = (rand() % 6) +1;
 
                     if(!diceNumbers[index]){
 
                         diceNumbers[index] = number;
                         index = (index+1) % CAT_LENGTH;
                     }
+                    else if(!SameNumber(diceNumbers,CAT_LENGTH,&i,&j) && diceNumbers[CAT_LENGTH-1]) PlayScreen();
                     else{
-                        if(!SameNumber(diceNumbers,CAT_LENGTH,&i,&j)) break;
-                        else if(SameNumber(diceNumbers,CAT_LENGTH,&i,&j) && diceNumbers[CAT_LENGTH]) PlayScreen();
-                        else{
-                            do
-                            {
-                            SameNumber(diceNumbers,CAT_LENGTH,&i,&j);
-                            number = rand() % 6;
-                            diceNumbers[i] = number;
-                            } while (SameNumber(diceNumbers,CAT_LENGTH,&i,&j));
-                            
-                        }
-
+                        do
+                        {
+                        SameNumber(diceNumbers,CAT_LENGTH,&i,&j);
+                        number = (rand() % 6) +1;
+                        diceNumbers[i] = number;
+                        } while (SameNumber(diceNumbers,CAT_LENGTH,&i,&j));
+                        
                     }
                     
                 }
