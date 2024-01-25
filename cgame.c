@@ -2,27 +2,29 @@
 
 
 int main(void) { 
-    SetTargetFPS(FRAME_PER_SECOND);
 
     // Initialize Window
+    SetTargetFPS(FRAME_PER_SECOND);
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Mr. Clobber's Backyard");
     
     // Initialize Seed 
-    // srand(time(NULL));
+    srand(1); // time(NULL));
     
-    // Initialization
-    InitBoard(BOARD_SIZE);
-    InitScoreBoard();
+    // Initialize
+    InitBoard("Images/Board/", BOARD_SIZE);
+    InitScoreBoard("Images/Score Board/");
+    
+    #include <stdio.h>
 
-    // Main Screen For Now
+    // Main Screen for Now
     PlayScreen();
     
-    // Unload Textures From Memory
+    // Unload Textures from Memory
     for (int i = 0; i < SET_LENGTH; i++) {
-        UnloadTexture(CharacterSet[i].pathTexture.texture);
+        UnloadTexture(CharacterSet[i].pature.texture);
     }
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        UnloadTexture(ScoreBoard.PathTextures[i].texture);
+        UnloadTexture(ScoreBoard.Patures[i].texture);
     }
 
     CloseWindow();   

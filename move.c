@@ -19,7 +19,7 @@ void RefreshFish(Conduct);
 // Check Board Movements
 void CheckMove(void) {
     Coordinate endPoint = (
-        ScoreBoard.Users[ScoreBoard.turn].userCat.secondary -> point
+        ScoreBoard.Users[ScoreBoard.turn].cat.secondary -> point
     );
 
     // Processing Pressed Key
@@ -53,7 +53,7 @@ void CheckMove(void) {
     if (
         ScoreBoard.walk == PROPERTY_LENGTH 
         || 
-        !ScoreBoard.Users[ScoreBoard.turn].property.energy
+        !ScoreBoard.Users[ScoreBoard.turn].feature.energy
     ) FindNextTurn();
 }
 
@@ -66,19 +66,19 @@ void ProcessMove(Coordinate endPoint) {
     if (endConduct.primary) {
         switch (endConduct.primary -> type) {
             case 'P':
-                currentUser -> property.strength ++;
+                currentUser -> feature.strength ++;
                 break;
             case 'F':
                 int fishIndex = (
                     endConduct.secondary - endConduct.primary -> Characters
                 );
-                currentUser -> property.energy += (
+                currentUser -> feature.energy += (
                     fishIndex % PROPERTY_LENGTH + DIRECTION_COUNT
                 );
                 RefreshFish(endConduct);
                 break;
             case 'M':
-                currentUser -> property.score += (
+                currentUser -> feature.score += (
                     (10 - endConduct.primary -> n) / 2
                 );
                 currentUser -> Mice[currentUser -> n] = endConduct;
@@ -100,17 +100,17 @@ void ProcessMove(Coordinate endPoint) {
         }
     }
     ScoreBoard.walk ++;
-    currentUser -> property.energy --;
+    currentUser -> feature.energy --;
 
     // Move Character
-    Coordinate point = currentUser -> userCat.secondary -> point;
+    Coordinate point = currentUser -> cat.secondary -> point;
     Conduct tempConduct, *startConduct = &Board[point.y][point.x].route;
 
     // Middle Conduct Case
-    if (currentUser -> userCat.secondary -> inactive) {
-        tempConduct = currentUser -> userCat;
+    if (currentUser -> cat.secondary -> inactive) {
+        tempConduct = currentUser -> cat;
         startConduct = &tempConduct;
-        currentUser -> userCat.secondary -> inactive = false;
+        currentUser -> cat.secondary -> inactive = false;
     }
 
     MoveCharacter(startConduct, endPoint);
@@ -140,7 +140,7 @@ void FindNextTurn(void) {
 
     while (true) {
         for (;ScoreBoard.turn < USERS_NUMBER; ScoreBoard.turn ++) {
-            if (ScoreBoard.Users[ScoreBoard.turn].property.energy > 0)
+            if (ScoreBoard.Users[ScoreBoard.turn].feature.energy > 0)
                 return;
         }
 
@@ -154,7 +154,7 @@ void FindNextTurn(void) {
         // Increase Every User Energy
         UserProperty *property;
         for (int i = 0; i < USERS_NUMBER; i ++) {
-            property = &ScoreBoard.Users[i].property;
+            property = &ScoreBoard.Users[i].feature;
             property -> energy ++;
 
             // End of Freeze
@@ -220,9 +220,9 @@ void ConfrontCat(Coordinate endPoint) {
     loser = &ScoreBoard.Users[catIndex];
     
     if (
-        loser -> property.energy / loser -> property.strength
+        loser -> feature.energy / loser -> feature.strength
         >
-        winner -> property.energy / winner -> property.strength
+        winner -> feature.energy / winner -> feature.strength
     ) {
         User *tempUser = loser;
         winner = loser;
@@ -232,22 +232,22 @@ void ConfrontCat(Coordinate endPoint) {
     for (int i = 0; i < loser -> n; i ++) {
         winner -> Mice[winner -> n] = loser -> Mice[i];
         winner -> n ++;
-        winner -> property.score += (
+        winner -> feature.score += (
             (10 - loser -> Mice[i].primary -> n) / 2
         );
     }
     loser -> n = 0;
 
     int multiply, waste;
-    multiply = loser -> property.strength * loser -> property.energy;
-    waste = multiply / winner -> property.strength;
+    multiply = loser -> feature.strength * loser -> feature.energy;
+    waste = multiply / winner -> feature.strength;
 
-    if (waste > winner -> property.energy)
-        winner -> property.energy = 1;
-    else winner -> property.energy -= waste;
+    if (waste > winner -> feature.energy)
+        winner -> feature.energy = 1;
+    else winner -> feature.energy -= waste;
     
-    loser -> property = (UserProperty){0, 1, -3};
-    *loser -> userCat.secondary = (Character){
+    loser -> feature = (UserProperty){0, 1, -3};
+    *loser -> cat.secondary = (Character){
         MID_CELL, MID_CELL, true
     };
 }
@@ -259,7 +259,7 @@ bool ConfrontDog(Coordinate endPoint) {
     
     int dogIndex = Board[endPoint.y][endPoint.x].route.primary - CharacterSet;
     
-    catProperty = &currentUser -> property;
+    catProperty = &currentUser -> feature;
     dogProperty = &Dogs[dogIndex - USERS_NUMBER];
 
     if (
@@ -300,10 +300,10 @@ void ConfrontTrap(void) {
 
     // No Mouse to Release
     if (!currentUser -> n) {
-        if (currentUser -> property.strength > 2)
-            currentUser -> property.strength -= 2;
+        if (currentUser -> feature.strength > 2)
+            currentUser -> feature.strength -= 2;
         else
-            currentUser -> property.energy -= 3;
+            currentUser -> feature.energy -= 3;
         return;
     }
 
@@ -321,7 +321,7 @@ void ConfrontTrap(void) {
     );
 
     // Reduce Score
-    currentUser -> property.score -= (
+    currentUser -> feature.score -= (
         (10 - currentUser -> Mice[maxIndex].primary -> n) / 2
     );
 

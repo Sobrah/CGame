@@ -1,7 +1,7 @@
 #include <raylib.h>
 
 
-//  Global Const Variables
+// Global Variables
 #define WINDOW_WIDTH 1150
 #define WINDOW_HEIGHT 750
 #define FRAME_PER_SECOND 30
@@ -9,7 +9,7 @@
 #define USERS_NUMBER 4
 
 
-// For Ease of Access
+// for Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
 #define CELL_SIZE (WINDOW_HEIGHT / BOARD_SIZE)
 #define WINDOW_DELTA ((WINDOW_WIDTH - WINDOW_HEIGHT) / 2)
@@ -21,7 +21,7 @@
 typedef enum Direction {
     NORTH = -1,
     WEST = 1,
-    DIRECTION_COUNT // For Flexibility Purposes
+    DIRECTION_COUNT // for Flexibility Purposes
 } Direction;
 
 // Coordinate Struct
@@ -36,21 +36,20 @@ typedef struct Character {
 } Character;
 
 // Path & Texture struct
-typedef struct PathTexture {
+typedef struct Pature {
     const char *path; // Local Address
     Texture texture;
-} PathTexture;
+} Pature;
 
 // Character Type Struct
 typedef struct CharacterType {
     const char type;
-    PathTexture pathTexture;
+    Pature pature;
     const int n;
     Character Characters[BOARD_SIZE];
-    const bool fix; // Stable Position
 } CharacterType;
 
-// Conduct to a Character Struct
+// Conduct to Specific Character Struct
 typedef struct Conduct {
     CharacterType *primary;
     Character *secondary; 
@@ -69,8 +68,8 @@ typedef struct UserProperty {
 
 // User Struct
 typedef struct User {
-    UserProperty property;
-    Conduct userCat;
+    UserProperty feature;
+    Conduct cat;
     int n;
     Conduct Mice[BOARD_SIZE];
 } User;
@@ -78,7 +77,7 @@ typedef struct User {
 // Score Board Struct
 typedef struct ScoreBoardType {
     int round, turn, walk;
-    PathTexture PathTextures[PROPERTY_LENGTH];
+    Pature Patures[PROPERTY_LENGTH];
     User Users[USERS_NUMBER];
 } ScoreBoardType;
 
@@ -87,39 +86,39 @@ typedef struct ScoreBoardType {
 CharacterType CharacterSet[] = {
     
     // Cats
-    {'C', {"Images/Board/Purple Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}, true,
+    {'C', {"Purple Cat.svg"}, 1, 
+        {MID_CELL, MID_CELL, true}
     },
-    {'C', {"Images/Board/Blue Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}, true,
+    {'C', {"Green Cat.svg"}, 1, 
+        {MID_CELL, MID_CELL, true}
     },
-    {'C', {"Images/Board/Yellow Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}, true,
+    {'C', {"Yellow Cat.svg"}, 1, 
+        {MID_CELL, MID_CELL, true}
     },
-    {'C', {"Images/Board/Green Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}, true,
+    {'C', {"Blue Cat.svg"}, 1, 
+        {MID_CELL, MID_CELL, true}
     },
     
     // Dogs
-    {'D', {"Images/Board/Poodle.svg"}, 1},
-    {'D', {"Images/Board/Dog.svg"}, 1},
-    {'D', {"Images/Board/Fox.svg"}, 1},
-    {'D', {"Images/Board/Wolf.svg"}, 1},
+    {'D', {"Poodle.svg"}, 1},
+    {'D', {"Dog.svg"}, 1},
+    {'D', {"Fox.svg"}, 1},
+    {'D', {"Wolf.svg"}, 1},
     
     // Mice
-    {'M', {"Images/Board/White Mouse.svg"}, 8},
-    {'M', {"Images/Board/Blue Mouse.svg"}, 6},
-    {'M', {"Images/Board/Purple Mouse.svg"}, 4},
+    {'M', {"White Mouse.svg"}, 8},
+    {'M', {"Blue Mouse.svg"}, 6},
+    {'M', {"Purple Mouse.svg"}, 4},
 
     // House
-    {'H', {"Images/Board/House.svg"}, 1, 
-        {MID_CELL, MID_CELL}, true
+    {'H', {"House.svg"}, 1, 
+        {MID_CELL, MID_CELL}
     },
 
     // Traps, Fish & Chocolates
-    {'T', {"Images/Board/Trap.svg"}, 8},
-    {'F', {"Images/Board/Fish.svg"}, 10},
-    {'P', {"Images/Board/Chocolate.svg"}, 8}
+    {'T', {"Trap.svg"}, 8},
+    {'F', {"Fish.svg"}, 10},
+    {'P', {"Chocolate.svg"}, 8}
 };
 
 // Game Board
@@ -136,9 +135,9 @@ UserProperty Dogs[] = {
 // Score Board Information
 ScoreBoardType ScoreBoard = {
     1, 0, 0, {
-        {"Images/Score Board/Score.svg"},
-        {"Images/Score Board/Strength.svg"},
-        {"Images/Score Board/Energy.svg"}
+        {"Score.svg"},
+        {"Strength.svg"},
+        {"Energy.svg"}
     }
 };
 const UserProperty DEFAULT_USER_PROPERTY = {0, 2, 5};

@@ -6,8 +6,8 @@
 
 
 // Initialization
-void InitBoard(int);
-void InitScoreBoard(void);
+void InitBoard(char *, int);
+void InitScoreBoard(char *);
 
 // Randomness
 int FindRadius(Coordinate);
@@ -16,14 +16,14 @@ Coordinate RandCell(Coordinate, int, char);
 
 
 // Initialize Board
-void InitBoard(int walls) {
+void InitBoard(char *path, int walls) {
     for (int i = 0; i < SET_LENGTH; i++) {
         
         // Initialize Characters
         for (int j = 0; j < CharacterSet[i].n; j++) {            
             Coordinate *point = &CharacterSet[i].Characters[j].point;
 
-            if (!CharacterSet[i].fix) {
+            if (!CharacterSet[i].Characters[j].point.x) {
                 *point = RandCell((Coordinate){0, 0}, BOARD_SIZE, 'P');
             }
 
@@ -34,12 +34,14 @@ void InitBoard(int walls) {
         }
 
         // Initialize Texture
+        const char *text[2] = {path, CharacterSet[i].pature.path};
+        
         Image itemImage = LoadImageSvg(
-            CharacterSet[i].pathTexture.path,
+            TextJoin(text, 2, ""),
             CELL_SIZE,
             CELL_SIZE
         );
-        CharacterSet[i].pathTexture.texture = LoadTextureFromImage(itemImage);
+        CharacterSet[i].pature.texture = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
 
@@ -56,7 +58,7 @@ void InitBoard(int walls) {
 }
 
 // Initialize Score Board
-void InitScoreBoard(void) {
+void InitScoreBoard(char *path) {
     
     // Initialize Users
     for (int i = 0; i < USERS_NUMBER; i++) {
@@ -70,12 +72,14 @@ void InitScoreBoard(void) {
 
     // Load Textures
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
+        const char *text[2] = {path, ScoreBoard.Patures[i].path};
+        
         Image itemImage = LoadImageSvg(
-            ScoreBoard.PathTextures[i].path,
+            TextJoin(text, 2, ""),
             CELL_SIZE,
             CELL_SIZE
         );
-        ScoreBoard.PathTextures[i].texture = LoadTextureFromImage(itemImage);
+        ScoreBoard.Patures[i].texture = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
 }
@@ -87,7 +91,8 @@ Coordinate RadiusRandCell(Coordinate point) {
 
     return RandCell(
         (Coordinate) {
-            point.x - radius, point.y - radius
+            point.x - radius < 0 ? 0 : point.x - radius,
+            point.y - radius < 0 ? 0 : point.y - radius
         }, 2 * radius + 1, 'P'
     );
 }

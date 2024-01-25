@@ -2,18 +2,19 @@
 
 const Color LIGHTS[USERS_NUMBER] = {
     {190, 149, 196, 255},
-    {0, 180, 216, 255},
+    {85, 166, 48, 255},
     {255, 186, 8, 255},
-    {85, 166, 48, 255}
+    {0, 180, 216, 255}
 };
 const Color DARKS[USERS_NUMBER] = {
     {94, 84, 142, 255},
-    {0, 119, 182, 255},
-    {244, 140, 6, 255},
     {0, 127, 95, 255},
+    {244, 140, 6, 255},
+    {0, 119, 182, 255}
 };
 
 #define THICK 1
+#define WALL_THICK (PROPERTY_LENGTH * THICK)
 #define GROUND_COLOR (BROWN)
 #define BORDER_COLOR (DARKBROWN)
 #define WALL_COLOR (ORANGE)
@@ -51,7 +52,7 @@ void DrawCharacters(void) {
 
             point = CharacterSet[i].Characters[j].point; 
             DrawTexture(
-                CharacterSet[i].pathTexture.texture,
+                CharacterSet[i].pature.texture,
                 point.x * CELL_SIZE + WINDOW_DELTA,
                 point.y * CELL_SIZE, WHITE
             );
@@ -83,7 +84,7 @@ void DrawBoard(void) {
                 case NORTH: ePoint.x += CELL_SIZE; break;
                 case WEST: ePoint.y += CELL_SIZE; break;
             }
-            DrawLineEx(sPoint, ePoint, THICK, WALL_COLOR);
+            DrawLineEx(sPoint, ePoint, WALL_THICK, WALL_COLOR);
         }
     }
 
@@ -138,9 +139,9 @@ void DrawUserProperty(Coordinate start, int index) {
     DrawRectangleRec(rectangle, DARKS[index]);
     if (ScoreBoard.turn == index)
         DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[index]);
-    DrawRectangleLinesEx(rectangle, THICK, GROUND_COLOR);
+    DrawRectangleLinesEx(rectangle, THICK, BORDER_COLOR);
 
-    int *property = &ScoreBoard.Users[index].property.score;
+    int *property = &ScoreBoard.Users[index].feature.score;
 
     int fontSize = 1.2 * CELL_SIZE;
     int posY = start.y + CELL_SIZE;
@@ -148,14 +149,14 @@ void DrawUserProperty(Coordinate start, int index) {
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
         const char *text = TextFormat("%-3i", *(property + i));
 
-        int textureWidth = ScoreBoard.PathTextures[i].texture.width;  
+        int textureWidth = ScoreBoard.Patures[i].texture.width;  
         int textWidth = MeasureText(text, fontSize);
 
         int posX = start.x + (WINDOW_DELTA - textureWidth - textWidth) / 2;
         
         DrawText(text, posX, posY, fontSize, WHITE);
         DrawTexture(
-            ScoreBoard.PathTextures[i].texture,
+            ScoreBoard.Patures[i].texture,
             posX + textWidth, posY, WHITE
         );
 
