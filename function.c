@@ -30,7 +30,7 @@ void MenuScreen(void) {
         "Load Game"
     };
 
-    Rectangle *buttons[BUTTON_TYPE_MEMBER];
+    Rectangle  buttons[BUTTON_TYPE_MEMBER];
     while (!WindowShouldClose()) {
         CheckMove();
         
@@ -127,7 +127,7 @@ void DrawBoard(Color borderColor, int thick , Color wallColor) {
     );
 
     for (int i = 0; i < BOARD_SIZE; i++) {
-        for (int j = 0; j < BOARD_SIZE; j++) {
+        for (int j = 0; j < WINDOW_WIDTH / CELL_SIZE; j++) {
             int x = CELL_SIZE * j;
             int y = CELL_SIZE * i;
 
@@ -156,7 +156,7 @@ void DrawBoard(Color borderColor, int thick , Color wallColor) {
 // Draw Menu Screen 
 void DrawMenuScreen(Color borderColor , int thick ,
  char *btnlables[],
- Rectangle *buttons[]
+ Rectangle buttons[]
  )
 
  {
@@ -195,12 +195,12 @@ void DrawMenuScreen(Color borderColor , int thick ,
 
       
         //set rectangles info
-    /*
-        buttons[i]->x = x;
-        buttons[i]->y = y;
-        buttons[i]->width = recwidth ;
-        buttons[i]->height = recheight;
-    */ 
+    
+        buttons[i].x = x;
+        buttons[i].y = y;
+        buttons[i].width = recwidth ;
+        buttons[i].height = recheight;
+     
         
     }
 }
@@ -275,7 +275,7 @@ void CheckCollisionMouse(Rectangle *buttons) {
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
 
-            if(CheckCollisionPointRec(mouse, buttons[0]));
+            if(CheckCollisionPointRec(mouse, buttons[0]))exit(1);
             if(CheckCollisionPointRec(mouse, buttons[1]));
             if(CheckCollisionPointRec(mouse, buttons[2]));
         }
