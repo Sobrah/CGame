@@ -2,7 +2,7 @@
 
 
 //  Global Const Variables
-#define WINDOW_WIDTH 950
+#define WINDOW_WIDTH 1150
 #define WINDOW_HEIGHT 750
 #define FRAME_PER_SECOND 30
 #define BOARD_SIZE 15
@@ -12,7 +12,7 @@
 // For Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
 #define CELL_SIZE (WINDOW_HEIGHT / BOARD_SIZE)
-#define WINDOW_DELTA (WINDOW_WIDTH - WINDOW_HEIGHT)
+#define WINDOW_DELTA ((WINDOW_WIDTH - WINDOW_HEIGHT) / 2)
 #define PROPERTY_LENGTH (sizeof(UserProperty) / sizeof(int))
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
 

@@ -175,6 +175,8 @@ void MoveNPC(void) {
 
         // Every Character
         for (int j = 0; j < length; j++) {
+            if (CharacterSet[i].Characters[j].inactive) continue;
+
             Coordinate ePoint, sPoint = (
                 CharacterSet[i].Characters[j].point
             );
@@ -184,7 +186,7 @@ void MoveNPC(void) {
             switch (CharacterSet[i].type) {
                 case 'D': speed = Dogs[i - USERS_NUMBER].score; break;
                 case 'M': speed = (10 - length) / 2; break;
-                default: exit(2); // Unknown Operation
+                default: exit(1); // Unknown Operation
             }
             
             // Every Speed

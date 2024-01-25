@@ -1,13 +1,30 @@
 #include "move.c"
 
+const Color LIGHTS[USERS_NUMBER] = {
+    {190, 149, 196, 255},
+    {0, 180, 216, 255},
+    {255, 186, 8, 255},
+    {85, 166, 48, 255}
+};
+const Color DARKS[USERS_NUMBER] = {
+    {94, 84, 142, 255},
+    {0, 119, 182, 255},
+    {244, 140, 6, 255},
+    {0, 127, 95, 255},
+};
+
+#define THICK 1
+#define GROUND_COLOR (BROWN)
+#define BORDER_COLOR (DARKBROWN)
+#define WALL_COLOR (ORANGE)
+
 
 // Graphical Function Prototypes
 void PlayScreen(void);
 void DrawCharacters(void);
-void DrawScoreBoard(int, Color);
-void DrawBoard(Color, int, Color);
-void DrawScoreBoardTable(int, Color);
-
+void DrawBoard(void);
+void DrawScoreBoard(void);
+void DrawUserProperty(Coordinate, int);
 
 // Play Screen
 void PlayScreen(void) {
@@ -15,130 +32,133 @@ void PlayScreen(void) {
         CheckMove();
         
         BeginDrawing();
-            ClearBackground(BROWN);
-
+            ClearBackground(GROUND_COLOR);
+            DrawScoreBoard();
+            
             DrawCharacters();
-            DrawBoard(DARKBROWN, DIRECTION_COUNT, ORANGE);
-            DrawScoreBoard(DIRECTION_COUNT, DARKBROWN);
+            DrawBoard();
         EndDrawing();
     }
 }
 
-
-// Draw Score Board & Related Info
-void DrawScoreBoard(int thick, Color borderColor) {
-
-    DrawScoreBoardTable(thick, borderColor);
-
-    // Draw Round
-    int fontSize = 0.6 * CELL_SIZE;
-    const char *text = TextFormat("Round %02i", ScoreBoard.round);
-    DrawText(
-        text,
-        (WINDOW_WIDTH + WINDOW_HEIGHT - MeasureText(text, fontSize)) / 2,
-        (CELL_SIZE - fontSize) / 2,
-        fontSize, BLACK
-    );
-    
-    fontSize = 1.2 * CELL_SIZE;
-    int y = 2 * CELL_SIZE;
-    for (int i = 0; i < 2; i++) {
-        int *n = &ScoreBoard.Users[i].property.score;
-        for (int j = 0; j < PROPERTY_LENGTH; j++, y += 2 * CELL_SIZE, n++) {
-            const char *text = TextFormat("%i ", *n);
-            int textWidth = MeasureText(text, fontSize);
-            int width = textWidth + CELL_SIZE;
-            int textX = (WINDOW_WIDTH + WINDOW_HEIGHT - width) / 2;
-            DrawText(text, textX, y, fontSize, WHITE);
-
-            // Draw Score Board Icons
-            DrawTexture(
-                ScoreBoard.PathTextures[j].texture, textX + textWidth, y, WHITE
-            );
-        }
-        y += CELL_SIZE;
-    }
-}
-
-
-// Draw Score Board Table
-void DrawScoreBoardTable(int thick, Color borderColor) {
-    
-    // White Area
-    Vector2 position = {WINDOW_HEIGHT, 0};
-    Vector2 size = {WINDOW_DELTA, CELL_SIZE};
-    DrawRectangleV(position, size, WHITE);
-    
-    // Red Area
-    position.y += size.y;
-    size.y = (BOARD_SIZE - 1) * CELL_SIZE / 2;
-    DrawRectangleV(position, size, MAROON);
-    DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
-    
-    // Blue Area
-    position.y += size.y;
-    DrawRectangleV(position, size, DARKBLUE);
-    DrawLineEx(position, (Vector2){WINDOW_WIDTH, position.y}, thick, borderColor);
-
-    // Score Board Outline
-    DrawRectangleLinesEx(
-        (Rectangle){
-            WINDOW_HEIGHT - thick, 0,
-            WINDOW_DELTA + thick, WINDOW_HEIGHT
-        }, thick, borderColor
-    );
-}
-
-
-// Draw Board
-void DrawBoard(Color borderColor, int thick, Color wallColor) { 
-    
-    // Board Outline
-    DrawRectangleLinesEx(
-        (Rectangle){0, 0, WINDOW_HEIGHT, WINDOW_HEIGHT},
-        thick, borderColor
-    );
-
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        for (int j = 0; j < BOARD_SIZE; j++) {
-            int x = CELL_SIZE * j;
-            int y = CELL_SIZE * i;
-
-            // Draw Cell
-            DrawRectangleLines(
-                x, y, CELL_SIZE, CELL_SIZE, borderColor
-            );
-
-            if (!Board[i][j].wall) continue;
-
-            // Draw Wall
-            Vector2 endPoint, startPoint = {x, y};
-            endPoint = startPoint;
-
-            switch (Board[i][j].wall) {
-                case NORTH: endPoint.x += CELL_SIZE; break;
-                case WEST: endPoint.y += CELL_SIZE; break;
-            }
-
-            DrawLineEx(startPoint, endPoint, thick, wallColor);
-        }
-    }
-}
-
-
 // Draw Characters
 void DrawCharacters(void) {
     for (int i = 0; i < SET_LENGTH; i++) {
-        for (int j = 0; j < CharacterSet[i].n; j++) {
+        Coordinate point;
 
+        for (int j = 0; j < CharacterSet[i].n; j++) {
             if (CharacterSet[i].Characters[j].inactive) continue;
 
+            point = CharacterSet[i].Characters[j].point; 
             DrawTexture(
                 CharacterSet[i].pathTexture.texture,
-                CharacterSet[i].Characters[j].point.x * CELL_SIZE,
-                CharacterSet[i].Characters[j].point.y * CELL_SIZE,
-                WHITE
+                point.x * CELL_SIZE + WINDOW_DELTA,
+                point.y * CELL_SIZE, WHITE
             );
         }
+    }
+}
+
+// Draw Board
+void DrawBoard(void) { 
+    for (int i = 0; i < BOARD_SIZE; i++) {        
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            Vector2 ePoint, sPoint = {
+                CELL_SIZE * j + WINDOW_DELTA,
+                CELL_SIZE * i
+            };
+
+            // Draw Cell
+            DrawRectangleLinesEx(
+                (Rectangle){
+                    sPoint.x, sPoint.y, CELL_SIZE, CELL_SIZE
+                }, THICK, BORDER_COLOR
+            );
+
+            // Draw Wall
+            if (!Board[i][j].wall) continue;
+
+            ePoint = sPoint;
+            switch (Board[i][j].wall) {
+                case NORTH: ePoint.x += CELL_SIZE; break;
+                case WEST: ePoint.y += CELL_SIZE; break;
+            }
+            DrawLineEx(sPoint, ePoint, THICK, WALL_COLOR);
+        }
+    }
+
+    // Board Outline
+    DrawRectangleLinesEx(
+        (Rectangle){
+            0, 0, WINDOW_WIDTH, WINDOW_HEIGHT
+        }, THICK, BORDER_COLOR
+    );
+}
+
+// Draw Score Board & Related Info
+void DrawScoreBoard(void) {
+    Coordinate point = {0, 0};
+
+    for (int i = 0; i < USERS_NUMBER / 2; i++) {        
+
+        // Draw Round BackGround
+        Rectangle rectangle = {
+            point.x, point.y, WINDOW_DELTA, CELL_SIZE
+        };
+        DrawRectangleRec(rectangle, WHITE);
+        DrawRectangleLinesEx(rectangle, THICK, DARKBROWN);
+
+        // Draw Round Text
+        int posX, posY, fontSize = 0.8 * CELL_SIZE;
+        const char *text = TextFormat("Round %2i", ScoreBoard.round);
+
+        posX = point.x + (WINDOW_DELTA - MeasureText(text, fontSize)) / 2;
+        posY = point.y + (CELL_SIZE - fontSize) / 2;
+        DrawText(text, posX, posY, fontSize, BLACK);
+
+        // Draw User Property
+        posY = CELL_SIZE;
+        for (int j = 0; j < USERS_NUMBER / 2; j++) {
+            DrawUserProperty(
+                (Coordinate){point.x, posY}, 2 * i + j
+            );
+            posY += MID_CELL * CELL_SIZE;
+        }
+
+        point.x = WINDOW_DELTA + WINDOW_HEIGHT;
+    }
+}
+
+// Draw User Property
+void DrawUserProperty(Coordinate start, int index) {
+    Rectangle rectangle = {
+        start.x, start.y, WINDOW_DELTA, MID_CELL * CELL_SIZE
+    };
+    
+    DrawRectangleRec(rectangle, DARKS[index]);
+    if (ScoreBoard.turn == index)
+        DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[index]);
+    DrawRectangleLinesEx(rectangle, THICK, GROUND_COLOR);
+
+    int *property = &ScoreBoard.Users[index].property.score;
+
+    int fontSize = 1.2 * CELL_SIZE;
+    int posY = start.y + CELL_SIZE;
+
+    for (int i = 0; i < PROPERTY_LENGTH; i++) {
+        const char *text = TextFormat("%-3i", *(property + i));
+
+        int textureWidth = ScoreBoard.PathTextures[i].texture.width;  
+        int textWidth = MeasureText(text, fontSize);
+
+        int posX = start.x + (WINDOW_DELTA - textureWidth - textWidth) / 2;
+        
+        DrawText(text, posX, posY, fontSize, WHITE);
+        DrawTexture(
+            ScoreBoard.PathTextures[i].texture,
+            posX + textWidth, posY, WHITE
+        );
+
+        posY += 2 * CELL_SIZE;
     }
 }
