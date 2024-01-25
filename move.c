@@ -6,6 +6,7 @@ void CheckMove(void);
 void ProcessMove(Coordinate);
 void MoveCharacter(Conduct *, Coordinate);
 void FindNextTurn(void);
+void MoveNPC(void);
 void ReviveCharacter(Conduct, Coordinate);
 
 // Face Character
@@ -144,8 +145,13 @@ void FindNextTurn(void) {
         }
 
         // Finish Turn
+        ScoreBoard.round ++;
         ScoreBoard.turn = 0;
 
+        // Dogs & Mice Movement
+        MoveNPC();
+
+        // Increase Every User Energy
         UserProperty *property;
         for (int i = 0; i < USERS_NUMBER; i ++) {
             property = &ScoreBoard.Users[i].property;
@@ -159,6 +165,39 @@ void FindNextTurn(void) {
     }
 }
 
+// Move Non-Character Players
+void MoveNPC(void) {
+    int MAX = 2 * USERS_NUMBER + PROPERTY_LENGTH;
+
+    // Every Category Including Dogs & Mice
+    for (int i = USERS_NUMBER; i < MAX; i++) {
+        int length = CharacterSet[i].n;
+
+        // Every Character
+        for (int j = 0; j < length; j++) {
+            Coordinate ePoint, sPoint = (
+                CharacterSet[i].Characters[j].point
+            );
+            ePoint = sPoint;
+
+            int speed;
+            switch (CharacterSet[i].type) {
+                case 'D': speed = Dogs[i - USERS_NUMBER].score; break;
+                case 'M': speed = (10 - length) / 2; break;
+                default: exit(2); // Unknown Operation
+            }
+            
+            // Every Speed
+            for (int k = 0; k < speed; k++) {
+                ePoint = RadiusRandCell(sPoint);
+                MoveCharacter(&Board[sPoint.y][sPoint.x].route, ePoint);
+                
+                sPoint = ePoint;
+            }
+        }
+    }
+}
+
 // Revive Dead Character
 void ReviveCharacter(Conduct character, Coordinate point) {
     point = RadiusRandCell(point);
@@ -167,6 +206,7 @@ void ReviveCharacter(Conduct character, Coordinate point) {
     *character.secondary = (Character){point, false};
     Board[point.y][point.x].route = character;
 }
+
 
 // Facing Cat
 void ConfrontCat(Coordinate endPoint) { 
