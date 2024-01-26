@@ -1,45 +1,49 @@
 #include "info.c"
 
-// For Random Functionality
+// for Random Functionality
 #include <stdlib.h>
 #include <time.h>
 
 
-// Initialization
+#define MIN(a, b) (a < b ? a : b)
+#define MAX(a, b) (a > b ? a : b)
+
+
+// Initialize
 void InitBoard(char *, int);
 void InitScoreBoard(char *);
 
-// Randomness
-int FindRadius(Coordinate);
+// Randomize
 Coordinate RadiusRandCell(Coordinate);
-Coordinate RandCell(Coordinate, int, char);
+Coordinate RandCell(Coordinate, Coordinate, char);
 
 
 // Initialize Board
-void InitBoard(char *path, int walls) {
+void InitBoard(char *basePath, int walls) {
+    Coordinate finish = {
+        BOARD_SIZE - 1,
+        BOARD_SIZE - 1
+    }, start = {0, 0};
+
+    // Initialize Characters
     for (int i = 0; i < SET_LENGTH; i++) {
-        
-        // Initialize Characters
         for (int j = 0; j < CharacterSet[i].n; j++) {            
             Coordinate *point = &CharacterSet[i].Characters[j].point;
 
-            if (!CharacterSet[i].Characters[j].point.x) {
-                *point = RandCell((Coordinate){0, 0}, BOARD_SIZE, 'P');
-            }
+            if (!point -> x) *point = RandCell(start, finish, 'P');
 
-            Board[point -> y][point -> x] = (Cell){
+            // Add to Board
+            Board[point -> y][point -> x].route = (Conduct){
                 CharacterSet + i, 
                 CharacterSet[i].Characters + j
             };
         }
 
         // Initialize Texture
-        const char *text[2] = {path, CharacterSet[i].pature.path};
-        
+        const char *path[] = {basePath, CharacterSet[i].pature.path};
         Image itemImage = LoadImageSvg(
-            TextJoin(text, 2, ""),
-            CELL_SIZE,
-            CELL_SIZE
+            TextJoin(path, sizeof(path) / sizeof(char *), ""),
+            CELL_SIZE, CELL_SIZE
         );
         CharacterSet[i].pature.texture = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
@@ -49,7 +53,7 @@ void InitBoard(char *path, int walls) {
     for (int i = 0; i < walls; i++) {
         
         // Zero Is Not Valid
-        Coordinate point = RandCell((Coordinate){1, 1}, BOARD_SIZE - 1, 'W');
+        Coordinate point = RandCell((Coordinate){1, 1}, finish, 'W');
         
         Board[point.y][point.x].wall = (
             rand() % DIRECTION_COUNT ? WEST : NORTH
@@ -58,7 +62,7 @@ void InitBoard(char *path, int walls) {
 }
 
 // Initialize Score Board
-void InitScoreBoard(char *path) {
+void InitScoreBoard(char *basePath) {
     
     // Initialize Users
     for (int i = 0; i < USERS_NUMBER; i++) {
@@ -72,66 +76,52 @@ void InitScoreBoard(char *path) {
 
     // Load Textures
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        const char *text[2] = {path, ScoreBoard.Patures[i].path};
+        const char *path[] = {basePath, ScoreBoard.Patures[i].path};
         
         Image itemImage = LoadImageSvg(
-            TextJoin(text, 2, ""),
-            CELL_SIZE,
-            CELL_SIZE
+            TextJoin(path, sizeof(path) / sizeof(char *), ""),
+            CELL_SIZE, CELL_SIZE
         );
         ScoreBoard.Patures[i].texture = LoadTextureFromImage(itemImage);
         UnloadImage(itemImage);
     }
 }
 
-
-// Find Empty Random Cell Base on Coordinate
-Coordinate RadiusRandCell(Coordinate point) {
-    int radius = FindRadius(point);
-
-    return RandCell(
-        (Coordinate) {
-            point.x - radius < 0 ? 0 : point.x - radius,
-            point.y - radius < 0 ? 0 : point.y - radius
-        }, 2 * radius + 1, 'P'
-    );
-}
-
-// Find the First Empty Radius
-int FindRadius(Coordinate point) {
-    int radius, last = BOARD_SIZE - 1;
-    
+// Find Random Cell Base on Coordinate
+Coordinate RadiusRandCell(Coordinate point) {    
     for (int radius = 0; radius < BOARD_SIZE; radius ++) {
-        Coordinate row = {
-            point.y - radius > 0 ? point.y - radius : 0,
-            point.y + radius < last ? point.y + radius : last
-        }, col = {
-            point.x - radius > 0 ? point.x - radius : 0,
-            point.x + radius < last ? point.x + radius : last
-        };
+        Coordinate start = {
+            MAX(point.x - radius, 0),
+            MAX(point.y - radius, 0)
+        }, finish = {
+            MIN(point.x + radius, BOARD_SIZE - 1),
+            MIN(point.y + radius, BOARD_SIZE - 1)
+        }, current = start;
         
-        for (; row.x <= row.y; row.x ++) {
-            for (; col.x <= col.y; col.x ++) {
-                if (!Board[row.x][col.x].route.primary) return radius;
+        for (; current.y <= finish.y; current.y ++) {
+            for (; current.x <= finish.x; current.x ++) {
+                
+                // Find Empty Cell
+                if (!Board[current.y][current.x].route.primary)
+                    return RandCell(start, finish, 'P');
             }
         }
     }
+
+    // Unkown Behavior
+    exit(1);
 }
 
 // Find Empty Cell Base On Wall Or Primary
-Coordinate RandCell(Coordinate start, int range, char factor) {
-    bool value;
-    Coordinate point, end = {
-        start.x + range - 1,
-        start.y + range - 1
-    }, radius = {
-        end.x < BOARD_SIZE ? range : BOARD_SIZE - start.x,
-        end.y < BOARD_SIZE ? range : BOARD_SIZE - start.x
-    };
+Coordinate RandCell(Coordinate start, Coordinate finish, char factor) {
+    Coordinate point, range = {
+        finish.x - start.x + 1,
+        finish.y - start.y + 1
+    }; bool value;
 
     do {
-        point.x = rand() % radius.x + start.x;
-        point.y = rand() % radius.y + start.y;
+        point.x = rand() % range.x + start.x;
+        point.y = rand() % range.y + start.y;
 
         switch (factor) {
             case 'P': value = Board[point.y][point.x].route.primary; break;

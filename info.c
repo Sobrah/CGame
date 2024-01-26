@@ -15,6 +15,7 @@
 #define WINDOW_DELTA ((WINDOW_WIDTH - WINDOW_HEIGHT) / 2)
 #define PROPERTY_LENGTH (sizeof(UserProperty) / sizeof(int))
 #define SET_LENGTH (sizeof(CharacterSet) / sizeof(CharacterType))
+#define DOGS_NUMBER (sizeof(Dogs) / sizeof(UserProperty))
 
 
 // Main Directions
