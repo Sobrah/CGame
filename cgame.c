@@ -1,4 +1,4 @@
-#include "graphic.c"
+#include "menu.c"
 
 
 int main(void) { 
@@ -14,10 +14,9 @@ int main(void) {
     InitBoard("Images/Board/", BOARD_SIZE);
     InitScoreBoard("Images/Score Board/");
     
-    #include <stdio.h>
-
     // Main Screen for Now
-    PlayScreen();
+    MenuScreen();
+    // PlayScreen();
     
     // Unload Textures from Memory
     for (int i = 0; i < SET_LENGTH; i++) {
