@@ -1,6 +1,10 @@
 #include "graphic.c"
 
 
+void MenuScreen(void);
+void PlayScreen(void);
+
+
 // Menu Screen
 void MenuScreen(void) {
     int LABELS_LENGTH, FONT_SIZE = CELL_SIZE;
@@ -36,9 +40,9 @@ void MenuScreen(void) {
             if(CheckCollisionPointRec(point, Buttons[0])) 
                 PlayScreen();
             if(CheckCollisionPointRec(point, Buttons[1]))
-                exit(1);
+                SaveBoard();
             if(CheckCollisionPointRec(point, Buttons[2]))
-                exit(1);
+                LoadBoard();
         }
         
         BeginDrawing();
@@ -63,6 +67,21 @@ void MenuScreen(void) {
                     FONT_SIZE, WALL_COLOR 
                 );  
             } 
+        EndDrawing();
+    }
+}
+
+// Play Screen
+void PlayScreen(void) {
+    while (!WindowShouldClose()) {
+        CheckMove();
+        
+        BeginDrawing();
+            ClearBackground(GROUND_COLOR);
+            DrawScoreBoard();
+            
+            DrawCharacters();
+            DrawBoard();
         EndDrawing();
     }
 }

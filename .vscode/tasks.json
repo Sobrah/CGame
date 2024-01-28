@@ -9,7 +9,7 @@
                 "-g",
                 "${fileDirname}/cgame.c",
                 "-o",
-                "${fileDirname}/cgame",
+                "${fileDirname}/Data/cgame",
                 "-lraylib"
             ],
             "options": {

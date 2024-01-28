@@ -1,4 +1,4 @@
-#include "menu.c"
+#include "screen.c"
 
 
 int main(void) { 
@@ -15,8 +15,8 @@ int main(void) {
     InitScoreBoard("Images/Score Board/");
     
     // Main Screen for Now
-    MenuScreen();
-    // PlayScreen();
+    // MenuScreen();
+    PlayScreen();
     
     // Unload Textures from Memory
     for (int i = 0; i < SET_LENGTH; i++) {

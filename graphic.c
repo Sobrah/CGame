@@ -21,26 +21,11 @@ const Color DARKS[USERS_NUMBER] = {
 
 
 // Graphical Function Prototypes
-void PlayScreen(void);
 void DrawCharacters(void);
 void DrawBoard(void);
 void DrawScoreBoard(void);
 void DrawUserProperty(Coordinate, int);
 
-// Play Screen
-void PlayScreen(void) {
-    while (!WindowShouldClose()) {
-        CheckMove();
-        
-        BeginDrawing();
-            ClearBackground(GROUND_COLOR);
-            DrawScoreBoard();
-            
-            DrawCharacters();
-            DrawBoard();
-        EndDrawing();
-    }
-}
 
 // Draw Characters
 void DrawCharacters(void) {

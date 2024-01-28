@@ -1,6 +1,9 @@
 #include "info.c"
 
-// for Random Functionality
+// Save & Load Functionality
+#include <stdio.h>
+
+// Random Functionality
 #include <stdlib.h>
 #include <time.h>
 
@@ -16,6 +19,38 @@ void InitScoreBoard(char *);
 // Randomize
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
+
+
+
+void SaveBoard(void) {
+    FILE *file = fopen("Data/save", "wb");
+    if (!file) return;
+
+    for (int i = 0; i < SET_LENGTH; i++) {
+        fwrite(
+            CharacterSet[i].Characters,
+            sizeof(Character), CharacterSet[i].n, file
+        );
+    }
+    
+
+    fclose(file);
+}
+
+void LoadBoard(void) {
+    FILE *file = fopen("Data/save", "rb");
+    if (!file) return;
+    
+    for (int i = 0; i < SET_LENGTH; i++) {
+        fread(
+            CharacterSet[i].Characters,
+            sizeof(Character), CharacterSet[i].n, file
+        );
+    }
+
+    fclose(file);
+}
+
 
 
 // Initialize Board
