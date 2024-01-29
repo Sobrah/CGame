@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${fileDirname}/cgame.c",
+                "${fileDirname}/dice.c",
                 "-o",
                 "${fileDirname}/Data/cgame",
                 "-lraylib"
