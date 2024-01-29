@@ -22,8 +22,9 @@ Coordinate RandCell(Coordinate, Coordinate, char);
 
 
 
-void SaveBoard(void) {
+void SaveMatch(void) {
     FILE *file = fopen("Data/save", "wb");
+    
     if (!file) return;
 
     for (int i = 0; i < SET_LENGTH; i++) {
@@ -32,12 +33,26 @@ void SaveBoard(void) {
             sizeof(Character), CharacterSet[i].n, file
         );
     }
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            if (!Board[i][j].wall) continue;
+
+            Coordinate point = {j, i};
+            
+            fwrite(
+                &point, sizeof(Coordinate), 1, file 
+            );
+            fwrite(
+                &Board[i][j].wall, sizeof(Direction), 1, file
+            );
+        }
+    }
     
 
     fclose(file);
 }
 
-void LoadBoard(void) {
+void LoadMatch(void) {
     FILE *file = fopen("Data/save", "rb");
     if (!file) return;
     

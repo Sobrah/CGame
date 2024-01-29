@@ -40,9 +40,9 @@ void MenuScreen(void) {
             if(CheckCollisionPointRec(point, Buttons[0])) 
                 PlayScreen();
             if(CheckCollisionPointRec(point, Buttons[1]))
-                SaveBoard();
+                SaveMatch();
             if(CheckCollisionPointRec(point, Buttons[2]))
-                LoadBoard();
+                LoadMatch();
         }
         
         BeginDrawing();
