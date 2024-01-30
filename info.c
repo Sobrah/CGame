@@ -47,6 +47,7 @@ typedef struct CharacterType {
     const char type;
     Pature pature;
     const int n;
+    const bool fix;
     Character Characters[BOARD_SIZE];
 } CharacterType;
 
@@ -62,6 +63,11 @@ typedef struct Cell {
     Direction wall;
 } Cell;
 
+typedef struct WallType {
+    Coordinate point;
+    Direction wall;
+} WallType;
+
 // User Properties Struct
 typedef struct UserProperty {
     int score, strength, energy;
@@ -76,29 +82,24 @@ typedef struct User {
 } User;
 
 // Score Board Struct
-typedef struct ScoreBoardType {
+typedef struct ScoreType {
     int round, turn, walk;
     Pature Patures[PROPERTY_LENGTH];
     User Users[USERS_NUMBER];
-} ScoreBoardType;
+} ScoreType;
 
+
+// Game Board
+Cell Board[BOARD_SIZE][BOARD_SIZE];
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
     
     // Cats
-    {'C', {"Purple Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}
-    },
-    {'C', {"Green Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}
-    },
-    {'C', {"Yellow Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}
-    },
-    {'C', {"Blue Cat.svg"}, 1, 
-        {MID_CELL, MID_CELL, true}
-    },
+    {'C', {"Purple Cat.svg"}, 1, true},
+    {'C', {"Blue Cat.svg"}, 1, true},
+    {'C', {"Green Cat.svg"}, 1, true},
+    {'C', {"Yellow Cat.svg"}, 1, true},
     
     // Dogs
     {'D', {"Poodle.svg"}, 1},
@@ -112,7 +113,7 @@ CharacterType CharacterSet[] = {
     {'M', {"Purple Mouse.svg"}, 4},
 
     // House
-    {'H', {"House.svg"}, 1, 
+    {'H', {"House.svg"}, 1, true,
         {MID_CELL, MID_CELL}
     },
 
@@ -121,24 +122,25 @@ CharacterType CharacterSet[] = {
     {'F', {"Fish.svg"}, 10},
     {'P', {"Chocolate.svg"}, 8}
 };
-
-// Game Board
-Cell Board[BOARD_SIZE][BOARD_SIZE];
-
-// Dogs Information
-UserProperty Dogs[] = {
-    {5, 5, 30},
-    {2, 2, 15},
-    {3, 2, 20},
-    {1, 1, 5}
-};
+const Character DEFAULT_CAT = {MID_CELL, MID_CELL, true};
 
 // Score Board Information
-ScoreBoardType ScoreBoard = {
-    1, 0, 0, {
+ScoreType ScoreBoard = {
+    0, 0, 0, {
         {"Score.svg"},
         {"Strength.svg"},
         {"Energy.svg"}
     }
 };
-const UserProperty DEFAULT_USER_PROPERTY = {0, 2, 5};
+const UserProperty DEFAULT_PROPERTY = {0, 2, 5};
+
+// Dogs Information
+const UserProperty DEFAULT_DOGS[] = {
+    {5, 5, 30},
+    {2, 2, 15},
+    {3, 2, 20},
+    {1, 1, 5}
+};
+UserProperty Dogs[USERS_NUMBER];
+
+WallType Walls[BOARD_SIZE];

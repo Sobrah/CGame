@@ -1,9 +1,7 @@
-#include "graphic.c"
+#include "menu.c"
 
 
 void MenuScreen(void);
-void PlayScreen(void);
-void DiceScreen(void);
 
 
 Pature DICE_PATURES[] = {
@@ -22,78 +20,6 @@ Pature CAT_PATURES[] = {
     {"Yellow Cat.svg"},
     {"Blue Cat.svg"}
 };
-
-
-// Menu Screen
-void MenuScreen(void) {
-    
-    // Screen Labels
-    const char *Labels[] ={
-        "Start",
-        "New",
-        "Save",
-        "Load"
-    }; 
-    const int LABELS_LENGTH = sizeof(Labels) / sizeof(char *);
-
-    // Screen Buttons 
-    Rectangle Buttons[LABELS_LENGTH], rectangle = {
-        WINDOW_DELTA + CELL_SIZE,
-        CELL_SIZE,
-        5 * CELL_SIZE,
-        5 * CELL_SIZE
-    };
-
-    // Initialize Buttons
-    for (int i = 0; i < LABELS_LENGTH / 2; i++) {
-        for (int j = 0; j < LABELS_LENGTH / 2; j++) {
-            Buttons[2 * i + j] = rectangle;
-            Buttons[2 * i + j].x += j * (rectangle.width + 3 * CELL_SIZE);
-        }
-        rectangle.y += rectangle.height + 3 * CELL_SIZE;
-    }
-
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        
-            // Draw Background
-            ClearBackground(GROUND_COLOR);
-            DrawScoreBoard();
-            DrawCharacters();
-            DrawBoard();
-
-            // Draw Buttons
-            for(int i = 0; i < LABELS_LENGTH; i++){
-                DrawRectangleRec(Buttons[i], BORDER_COLOR);
-            
-                // Draw Text
-                int textWidth = MeasureText(Labels[i], CELL_SIZE);
-                DrawText(
-                    Labels[i], 
-                    Buttons[i].x + (Buttons[i].width - textWidth) / 2,
-                    Buttons[i].y + (Buttons[i].height - CELL_SIZE) / 2,
-                    CELL_SIZE, WALL_COLOR 
-                );  
-            } 
-        EndDrawing();
-
-        // Check Click
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            Vector2 point = GetMousePosition();
-
-            if(CheckCollisionPointRec(point, Buttons[0])) 
-                break;
-            if(CheckCollisionPointRec(point, Buttons[1]))
-                exit(1);
-            if(CheckCollisionPointRec(point, Buttons[2]))
-                exit(2);
-            if(CheckCollisionPointRec(point, Buttons[3]))
-                exit(2);
-        }
-    }
-    DiceScreen();
-}
-
 
 void DiceScreen(void) {
 
@@ -178,9 +104,31 @@ void DiceScreen(void) {
 
 // Play Screen
 void PlayScreen(void) {
-    
+        
+    // Initialize Texture
+    for (int i = 0; i < SET_LENGTH; i++) {
+        const char *path[] = {"Images/Board/", CharacterSet[i].pature.path};
+        Image picture = LoadImageSvg(
+            TextJoin(path, sizeof(path) / sizeof(char *), ""),
+            CELL_SIZE, CELL_SIZE
+        );
+        CharacterSet[i].pature.texture = LoadTextureFromImage(picture);
+        UnloadImage(picture);
+    }
+    // Load Textures
+    for (int i = 0; i < PROPERTY_LENGTH; i++) {
+        const char *path[] = {"Images/Score/", ScoreBoard.Patures[i].path};
+        
+        Image itemImage = LoadImageSvg(
+            TextJoin(path, sizeof(path) / sizeof(char *), ""),
+            CELL_SIZE, CELL_SIZE
+        );
+        ScoreBoard.Patures[i].texture = LoadTextureFromImage(itemImage);
+        UnloadImage(itemImage);
+    }
+        
     // Initialize
-    InitBoard("Images/Board/", BOARD_SIZE);
+    InitBoard(BOARD_SIZE);
     
     while (!WindowShouldClose()) {
         CheckMove();

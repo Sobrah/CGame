@@ -13,12 +13,10 @@
 
 
 // Initialize
-void InitBoard(char *, int);
 
 // Randomize
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
-
 
 
 
@@ -50,18 +48,19 @@ int CheckRepeat(int *Dice) {
 
 
 // Initialize Board
-void InitBoard(char *basePath, int walls) {
+void InitBoard() {
     Coordinate finish = {
         BOARD_SIZE - 1,
         BOARD_SIZE - 1
     }, start = {0, 0};
-
+    
     // Initialize Characters
     for (int i = 0; i < SET_LENGTH; i++) {
         for (int j = 0; j < CharacterSet[i].n; j++) {            
             Coordinate *point = &CharacterSet[i].Characters[j].point;
 
-            if (!point -> x) *point = RandCell(start, finish, 'P');
+            if (!CharacterSet[i].fix) 
+                *point = RandCell(start, finish, 'P');
 
             // Add to Board
             Board[point -> y][point -> x].route = (Conduct){
@@ -69,26 +68,19 @@ void InitBoard(char *basePath, int walls) {
                 CharacterSet[i].Characters + j
             };
         }
-
-        // Initialize Texture
-        const char *path[] = {basePath, CharacterSet[i].pature.path};
-        Image itemImage = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""),
-            CELL_SIZE, CELL_SIZE
-        );
-        CharacterSet[i].pature.texture = LoadTextureFromImage(itemImage);
-        UnloadImage(itemImage);
     }
 
     // Initialize Walls
-    for (int i = 0; i < walls; i++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
         
         // Zero Is Not Valid
         Coordinate point = RandCell((Coordinate){1, 1}, finish, 'W');
+        Direction side = rand() % DIRECTION_COUNT ? WEST : NORTH;
+
+        Walls[i].point = point;
+        Walls[i].wall = side;
         
-        Board[point.y][point.x].wall = (
-            rand() % DIRECTION_COUNT ? WEST : NORTH
-        );
+        Board[point.y][point.x].wall = side;
     }
 }
 
@@ -107,25 +99,13 @@ void InitScoreBoard(char *basePath, int *Order) {
         }
 
         ScoreBoard.Users[i] = (User) {
-            DEFAULT_USER_PROPERTY,
+            DEFAULT_PROPERTY,
             (Conduct){
                 CharacterSet + maxIndex, CharacterSet[maxIndex].Characters
             }
         };
 
         lastValue = Order[maxIndex];
-    }
-
-    // Load Textures
-    for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        const char *path[] = {basePath, ScoreBoard.Patures[i].path};
-        
-        Image itemImage = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""),
-            CELL_SIZE, CELL_SIZE
-        );
-        ScoreBoard.Patures[i].texture = LoadTextureFromImage(itemImage);
-        UnloadImage(itemImage);
     }
 }
 

@@ -11,7 +11,7 @@ int main(void) {
     srand(1); // time(NULL));
     
     // Initialize
-    InitBoard("Images/Board/", BOARD_SIZE);
+    InitBoard();
     
     
     DiceScreen();

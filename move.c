@@ -1,4 +1,4 @@
-#include "logic.c"
+#include "save.c"
 
 
 // Movements
@@ -162,7 +162,7 @@ void FindNextTurn(void) {
             property -> energy ++;
 
             // End of Freeze
-            if (!property -> energy) *property = DEFAULT_USER_PROPERTY;
+            if (!property -> energy) *property = DEFAULT_PROPERTY;
         }
     }
 }
