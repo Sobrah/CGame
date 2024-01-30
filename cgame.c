@@ -10,21 +10,7 @@ int main(void) {
     // Initialize Seed 
     srand(1); // time(NULL));
     
-    // Initialize
-    InitBoard("Images/Board/", BOARD_SIZE);
-    InitScoreBoard("Images/Score Board/");
+    MenuScreen();
     
-    // Main Screen for Now
-    // MenuScreen();
-    PlayScreen();
-    
-    // Unload Textures from Memory
-    for (int i = 0; i < SET_LENGTH; i++) {
-        UnloadTexture(CharacterSet[i].pature.texture);
-    }
-    for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        UnloadTexture(ScoreBoard.Patures[i].texture);
-    }
-
-    CloseWindow();   
+    CloseWindow();  
 }
