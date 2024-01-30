@@ -20,6 +20,35 @@ Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
 
 
+
+
+void LoadPatures(char *basePath, Pature *Patures, int n, int size) {
+    for (int i = 0; i < n; i++) {
+        const char *path[] = {basePath, Patures[i].path};
+        
+        Image picture = LoadImageSvg(
+            TextJoin(path, sizeof(path) / sizeof(char *), ""), 
+            size,
+            size
+        );
+        Patures[i].texture = LoadTextureFromImage(picture);
+        UnloadImage(picture);
+    }
+}
+
+// Check Repetitive Dice
+int CheckRepeat(int *Dice) {
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        for (int j = i + 1; j < USERS_NUMBER; j++) {
+            if (Dice[i] == Dice[j]) return i;
+        }
+    }
+    return USERS_NUMBER;
+}
+
+
+
+
 // Initialize Board
 void InitBoard(char *basePath, int walls) {
     Coordinate finish = {
@@ -64,16 +93,27 @@ void InitBoard(char *basePath, int walls) {
 }
 
 // Initialize Score Board
-void InitScoreBoard(char *basePath) {
+void InitScoreBoard(char *basePath, int *Order) {
     
     // Initialize Users
+    int lastValue = __INT_MAX__;
+
     for (int i = 0; i < USERS_NUMBER; i++) {
+        int maxIndex = 0;
+
+        for (int j = 0; j < USERS_NUMBER; j++) {
+            if (Order[maxIndex] < Order[j] && Order[j] < lastValue)
+                maxIndex = j;
+        }
+
         ScoreBoard.Users[i] = (User) {
             DEFAULT_USER_PROPERTY,
             (Conduct){
-                CharacterSet + i, CharacterSet[i].Characters
+                CharacterSet + maxIndex, CharacterSet[maxIndex].Characters
             }
         };
+
+        lastValue = Order[maxIndex];
     }
 
     // Load Textures

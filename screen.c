@@ -6,6 +6,24 @@ void PlayScreen(void);
 void DiceScreen(void);
 
 
+Pature DICE_PATURES[] = {
+    {"Craps.svg"},
+    {"One.svg"},
+    {"Two.svg"},
+    {"Three.svg"},
+    {"Four.svg"},
+    {"Five.svg"},
+   { "Six.svg"}
+};
+
+Pature CAT_PATURES[] = {
+    {"Purple Cat.svg"},
+    {"Green Cat.svg"},
+    {"Yellow Cat.svg"},
+    {"Blue Cat.svg"}
+};
+
+
 // Menu Screen
 void MenuScreen(void) {
     
@@ -34,10 +52,6 @@ void MenuScreen(void) {
         }
         rectangle.y += rectangle.height + 3 * CELL_SIZE;
     }
-    
-    // Initialize
-    InitBoard("Images/Board/", BOARD_SIZE);
-    InitScoreBoard("Images/Score/");
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -68,7 +82,7 @@ void MenuScreen(void) {
             Vector2 point = GetMousePosition();
 
             if(CheckCollisionPointRec(point, Buttons[0])) 
-                exit(0);
+                break;
             if(CheckCollisionPointRec(point, Buttons[1]))
                 exit(1);
             if(CheckCollisionPointRec(point, Buttons[2]))
@@ -77,130 +91,87 @@ void MenuScreen(void) {
                 exit(2);
         }
     }
+    DiceScreen();
 }
 
-
-#define TEXTURE_SIZE (PROPERTY_LENGTH * CELL_SIZE)
-#define CAT_LENGTH (sizeof(CAT_PATURES) / sizeof(Pature))
-#define DICE_LENGTH (sizeof(DICE_PATURES) / sizeof(Pature))
-
-
-Pature DICE_PATURES[] = {
-    {"Craps.svg"},
-    {"One.svg"},
-    {"Two.svg"},
-    {"Three.svg"},
-    {"Four.svg"},
-    {"Five.svg"},
-   { "Six.svg"}
-};
-
-Pature CAT_PATURES[] = {
-    {"Purple Cat.svg"},
-    {"Green Cat.svg"},
-    {"Yellow Cat.svg"},
-    {"Blue Cat.svg"}
-};
-
-Coordinate Dice[CAT_LENGTH];
-
-// Check Repetitive Dice
-int CheckRepeat(void) {
-    for (int i = 0; i < CAT_LENGTH; i++) {
-        for (int j = i + 1; j < CAT_LENGTH; j++) {
-            if (Dice[i].y == Dice[j].y) return i;
-        }
-    }
-    return CAT_LENGTH;
-}
-
-void LoadPatures(char *basePath, Pature *Patures, int n) {
-    for (int i = 0; i < n; i++) {
-        const char *path[] = {basePath, Patures[i].path};
-        
-        Image picture = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""),
-            TEXTURE_SIZE,
-            TEXTURE_SIZE
-        );
-
-        Patures[i].texture = LoadTextureFromImage(picture);
-
-        UnloadImage(picture);
-    }
-}
 
 void DiceScreen(void) {
 
-    // Load Dice Textures
-    LoadPatures("Images/Dice/", DICE_PATURES, DICE_LENGTH);
-    
-    // Load Cat Textures
-    LoadPatures("Images/Board/", CAT_PATURES, CAT_LENGTH);
+    // Load Textures
+    LoadPatures(
+        "Images/Dice/",
+        DICE_PATURES,
+        MID_CELL,
+        2 * CELL_SIZE
+    );
+    LoadPatures(
+        "Images/Board/", 
+        CAT_PATURES,
+        USERS_NUMBER,
+        3 * CELL_SIZE
+    );
 
     // Current User Index
-    int index = 0;
+    int Dice[USERS_NUMBER] = {0}, index = 0;
 
     while (!WindowShouldClose()) {
-        
-        // Set Textures Coordination
-        int xspace = (WINDOW_WIDTH - CAT_LENGTH * TEXTURE_SIZE) / (CAT_LENGTH + 1);
-        int x = xspace;
-        int y = TEXTURE_SIZE / 2;
-
         BeginDrawing();
             ClearBackground(GROUND_COLOR);
-            
+            DrawScoreBoard();
+            DrawBoard();
+
             // Draw Cat Textures
-            for (int i = 0 ; i < CAT_LENGTH; i++) {
-                DrawTexture(CAT_PATURES[i].texture, x, y, WHITE);
-                x += xspace + TEXTURE_SIZE;
+            int x = WINDOW_DELTA + CELL_SIZE, y = CELL_SIZE;
+            for (int i = 0 ; i < USERS_NUMBER / 2; i++) {
+                for (int j = 0; j < USERS_NUMBER / 2; j++) {
+                    DrawTexture(
+                        CAT_PATURES[2 * i + j].texture,
+                        x,
+                        y + j * (7 * CELL_SIZE),
+                        WHITE
+                    );
+                    DrawTexture(
+                        DICE_PATURES[Dice[2 * i + j]].texture,
+                        x + 0.5 * CELL_SIZE,
+                        5 * CELL_SIZE + j * (7 * CELL_SIZE),
+                        WHITE
+                    );
+                }
+                x += 10 * CELL_SIZE;
             }
-
-            // Draw Dice Texture
-            x = xspace;
-            y =  2 * TEXTURE_SIZE;
-
-            for(int i = 0 ; i < CAT_LENGTH && Dice[i].y;x += xspace + TEXTURE_SIZE , i++) {
-                DrawTexture(DICE_PATURES[Dice[i].y].texture, x,y,WHITE);
-            }
-            
-            // Draw Dice Button
-            int xbtn = (WINDOW_WIDTH - TEXTURE_SIZE) / 2;
-            int ybtn = (4 * TEXTURE_SIZE) - CELL_SIZE;
-
+            Rectangle button = {
+                WINDOW_DELTA + MID_CELL * CELL_SIZE - 0.5 * CELL_SIZE,
+                MID_CELL * CELL_SIZE - 0.5 * CELL_SIZE,
+                2 * CELL_SIZE,
+                2 * CELL_SIZE
+            };
             DrawTexture(
                 DICE_PATURES[0].texture,
-                xbtn, ybtn, WHITE
+                button.x, button.y,
+                WHITE
             );
         EndDrawing();
 
-        
-        bool checkCollision = CheckCollisionPointRec(
-            GetMousePosition(), 
-            (Rectangle){
-                xbtn, ybtn,
-                TEXTURE_SIZE, TEXTURE_SIZE
-            }
-        );
-        
         // Click Button 
-        if(!checkCollision || !IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            continue;
+        if(
+            !CheckCollisionPointRec(GetMousePosition(), button)
+            ||
+            !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
+        ) continue;
 
-        if (index < CAT_LENGTH) {
-            Dice[index].y = rand() % (DICE_LENGTH - 1) + 1;
-                index ++;
+        if (index < USERS_NUMBER) {
+            Dice[index] = rand() % 6 + 1;
+            index ++;
             continue;
         }
 
-        int i = CheckRepeat();
-
-        if(i == CAT_LENGTH) {
-            break;
+        int i = CheckRepeat(Dice);
+        if(i == USERS_NUMBER) {
+            InitScoreBoard("Images/Score/", Dice);
         }
-        while (CheckRepeat() <= i) {
-            Dice[i].y = rand() % (DICE_LENGTH - 1) + 1;
+
+        while (CheckRepeat(Dice) <= i) {
+            Dice[i] = rand() % 6 + 1;
         }
     }
 }

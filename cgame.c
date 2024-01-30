@@ -10,7 +10,11 @@ int main(void) {
     // Initialize Seed 
     srand(1); // time(NULL));
     
-    MenuScreen();
+    // Initialize
+    InitBoard("Images/Board/", BOARD_SIZE);
+    
+    
+    DiceScreen();
     
     CloseWindow();  
 }
