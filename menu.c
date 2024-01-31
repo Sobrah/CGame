@@ -9,7 +9,7 @@ const char *MENU_LABELS[] ={
 };
 
 void (*Functions[])(void) = {
-    DiceScreen, New, Save, Load
+    PlayScreen, New, Save, Load
 };
 
 

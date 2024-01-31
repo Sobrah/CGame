@@ -22,45 +22,10 @@ void LoadPature(char *basePath, Pature *pature, int size) {
     UnloadImage(picture);
 }
 
-// Initialize Board
-void InitBoard() {
-    Coordinate finish = {
-        BOARD_SIZE - 1,
-        BOARD_SIZE - 1
-    }, start = {0, 0};
-    
-    // Initialize Characters
-    for (int i = 0; i < SET_LENGTH; i++) {
-        for (int j = 0; j < CharacterSet[i].n; j++) {            
-            Coordinate *point = &CharacterSet[i].Characters[j].point;
 
-            if (!CharacterSet[i].fix) 
-                *point = RandCell(start, finish, 'P');
-
-            // Add to Board
-            Board[point -> y][point -> x].route = (Conduct){
-                CharacterSet + i, 
-                CharacterSet[i].Characters + j
-            };
-        }
-    }
-
-    // Initialize Walls
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        
-        // Zero Is Not Valid
-        Coordinate point = RandCell((Coordinate){1, 1}, finish, 'W');
-        Direction side = rand() % DIRECTION_COUNT ? WEST : NORTH;
-
-        Walls[i].point = point;
-        Walls[i].wall = side;
-        
-        Board[point.y][point.x].wall = side;
-    }
-}
 
 // Initialize Score Board
-void InitScoreBoard(char *basePath, int *Order) {
+void InitScoreBoard(int *Order) {
     
     // Initialize Users
     int lastValue = __INT_MAX__;

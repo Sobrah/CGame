@@ -30,8 +30,6 @@ int main(void) {
     New();
     MenuScreen();
     
-    CloseWindow();
-
     // Unload Textures
     for (int i = 0; i < SET_LENGTH; i++) {
         UnloadTexture(CharacterSet[i].pature.texture);
@@ -39,6 +37,7 @@ int main(void) {
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
         UnloadTexture(ScoreBoard.Patures[i].texture);
     }
-
     UnloadImage(ICON); 
+
+    CloseWindow();
 }

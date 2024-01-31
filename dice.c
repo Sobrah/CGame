@@ -99,7 +99,7 @@ void DiceScreen(void) {
 
         int i = CheckRepeat(Dice);
         if(i == USERS_NUMBER) {
-            InitScoreBoard("Images/Score/", Dice);
+            // InitScoreBoard("Images/Score/", Dice);
             // TO Do
         }
 

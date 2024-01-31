@@ -3,9 +3,8 @@
 
 // Play Screen
 void PlayScreen(void) {
-        
-    // Initialize
-    InitBoard(BOARD_SIZE);
+    int order[] = {1, 2, 3, 4};
+    InitScoreBoard(order);
     
     while (!WindowShouldClose()) {
         CheckMove();

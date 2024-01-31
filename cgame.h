@@ -93,8 +93,8 @@ typedef struct User {
 
 // Score Board Struct
 typedef struct ScoreType {
-    int round, turn, walk;
     Pature Patures[PROPERTY_LENGTH];
+    int round, turn, walk;
     User Users[USERS_NUMBER];
 } ScoreType;
 
@@ -125,8 +125,7 @@ void New(void);
 void Save(void);
 void Load(void);
 
-void InitBoard();
-void InitScoreBoard(char *basePath, int *Order);
+void InitScoreBoard(int *Order);
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
 void LoadPature(char *, Pature *, int);

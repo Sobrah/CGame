@@ -1,7 +1,9 @@
 #include "cgame.h"
 
+
 // Game Board
 Cell Board[BOARD_SIZE][BOARD_SIZE];
+Wall Walls[BOARD_SIZE];
 
 // Character Categories Storage
 CharacterType CharacterSet[] = {
@@ -37,11 +39,7 @@ const Character DEFAULT_CAT = {MID_CELL, MID_CELL, true};
 
 // Score Board Information
 ScoreType ScoreBoard = {
-    0, 0, 0, {
-        {"Score.svg"},
-        {"Strength.svg"},
-        {"Energy.svg"}
-    }
+    {{"Score.svg"}, {"Strength.svg"}, {"Energy.svg"}}
 };
 const UserProperty DEFAULT_PROPERTY = {0, 2, 5};
 
@@ -54,10 +52,41 @@ const UserProperty DEFAULT_DOGS[] = {
 };
 UserProperty Dogs[USERS_NUMBER];
 
-Wall Walls[BOARD_SIZE];
+// Initialize Board
+void InitBoard() {
+    Coordinate finish = {
+        BOARD_SIZE - 1,
+        BOARD_SIZE - 1
+    }, startZero = {0, 0}, startOne = {1, 1};
+    
+    // Initialize Characters
+    for (int i = 0; i < SET_LENGTH; i++) {
+        for (int j = 0; j < CharacterSet[i].n; j++) {            
+            Coordinate *point = &CharacterSet[i].Characters[j].point;
 
+            if (!CharacterSet[i].fix) 
+                *point = RandCell(startZero, finish, 'P');
 
+            // Add to Board
+            Board[point -> y][point -> x].route = (Conduct){
+                CharacterSet + i, 
+                CharacterSet[i].Characters + j
+            };
+        }
+    }
 
+    // Initialize Walls _ Zero Is Not Valid
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        Coordinate point; Direction side;
+        Walls[i] = (Wall){
+            point = RandCell(startOne, finish, 'W'),
+            side = rand() % DIRECTION_COUNT ? WEST : NORTH
+        };
+        Board[point.y][point.x].wall = side;
+    }
+}
+
+// Start New
 void New(void) {
 
     // Reset Board
@@ -67,14 +96,14 @@ void New(void) {
         }
     }
 
-    // Reset Character Set
+    // Reset Cats Positions
     for (int i = 0; i < USERS_NUMBER; i++) {
-        int length = CharacterSet[i].n;
-        
-        for (int j = 0; j < length; j++) {
+        for (int j = 0; j < CharacterSet[i].n; j++) {
             CharacterSet[i].Characters[j] = DEFAULT_CAT;
         }
     }
+
+    // Reset Character Set
     InitBoard(BOARD_SIZE);
 
     // Reset Score Board
