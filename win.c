@@ -13,14 +13,15 @@ void WinScreen() {
         "Back to Menu"
     };
    
-    const int MEDALL_LENGTH = sizeof(MEDALL_NAME) / sizeof(char *);
-    const int BTNLABLE_LENGTH = sizeof(BtnLable) / sizeof(char *);
-
-    char *StandNumber[MEDALL_LENGTH] ={
+   char *StandNumber[] ={
         "2",
         "1",
         "3"
     };
+    const int MEDALL_LENGTH = sizeof(StandNumber) / sizeof(char *);
+    const int BTNLABLE_LENGTH = sizeof(BtnLable) / sizeof(char *);
+
+    
 
     // Stand Rectangle
     Rectangle StandOrButton[MEDALL_LENGTH ] , rectangle={
@@ -51,13 +52,15 @@ void WinScreen() {
 
     //Load Medall Texture
             LoadPatures(
-                "Images/Win Board/",
+                "Images/Medalls/",
                 MEDALL_NAME,
                 MEDALL_LENGTH,
                 3 * CELL_SIZE
             );
 
-
+    //Check Winers
+    //TO DO
+    
     while(!WindowShouldClose()){
         BeginDrawing();
 
@@ -81,21 +84,44 @@ void WinScreen() {
                 DrawLine(startx,y,endx,y , GROUND_COLOR);
 
             // Draw Medall Texture
-            int medallx = WINDOW_DELTA + CELL_SIZE; int y = CELL_SIZE;
+            int x = WINDOW_DELTA + CELL_SIZE; int y = CELL_SIZE;
             for(int i = 0  ; i < MEDALL_LENGTH ; i++ )
-                DrawTexture(MEDALL_NAME[i].texture, medallx += i * (3*CELL_SIZE) ,y , WHITE);
+                DrawTexture(MEDALL_NAME[i].texture, x += i * (3*CELL_SIZE) ,y , WHITE);
             
-            // Draw Back To Menu Button
+            // Draw Back To Menu Button And Info
             DrawRectangleRec(Button,BORDER_COLOR);
 
+
+            int fontSize = 2 * CELL_SIZE;
+                
+                Vector2 point = GetMousePosition();
+                if(CheckCollisionPointRec(point , Button)) 
+                fontSize = 2.1 * CELL_SIZE;
+
                 //Draw Text 
-                int textwidth = MeasureText(BtnLable, 2 *CELL_SIZE);
+                int textwidth = MeasureText(BtnLable, fontSize);
                 DrawText(
                     BtnLable[BTNLABLE_LENGTH],
-                    Button.x + (Button.width - textwidth) / 2,
-                    Button.y + Button.height - 
+                    Button.x + (Button.width - textwidth) * 0.5,
+                    Button.y + (Button.height - textwidth) * 0.5,
+                    2 * CELL_SIZE,
+                    GOLD
                 );
 
+                // Draw Win Cats
+                //TO DO
+                
         EndDrawing();
+
+        //Check Click
+        if(CheckCollisionPointRec(point , Button))
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                MenuScreen();
+            }
     };
+
+    // Unload Texture From Memory
+    for(int i = 0 ; i < MEDALL_LENGTH ; i++){
+        UnloadTexture(MEDALL_NAME[i].texture);
+    }
 }
