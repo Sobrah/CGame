@@ -1,21 +1,8 @@
 #include "cgame.h"
 
+#define DICE_LENGTH (sizeof(DICE_PATURES) / sizeof(Pature))
 
 
-// Check Repetitive Dice
-int CheckRepeat(int *Dice) {
-    for (int i = 0; i < USERS_NUMBER; i++) {
-        for (int j = i + 1; j < USERS_NUMBER; j++) {
-            if (Dice[i] == Dice[j]) return i;
-        }
-    }
-    return USERS_NUMBER;
-}
-
-
-
-void DiceScreen(void) {
-    
 Pature DICE_PATURES[] = {
     {"Craps.svg"},
     {"One.svg"},
@@ -34,20 +21,27 @@ Pature CAT_PATURES[] = {
 };
 
 
+// Check Repetitive Dice
+int CheckRepeat(int *Dice) {
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        for (int j = i + 1; j < USERS_NUMBER; j++) {
+            if (Dice[i] == Dice[j]) return j;
+        }
+    }
+    return USERS_NUMBER;
+}
 
-    // Load Textures
-    LoadPatures(
-        "Images/Dice/",
-        DICE_PATURES,
-        MID_CELL,
-        2 * CELL_SIZE
-    );
-    LoadPatures(
-        "Images/Board/", 
-        CAT_PATURES,
-        USERS_NUMBER,
-        3 * CELL_SIZE
-    );
+void DiceScreen(void) {
+
+    // Load Dice Textures
+    for (int i = 0; i < DICE_LENGTH; i ++) {
+        LoadPature("Images/Dice", DICE_PATURES + i, 2 * CELL_SIZE);
+    }
+
+    // Load Cat Textures
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        LoadPature("Images/Board", CAT_PATURES + i, 3 * CELL_SIZE);
+    }
 
     // Current User Index
     int Dice[USERS_NUMBER] = {0}, index = 0;
@@ -106,59 +100,28 @@ Pature CAT_PATURES[] = {
         int i = CheckRepeat(Dice);
         if(i == USERS_NUMBER) {
             InitScoreBoard("Images/Score/", Dice);
+            // TO Do
         }
 
-        while (CheckRepeat(Dice) <= i) {
-            Dice[i] = rand() % 6 + 1;
-        }
-    }
-}
+        bool check = false;
+        do {
+            int value = rand() % 6 + 1;
 
-// Play Screen
-void PlayScreen(void) {
-        
-    // Initialize Texture
-    for (int i = 0; i < SET_LENGTH; i++) {
-        const char *path[] = {"Images/Board/", CharacterSet[i].pature.path};
-        Image picture = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""),
-            CELL_SIZE, CELL_SIZE
-        );
-        CharacterSet[i].pature.texture = LoadTextureFromImage(picture);
-        UnloadImage(picture);
-    }
-    // Load Textures
-    for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        const char *path[] = {"Images/Score/", ScoreBoard.Patures[i].path};
-        
-        Image itemImage = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""),
-            CELL_SIZE, CELL_SIZE
-        );
-        ScoreBoard.Patures[i].texture = LoadTextureFromImage(itemImage);
-        UnloadImage(itemImage);
-    }
-        
-    // Initialize
-    InitBoard(BOARD_SIZE);
-    
-    while (!WindowShouldClose()) {
-        CheckMove();
-        
-        BeginDrawing();
-            ClearBackground(GROUND_COLOR);
-            DrawScoreBoard();
-            
-            DrawCharacters();
-            DrawBoard();
-        EndDrawing();
+            check = true;
+            for (int i = 0; i < USERS_NUMBER; i++) {
+                if (value == Dice[i]) {
+                    check = false;
+                    break;
+                }
+            }
+        } while (!check);
     }
 
-        // Unload Textures from Memory
-    for (int i = 0; i < SET_LENGTH; i++) {
-        UnloadTexture(CharacterSet[i].pature.texture);
+    // Unload Textures
+    for (int i = 0; i < DICE_LENGTH; i++) {
+        UnloadTexture(DICE_PATURES[i].texture);
     }
-    for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        UnloadTexture(ScoreBoard.Patures[i].texture);
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        UnloadTexture(CAT_PATURES[i].texture);
     }
 }

@@ -43,30 +43,33 @@ void DrawCharacters(void) {
 
 // Draw Board
 void DrawBoard(void) { 
+    
+    // Draw Table
     for (int i = 0; i < BOARD_SIZE; i++) {        
         for (int j = 0; j < BOARD_SIZE; j++) {
-            Vector2 ePoint, sPoint = {
-                CELL_SIZE * j + WINDOW_DELTA,
-                CELL_SIZE * i
-            };
 
             // Draw Cell
             DrawRectangleLinesEx(
                 (Rectangle){
-                    sPoint.x, sPoint.y, CELL_SIZE, CELL_SIZE
+                    WINDOW_DELTA + CELL_SIZE * j, CELL_SIZE * i,
+                    CELL_SIZE, CELL_SIZE
                 }, THICK, BORDER_COLOR
             );
-
-            // Draw Wall
-            if (!Board[i][j].wall) continue;
-
-            ePoint = sPoint;
-            switch (Board[i][j].wall) {
-                case NORTH: ePoint.x += CELL_SIZE; break;
-                case WEST: ePoint.y += CELL_SIZE; break;
-            }
-            DrawLineEx(sPoint, ePoint, WALL_THICK, WALL_COLOR);
         }
+    }
+
+    // Draw Walls
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        Vector2 ePoint, sPoint = {
+            CELL_SIZE * Walls[i].point.x + WINDOW_DELTA,
+            CELL_SIZE * Walls[i].point.y,
+        }; ePoint = sPoint;
+
+        switch (Walls[i].wall) {
+            case NORTH: ePoint.x += CELL_SIZE; break;
+            case  WEST: ePoint.y += CELL_SIZE; break;
+        }
+        DrawLineEx(sPoint, ePoint, WALL_THICK, WALL_COLOR);
     }
 
     // Board Outline

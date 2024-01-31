@@ -2,14 +2,15 @@
 
 #define LABELS_LENGTH (sizeof(MENU_LABELS) / sizeof(char *))
 
+
 // Screen Labels
 const char *MENU_LABELS[] ={
-    "Start",
-    "New",
-    "Save",
-    "Load"
+    "Start", "New", "Save", "Load"
 };
 
+void (*Functions[])(void) = {
+    DiceScreen, New, Save, Load
+};
 
 
 // Menu Screen
@@ -42,7 +43,7 @@ void MenuScreen(void) {
             DrawBoard();
 
             // Draw Buttons
-            for(int i = 0; i < LABELS_LENGTH; i++){
+            for (int i = 0; i < LABELS_LENGTH; i++) {
                 DrawRectangleRec(Buttons[i], BORDER_COLOR);
             
                 // Draw Text
@@ -60,15 +61,10 @@ void MenuScreen(void) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             Vector2 point = GetMousePosition();
 
-            if(CheckCollisionPointRec(point, Buttons[0])) 
-                PlayScreen();
-            if(CheckCollisionPointRec(point, Buttons[1]))
-                New();
-            if(CheckCollisionPointRec(point, Buttons[2]))
-                exit(2);
-            if(CheckCollisionPointRec(point, Buttons[3]))
-                exit(2);
+            // Check Collision
+            for (int i = 0; i < LABELS_LENGTH; i++) {
+                if (CheckCollisionPointRec(point, Buttons[i])) Functions[i]();
+            }
         }
     }
-    DiceScreen();
 }

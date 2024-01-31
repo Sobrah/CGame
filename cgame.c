@@ -16,13 +16,29 @@ int main(void) {
     // Initialize Seed 
     srand(1); // time(NULL));
     
-    // Initialize
-    InitBoard();
     
+    // Load Character Set Textures
+    for (int i = 0; i < SET_LENGTH; i++) {
+        LoadPature("Images/Board", &CharacterSet[i].pature, CELL_SIZE);
+    }
     
-    DiceScreen();
+    // Load Score Board Textures
+    for (int i = 0; i < PROPERTY_LENGTH; i++) {
+        LoadPature("Images/Score", ScoreBoard.Patures + i, CELL_SIZE);
+    }
+
+    New();
+    MenuScreen();
     
-    CloseWindow(); 
+    CloseWindow();
+
+    // Unload Textures
+    for (int i = 0; i < SET_LENGTH; i++) {
+        UnloadTexture(CharacterSet[i].pature.texture);
+    }
+    for (int i = 0; i < PROPERTY_LENGTH; i++) {
+        UnloadTexture(ScoreBoard.Patures[i].texture);
+    }
 
     UnloadImage(ICON); 
 }

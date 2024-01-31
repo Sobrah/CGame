@@ -11,23 +11,16 @@
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
 
+void LoadPature(char *basePath, Pature *pature, int size) {
+    const char *path[] = {basePath, pature -> path};
 
-
-void LoadPatures(char *basePath, Pature *Patures, int n, int size) {
-    for (int i = 0; i < n; i++) {
-        const char *path[] = {basePath, Patures[i].path};
-        
-        Image picture = LoadImageSvg(
-            TextJoin(path, sizeof(path) / sizeof(char *), ""), 
-            size,
-            size
-        );
-        Patures[i].texture = LoadTextureFromImage(picture);
-        UnloadImage(picture);
-    }
+    Image picture = LoadImageSvg(
+        TextJoin(path, sizeof(path) / sizeof(char *), "/"), size, size
+    );
+    
+    pature -> texture = LoadTextureFromImage(picture);
+    UnloadImage(picture);
 }
-
-
 
 // Initialize Board
 void InitBoard() {

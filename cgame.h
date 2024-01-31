@@ -129,7 +129,7 @@ void InitBoard();
 void InitScoreBoard(char *basePath, int *Order);
 Coordinate RadiusRandCell(Coordinate);
 Coordinate RandCell(Coordinate, Coordinate, char);
-void LoadPatures(char *, Pature *, int, int);
+void LoadPature(char *, Pature *, int);
 
 void CheckMove(void);
 void DrawCharacters(void);
