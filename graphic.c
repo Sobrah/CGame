@@ -23,7 +23,7 @@ const Color DARKS[USERS_NUMBER] = {
 void DrawCharacters(void);
 void DrawBoard(void);
 void DrawScoreBoard(void);
-void DrawUserProperty(Coordinate, int);
+void DrawUserProperty(Coordinate, int, int);
 
 
 // Draw Characters
@@ -107,8 +107,14 @@ void DrawScoreBoard(void) {
         // Draw User Property
         posY = CELL_SIZE;
         for (int j = 0; j < USERS_NUMBER / 2; j++) {
+            int index;
+            for (index = 0; index < USERS_NUMBER; index ++) {
+                if (2 * i + j == ScoreBoard.Users[index].cat.primary - CharacterSet) {
+                    break;
+                }
+            }
             DrawUserProperty(
-                (Coordinate){point.x, posY}, 2 * i + j
+                (Coordinate){point.x, posY}, index, 2 * i + j
             );
             posY += MID_CELL * CELL_SIZE;
         }
@@ -118,22 +124,22 @@ void DrawScoreBoard(void) {
 }
 
 // Draw User Property
-void DrawUserProperty(Coordinate start, int index) {
+void DrawUserProperty(Coordinate start, int userIndex, int colorIndex) {
     Rectangle rectangle = {
         start.x, start.y, WINDOW_DELTA, MID_CELL * CELL_SIZE
     };
     
-    DrawRectangleRec(rectangle, DARKS[index]);
+    DrawRectangleRec(rectangle, DARKS[colorIndex]);
     
     int catIndex = (
         ScoreBoard.Users[ScoreBoard.turn].cat.primary - CharacterSet
     );
-    if (ScreenState == PLAY && catIndex == index)
-        DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[index]);
+    if (ScreenState == PLAY && catIndex == colorIndex)
+        DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[colorIndex]);
 
     DrawRectangleLinesEx(rectangle, THICK, BORDER_COLOR);
 
-    int *property = &ScoreBoard.Users[index].feature.score;
+    int *property = &ScoreBoard.Users[userIndex].feature.score;
 
     int fontSize = 1.2 * CELL_SIZE;
     int posY = start.y + CELL_SIZE;
