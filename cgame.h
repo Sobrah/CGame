@@ -1,5 +1,9 @@
 #include <raylib.h>
 
+// for Random Purposes
+#include <stdlib.h>
+#include <time.h>
+
 
 // Global Variables
 #define WINDOW_WIDTH 1150
@@ -8,6 +12,12 @@
 #define BOARD_SIZE 15
 #define USERS_NUMBER 4
 
+// Graphic Constants
+#define THICK 1
+#define WALL_THICK (PROPERTY_LENGTH * THICK)
+#define GROUND_COLOR (BROWN)
+#define BORDER_COLOR (DARKBROWN)
+#define WALL_COLOR (ORANGE)
 
 // for Ease of Access
 #define MID_CELL (BOARD_SIZE / 2)
@@ -63,10 +73,10 @@ typedef struct Cell {
     Direction wall;
 } Cell;
 
-typedef struct WallType {
+typedef struct Wall {
     Coordinate point;
     Direction wall;
-} WallType;
+} Wall;
 
 // User Properties Struct
 typedef struct UserProperty {
@@ -90,57 +100,38 @@ typedef struct ScoreType {
 
 
 // Game Board
-Cell Board[BOARD_SIZE][BOARD_SIZE];
+extern Cell Board[BOARD_SIZE][BOARD_SIZE];
+extern Wall Walls[BOARD_SIZE];
 
 // Character Categories Storage
-CharacterType CharacterSet[] = {
-    
-    // Cats
-    {'C', {"Purple Cat.svg"}, 1, true},
-    {'C', {"Blue Cat.svg"}, 1, true},
-    {'C', {"Green Cat.svg"}, 1, true},
-    {'C', {"Yellow Cat.svg"}, 1, true},
-    
-    // Dogs
-    {'D', {"Poodle.svg"}, 1},
-    {'D', {"Dog.svg"}, 1},
-    {'D', {"Fox.svg"}, 1},
-    {'D', {"Wolf.svg"}, 1},
-    
-    // Mice
-    {'M', {"White Mouse.svg"}, 8},
-    {'M', {"Blue Mouse.svg"}, 6},
-    {'M', {"Purple Mouse.svg"}, 4},
-
-    // House
-    {'H', {"House.svg"}, 1, true,
-        {MID_CELL, MID_CELL}
-    },
-
-    // Traps, Fish & Chocolates
-    {'T', {"Trap.svg"}, 8},
-    {'F', {"Fish.svg"}, 10},
-    {'P', {"Chocolate.svg"}, 8}
-};
-const Character DEFAULT_CAT = {MID_CELL, MID_CELL, true};
+extern CharacterType CharacterSet[BOARD_SIZE];
+extern const Character DEFAULT_CAT;
 
 // Score Board Information
-ScoreType ScoreBoard = {
-    0, 0, 0, {
-        {"Score.svg"},
-        {"Strength.svg"},
-        {"Energy.svg"}
-    }
-};
-const UserProperty DEFAULT_PROPERTY = {0, 2, 5};
+extern ScoreType ScoreBoard;
+extern const UserProperty DEFAULT_PROPERTY;
 
 // Dogs Information
-const UserProperty DEFAULT_DOGS[] = {
-    {5, 5, 30},
-    {2, 2, 15},
-    {3, 2, 20},
-    {1, 1, 5}
-};
-UserProperty Dogs[USERS_NUMBER];
+extern const UserProperty DEFAULT_DOGS[USERS_NUMBER];
+extern UserProperty Dogs[USERS_NUMBER];
 
-WallType Walls[BOARD_SIZE];
+
+// Function Prototypes
+void PlayScreen(void);
+void DiceScreen(void);
+void MenuScreen(void);
+
+void New(void);
+void Save(void);
+void Load(void);
+
+void InitBoard();
+void InitScoreBoard(char *basePath, int *Order);
+Coordinate RadiusRandCell(Coordinate);
+Coordinate RandCell(Coordinate, Coordinate, char);
+void LoadPatures(char *, Pature *, int, int);
+
+void CheckMove(void);
+void DrawCharacters(void);
+void DrawBoard(void);
+void DrawScoreBoard(void);

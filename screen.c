@@ -1,9 +1,21 @@
-#include "menu.c"
+#include "cgame.h"
 
 
-void MenuScreen(void);
+
+// Check Repetitive Dice
+int CheckRepeat(int *Dice) {
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        for (int j = i + 1; j < USERS_NUMBER; j++) {
+            if (Dice[i] == Dice[j]) return i;
+        }
+    }
+    return USERS_NUMBER;
+}
 
 
+
+void DiceScreen(void) {
+    
 Pature DICE_PATURES[] = {
     {"Craps.svg"},
     {"One.svg"},
@@ -21,7 +33,7 @@ Pature CAT_PATURES[] = {
     {"Blue Cat.svg"}
 };
 
-void DiceScreen(void) {
+
 
     // Load Textures
     LoadPatures(

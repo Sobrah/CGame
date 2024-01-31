@@ -1,4 +1,4 @@
-#include "move.c"
+#include "cgame.h"
 
 const Color LIGHTS[USERS_NUMBER] = {
     {190, 149, 196, 255},
@@ -13,11 +13,7 @@ const Color DARKS[USERS_NUMBER] = {
     {0, 119, 182, 255}
 };
 
-#define THICK 1
-#define WALL_THICK (PROPERTY_LENGTH * THICK)
-#define GROUND_COLOR (BROWN)
-#define BORDER_COLOR (DARKBROWN)
-#define WALL_COLOR (ORANGE)
+
 
 
 // Graphical Function Prototypes

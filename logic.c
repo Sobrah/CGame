@@ -1,11 +1,4 @@
-#include "info.c"
-
-// Save & Load Functionality
-#include <stdio.h>
-
-// Random Functionality
-#include <stdlib.h>
-#include <time.h>
+#include "cgame.h"
 
 
 #define MIN(a, b) (a < b ? a : b)
@@ -33,17 +26,6 @@ void LoadPatures(char *basePath, Pature *Patures, int n, int size) {
         UnloadImage(picture);
     }
 }
-
-// Check Repetitive Dice
-int CheckRepeat(int *Dice) {
-    for (int i = 0; i < USERS_NUMBER; i++) {
-        for (int j = i + 1; j < USERS_NUMBER; j++) {
-            if (Dice[i] == Dice[j]) return i;
-        }
-    }
-    return USERS_NUMBER;
-}
-
 
 
 

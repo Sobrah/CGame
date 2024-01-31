@@ -1,4 +1,6 @@
-#include "logic.c"
+#include "cgame.h"
+
+#include <stdio.h>
 
 Coordinate CondToCoor(Conduct route) {
     int primary, secondary;
@@ -8,7 +10,7 @@ Coordinate CondToCoor(Conduct route) {
     return (Coordinate){primary, secondary};
 }
 
-void save(void) {
+void Save(void) {
     FILE *file = fopen("Data/save", "wb");
     
     // Save Character Set
@@ -34,12 +36,12 @@ void save(void) {
     fwrite(Dogs, sizeof(UserProperty), DOGS_NUMBER, file);
 
     // Save Walls
-    fwrite(Walls, sizeof(WallType), BOARD_SIZE, file);
+    fwrite(Walls, sizeof(Wall), BOARD_SIZE, file);
 
     fclose(file);
 }
 
-void load(void) {
+void Load(void) {
     FILE *file = fopen("Data/save", "rb");
 
     // Empty Board
@@ -99,7 +101,7 @@ void load(void) {
     fread(Dogs, sizeof(UserProperty), DOGS_NUMBER, file);
 
     // Save Walls
-    fread(Walls, sizeof(WallType), BOARD_SIZE, file);
+    fread(Walls, sizeof(Wall), BOARD_SIZE, file);
     for (int i = 0; i < BOARD_SIZE; i++) {
         Coordinate point = Walls[i].point;
         Board[point.y][point.x].wall = Walls[i].wall;

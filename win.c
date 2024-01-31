@@ -1,9 +1,9 @@
-#include "graphic.c"
-
+#include "cgame.h"
+/*
 Pature MEDALL_NAME[] = {
-        {"silver medall.svg"},
-        {"gold medall.svg"},
-        {"bronze medall.svg"}
+    {"silver medall.svg"},
+    {"gold medall.svg"},
+    {"bronze medall.svg"}
 };
 
 // Win Screen
@@ -78,3 +78,4 @@ void WinScreen() {
         EndDrawing();
     };
 }
+*/

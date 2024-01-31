@@ -1,4 +1,4 @@
-#include "new.c"
+#include "cgame.h"
 
 #define LABELS_LENGTH (sizeof(MENU_LABELS) / sizeof(char *))
 
@@ -9,6 +9,8 @@ const char *MENU_LABELS[] ={
     "Save",
     "Load"
 };
+
+
 
 // Menu Screen
 void MenuScreen(void) {
@@ -61,7 +63,7 @@ void MenuScreen(void) {
             if(CheckCollisionPointRec(point, Buttons[0])) 
                 PlayScreen();
             if(CheckCollisionPointRec(point, Buttons[1]))
-                new();
+                New();
             if(CheckCollisionPointRec(point, Buttons[2]))
                 exit(2);
             if(CheckCollisionPointRec(point, Buttons[3]))

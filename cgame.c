@@ -1,16 +1,17 @@
-#include "screen.c"
+#include "cgame.h"
 
 
 int main(void) { 
-
+    
     // Initialize Window
     SetTargetFPS(FRAME_PER_SECOND);
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Mr. Clobber's Backyard");
     
-    Image picture = LoadImageSvg(
+    // Window Icon
+    Image ICON = LoadImageSvg(
         "Images/Board/Yellow Cat.svg", CELL_SIZE, CELL_SIZE
-    );
-    SetWindowIcon(picture);
+    ); 
+    SetWindowIcon(ICON);
 
     // Initialize Seed 
     srand(1); // time(NULL));
@@ -22,5 +23,6 @@ int main(void) {
     DiceScreen();
     
     CloseWindow(); 
-    UnloadImage(picture); 
+
+    UnloadImage(ICON); 
 }
