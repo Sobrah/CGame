@@ -295,7 +295,9 @@ void ConfrontTrap(void) {
         if (currentUser -> feature.strength > 2)
             currentUser -> feature.strength -= 2;
         else
-            currentUser -> feature.energy -= 3;
+            if (currentUser -> feature.energy -= 3 < 0) {
+                currentUser -> feature.energy = 0;
+            }
         return;
     }
 
