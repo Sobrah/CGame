@@ -34,13 +34,14 @@ int CheckRepeat(int *Dice) {
 void DiceScreen(void) {
 
     // Load Dice Textures
-    for (int i = 0; i < DICE_LENGTH; i ++) {
+    for (int i = 1; i < DICE_LENGTH; i ++) {
         LoadPature("Images/Dice", DICE_PATURES + i, 2 * CELL_SIZE);
     }
+    LoadPature("Images/Dice", DICE_PATURES , 3 * CELL_SIZE);
 
     // Load Cat Textures
     for (int i = 0; i < USERS_NUMBER; i++) {
-        LoadPature("Images/Board", CAT_PATURES + i, 3 * CELL_SIZE);
+        LoadPature("Images/Board", CAT_PATURES + i, 4* CELL_SIZE);
     }
 
     // Current User Index
@@ -53,7 +54,7 @@ void DiceScreen(void) {
             DrawBoard();
 
             // Draw Cat Textures
-            int x = WINDOW_DELTA + CELL_SIZE, y = CELL_SIZE;
+            int x = WINDOW_DELTA + CELL_SIZE, y = CELL_SIZE * 0.5;
             for (int i = 0 ; i < USERS_NUMBER / 2; i++) {
                 for (int j = 0; j < USERS_NUMBER / 2; j++) {
                     DrawTexture(
@@ -62,6 +63,7 @@ void DiceScreen(void) {
                         y + j * (7 * CELL_SIZE),
                         WHITE
                     );
+                    if(Dice[2 * i + j])
                     DrawTexture(
                         DICE_PATURES[Dice[2 * i + j]].texture,
                         x + 0.5 * CELL_SIZE,
@@ -69,8 +71,11 @@ void DiceScreen(void) {
                         WHITE
                     );
                 }
-                x += 10 * CELL_SIZE;
+                x += 9 * CELL_SIZE;
             }
+
+            
+
             Rectangle button = {
                 WINDOW_DELTA + MID_CELL * CELL_SIZE - 0.5 * CELL_SIZE,
                 MID_CELL * CELL_SIZE - 0.5 * CELL_SIZE,
