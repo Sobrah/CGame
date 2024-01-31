@@ -1,6 +1,10 @@
 #include "cgame.h"
 
 
+// Default Screen State
+State ScreenState = MENU;
+
+
 int main(void) { 
     
     // Initialize Window
@@ -8,14 +12,13 @@ int main(void) {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Mr. Clobber's Backyard");
     
     // Window Icon
-    Image ICON = LoadImageSvg(
+    const Image ICON = LoadImageSvg(
         "Images/Board/Yellow Cat.svg", CELL_SIZE, CELL_SIZE
     ); 
     SetWindowIcon(ICON);
 
     // Initialize Seed 
     srand(1); // time(NULL));
-    
     
     // Load Character Set Textures
     for (int i = 0; i < SET_LENGTH; i++) {
@@ -27,8 +30,16 @@ int main(void) {
         LoadPature("Images/Score", ScoreBoard.Patures + i, CELL_SIZE);
     }
 
+    // Start Game
     New();
-    MenuScreen();
+    while (!WindowShouldClose()) {
+        switch (ScreenState) {
+            case MENU: MenuScreen(); break;
+            case DICE: DiceScreen(); break;
+            case PLAY: PlayScreen(); break;
+            case WIN: break;
+        }
+    }
     
     // Unload Textures
     for (int i = 0; i < SET_LENGTH; i++) {

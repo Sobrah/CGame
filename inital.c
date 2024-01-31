@@ -10,8 +10,8 @@ CharacterType CharacterSet[] = {
     
     // Cats
     {'C', {"Purple Cat.svg"}, 1, true},
-    {'C', {"Blue Cat.svg"}, 1, true},
     {'C', {"Green Cat.svg"}, 1, true},
+    {'C', {"Blue Cat.svg"}, 1, true},
     {'C', {"Yellow Cat.svg"}, 1, true},
     
     // Dogs

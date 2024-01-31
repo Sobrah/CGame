@@ -8,8 +8,16 @@ const char *MENU_LABELS[] ={
     "Start", "New", "Save", "Load"
 };
 
+void SwitchScreen(void) {
+    if (ScoreBoard.Users[ScoreBoard.turn].cat.primary) {
+        ScreenState = PLAY;
+    } else {
+        ScreenState = DICE;
+    }
+}
+
 void (*Functions[])(void) = {
-    PlayScreen, New, Save, Load
+    SwitchScreen, New, Save, Load
 };
 
 
@@ -66,5 +74,6 @@ void MenuScreen(void) {
                 if (CheckCollisionPointRec(point, Buttons[i])) Functions[i]();
             }
         }
+        if (ScreenState != MENU) break;
     }
 }

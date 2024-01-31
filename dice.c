@@ -16,8 +16,8 @@ Pature DICE_PATURES[] = {
 Pature CAT_PATURES[] = {
     {"Purple Cat.svg"},
     {"Green Cat.svg"},
-    {"Yellow Cat.svg"},
-    {"Blue Cat.svg"}
+    {"Blue Cat.svg"},
+    {"Yellow Cat.svg"}
 };
 
 
@@ -34,10 +34,10 @@ int CheckRepeat(int *Dice) {
 void DiceScreen(void) {
 
     // Load Dice Textures
+    LoadPature("Images/Dice", DICE_PATURES , 3 * CELL_SIZE);
     for (int i = 1; i < DICE_LENGTH; i ++) {
         LoadPature("Images/Dice", DICE_PATURES + i, 2 * CELL_SIZE);
     }
-    LoadPature("Images/Dice", DICE_PATURES , 3 * CELL_SIZE);
 
     // Load Cat Textures
     for (int i = 0; i < USERS_NUMBER; i++) {
@@ -63,18 +63,17 @@ void DiceScreen(void) {
                         y + j * (7 * CELL_SIZE),
                         WHITE
                     );
-                    if(Dice[2 * i + j])
-                    DrawTexture(
-                        DICE_PATURES[Dice[2 * i + j]].texture,
-                        x + 0.5 * CELL_SIZE,
-                        5 * CELL_SIZE + j * (7 * CELL_SIZE),
-                        WHITE
-                    );
+                    if (Dice[2 * i + j]) {
+                        DrawTexture(
+                            DICE_PATURES[Dice[2 * i + j]].texture,
+                            x + CELL_SIZE,
+                            5 * CELL_SIZE + j * (7 * CELL_SIZE),
+                            WHITE
+                        );
+                    }
                 }
                 x += 9 * CELL_SIZE;
             }
-
-            
 
             Rectangle button = {
                 WINDOW_DELTA + MID_CELL * CELL_SIZE - 0.5 * CELL_SIZE,
@@ -88,6 +87,11 @@ void DiceScreen(void) {
                 WHITE
             );
         EndDrawing();
+
+        if (GetKeyPressed() == KEY_SPACE) {
+            ScreenState = MENU;
+            break;
+        }
 
         // Click Button 
         if(
@@ -103,18 +107,21 @@ void DiceScreen(void) {
         }
 
         int i = CheckRepeat(Dice);
-        if(i == USERS_NUMBER) {
-            // InitScoreBoard("Images/Score/", Dice);
-            // TO Do
+        if (i == USERS_NUMBER) {
+            InitScoreBoard(Dice);
+            ScreenState = PLAY;
+            break;
         }
 
         bool check = false;
         do {
-            int value = rand() % 6 + 1;
+            Dice[i] = rand() % 6 + 1;
 
             check = true;
-            for (int i = 0; i < USERS_NUMBER; i++) {
-                if (value == Dice[i]) {
+            for (int j = 0; j < USERS_NUMBER; j++) {
+                if (i == j) continue;
+                
+                if (Dice[i] == Dice[j]) {
                     check = false;
                     break;
                 }

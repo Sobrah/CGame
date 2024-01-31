@@ -31,18 +31,21 @@ void InitScoreBoard(int *Order) {
     int lastValue = __INT_MAX__;
 
     for (int i = 0; i < USERS_NUMBER; i++) {
-        int maxIndex = 0;
+        int maxIndex;
+        for (int j = 0; j < USERS_NUMBER; j++) {
+            if (Order[j] < lastValue) {
+                maxIndex = j;
+                break;
+            }
+        }
 
         for (int j = 0; j < USERS_NUMBER; j++) {
             if (Order[maxIndex] < Order[j] && Order[j] < lastValue)
                 maxIndex = j;
         }
 
-        ScoreBoard.Users[i] = (User) {
-            DEFAULT_PROPERTY,
-            (Conduct){
-                CharacterSet + maxIndex, CharacterSet[maxIndex].Characters
-            }
+        ScoreBoard.Users[i].cat = (Conduct){
+            CharacterSet + maxIndex, CharacterSet[maxIndex].Characters
         };
 
         lastValue = Order[maxIndex];

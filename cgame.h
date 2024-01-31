@@ -28,6 +28,14 @@
 #define DOGS_NUMBER (sizeof(Dogs) / sizeof(UserProperty))
 
 
+// Main Screen States
+typedef enum State {
+    MENU,
+    DICE,
+    PLAY,
+    WIN
+} State;
+
 // Main Directions
 typedef enum Direction {
     NORTH = -1,
@@ -98,6 +106,9 @@ typedef struct ScoreType {
     User Users[USERS_NUMBER];
 } ScoreType;
 
+
+// Screen State
+extern State ScreenState;
 
 // Game Board
 extern Cell Board[BOARD_SIZE][BOARD_SIZE];

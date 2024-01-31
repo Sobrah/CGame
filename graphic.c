@@ -1,16 +1,19 @@
 #include "cgame.h"
 
+
 const Color LIGHTS[USERS_NUMBER] = {
-    {190, 149, 196, 255},
-    {85, 166, 48, 255},
-    {255, 186, 8, 255},
-    {0, 180, 216, 255}
+    {190, 149, 196, 255}, // Purple
+    {85, 166, 48, 255}, // Green
+    {0, 180, 216, 255}, // Blue
+    {255, 186, 8, 255} // Yellow
+    
 };
 const Color DARKS[USERS_NUMBER] = {
-    {94, 84, 142, 255},
-    {0, 127, 95, 255},
-    {244, 140, 6, 255},
-    {0, 119, 182, 255}
+    {94, 84, 142, 255}, // Purple
+    {0, 127, 95, 255}, // Green
+    {0, 119, 182, 255}, // Blue
+    {244, 140, 6, 255} // Yellow
+    
 };
 
 
@@ -121,8 +124,13 @@ void DrawUserProperty(Coordinate start, int index) {
     };
     
     DrawRectangleRec(rectangle, DARKS[index]);
-    if (ScoreBoard.turn == index)
+    
+    int catIndex = (
+        ScoreBoard.Users[ScoreBoard.turn].cat.primary - CharacterSet
+    );
+    if (ScreenState == PLAY && catIndex == index)
         DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[index]);
+
     DrawRectangleLinesEx(rectangle, THICK, BORDER_COLOR);
 
     int *property = &ScoreBoard.Users[index].feature.score;
