@@ -10,9 +10,9 @@ Pature MEDAL_PATURES[] = {
 };
 
 char *StandNumber[] ={
-        "2",
-        "1",
-        "3"
+    "2",
+    "1",
+    "3"
 };
 
 char *CATS[] = {
@@ -77,8 +77,6 @@ void WinScreen() {
     User Users[USERS_NUMBER];
 
     // Copy Info
-    int order[] = {1, 2, 3, 4};
-    InitScoreBoard(order);
     for (int i = 0; i < USERS_NUMBER; i++) {
         Users[i] = ScoreBoard.Users[i];
     }
@@ -88,7 +86,7 @@ void WinScreen() {
     
     for (int i = 0; i < 3; i++) {
         int catIndex = Users[i].cat.primary - CharacterSet;
-        WINNER_PATURES[i].path = CATS[i];
+        WINNER_PATURES[i].path = CATS[catIndex];
         LoadPature(
             "Images/Board",
             WINNER_PATURES + i,
@@ -98,6 +96,12 @@ void WinScreen() {
     
 
     while(!WindowShouldClose()){
+        if (IsKeyDown(KEY_SPACE)) {
+            ScreenState = MENU;
+            New();
+            break;
+        }
+
         BeginDrawing();
 
             // Draw Background
@@ -149,15 +153,15 @@ void WinScreen() {
         EndDrawing();            
     };
 
-    // Save Winers
-    FILE *file = fopen("Data/Winers","wt");
+    // Save Winners
+    FILE *file = fopen("Data/Winners","wt");
 
     // File Error
-    if(!file) /* exit(1) */;
-    else
-        for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-            fprintf(file ,"%s\n",CATS[i]);
-        }
+    if(!file) return;
+    
+    for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
+        fprintf(file ,"%s\n",CATS[i]);
+    }
     
     fclose(file);
     

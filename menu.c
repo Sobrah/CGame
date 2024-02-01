@@ -3,11 +3,6 @@
 #define LABELS_LENGTH (sizeof(MENU_LABELS) / sizeof(char *))
 
 
-// Screen Labels
-const char *MENU_LABELS[] ={
-    "Start", "New", "Save", "Load"
-};
-
 void SwitchScreen(void) {
     if (ScoreBoard.Users[ScoreBoard.turn].cat.primary) {
         ScreenState = PLAY;
@@ -16,6 +11,12 @@ void SwitchScreen(void) {
     }
 }
 
+// Screen Labels
+const char *MENU_LABELS[] ={
+    "Start", "New", "Save", "Load"
+};
+
+// Labels Functions
 void (*Functions[])(void) = {
     SwitchScreen, New, Save, Load
 };
@@ -42,6 +43,8 @@ void MenuScreen(void) {
     }
 
     while (!WindowShouldClose()) {
+        
+    if (ScreenState != MENU) break;
         BeginDrawing();
         
             // Draw Background
@@ -74,6 +77,5 @@ void MenuScreen(void) {
                 if (CheckCollisionPointRec(point, Buttons[i])) Functions[i]();
             }
         }
-        if (ScreenState != MENU) break;
     }
 }

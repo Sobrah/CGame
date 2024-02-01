@@ -3,10 +3,12 @@
 
 // Play Screen
 void PlayScreen(void) {
-    
+
     while (!WindowShouldClose()) {
-        CheckMove();
+        if (ScreenState != PLAY) break;
         
+        CheckMove();
+
         if (IsKeyDown(KEY_SPACE)) {
             ScreenState = MENU;
             break;

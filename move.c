@@ -149,6 +149,11 @@ void FindNextTurn(void) {
         }
 
         // Finish Turn
+        if (ScoreBoard.round == BOARD_SIZE) {
+            ScreenState = WIN;
+            return;
+        }
+
         ScoreBoard.round ++;
         ScoreBoard.turn = 0;
 

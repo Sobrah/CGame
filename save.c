@@ -28,6 +28,8 @@ void Save(void) {
 
     // File Error
     if (!file) return;
+
+    if (!ScoreBoard.Users[ScoreBoard.turn].cat.primary) return;
     
     // Save Character Set
     for (int i = 0; i < SET_LENGTH; i++) {
@@ -43,7 +45,7 @@ void Save(void) {
     fwrite(&ScoreBoard.round, sizeof(int), 3, file); // Round, Turn, Walk
 
     for (int i = 0; i < USERS_NUMBER; i++) {
-        fwrite(ScoreBoard.Users + i, sizeof(UserProperty), 1, file);
+        fwrite(&ScoreBoard.Users[i].feature, sizeof(UserProperty), 1, file);
 
         Coordinate catPoint = Poindex(ScoreBoard.Users[i].cat);
         fwrite(&catPoint, sizeof(Coordinate), 1, file);
@@ -105,7 +107,7 @@ void Load(void) {
     fread(&ScoreBoard.round, sizeof(int), 3, file); // Round, Turn, Walk
 
     for (int i = 0; i < USERS_NUMBER; i++) {
-        fread(ScoreBoard.Users + i, sizeof(UserProperty), 1, file);
+        fread(&ScoreBoard.Users[i].feature, sizeof(UserProperty), 1, file);
         
         Coordinate catPoint;
         fread(&catPoint, sizeof(Coordinate), 1, file);

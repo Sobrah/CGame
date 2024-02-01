@@ -48,6 +48,11 @@ void DiceScreen(void) {
     int Dice[USERS_NUMBER] = {0}, index = 0;
 
     while (!WindowShouldClose()) {
+        if (IsKeyDown(KEY_SPACE)) {
+            ScreenState = MENU;
+            break;
+        }
+
         BeginDrawing();
             ClearBackground(GROUND_COLOR);
             DrawScoreBoard();
@@ -88,11 +93,6 @@ void DiceScreen(void) {
             );
         EndDrawing();
 
-        if (GetKeyPressed() == KEY_SPACE) {
-            ScreenState = MENU;
-            break;
-        }
-
         // Click Button 
         if(
             !CheckCollisionPointRec(GetMousePosition(), button)
@@ -109,6 +109,7 @@ void DiceScreen(void) {
         int i = CheckRepeat(Dice);
         if (i == USERS_NUMBER) {
             InitScoreBoard(Dice);
+            ScoreBoard.round ++;
             ScreenState = PLAY;
             break;
         }

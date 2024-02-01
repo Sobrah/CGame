@@ -2,7 +2,7 @@
 
 
 // Default Screen State
-State ScreenState = WIN;
+State ScreenState = MENU;
 
 
 int main(void) { 
@@ -18,7 +18,7 @@ int main(void) {
     SetWindowIcon(ICON);
 
     // Initialize Seed 
-    srand(1); // time(NULL));
+    srand(time(NULL));
     
     // Load Character Set Textures
     for (int i = 0; i < SET_LENGTH; i++) {
