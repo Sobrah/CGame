@@ -98,7 +98,10 @@ void Load(void) {
             if (CharacterSet[i].Characters[j].inactive) continue;
             
             Coordinate point = CharacterSet[i].Characters[j].point;
-            Board[point.y][point.x].route = Inpoint(point);
+            Board[point.y][point.x].route = (Conduct){
+                CharacterSet + i,
+                CharacterSet[i].Characters + j
+            };
         }
     }
 
