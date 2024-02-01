@@ -227,8 +227,8 @@ bool ConfrontCat(Coordinate endPoint) {
     }
 
     // Lose Mice
-    for (; loser -> n > 0; loser -> n --) {
-        winner -> Mice[winner -> n ++] = loser -> Mice[loser -> n];
+    for (; loser -> n > 0;) {
+        winner -> Mice[winner -> n ++] = loser -> Mice[-- loser -> n];
     }
     winner -> feature.score += loser -> feature.score;
 
@@ -254,7 +254,7 @@ bool ConfrontDog(Coordinate endPoint) {
     UserProperty *winner, *loser;
 
     int dogIndex = (
-        Board[endPoint.y][endPoint.x].route.primary - CharacterSet
+        Board[endPoint.y][endPoint.x].route.primary - CharacterSet - USERS_NUMBER
     );
     winner = &ScoreBoard.Users[ScoreBoard.turn].feature;
     loser = Dogs + dogIndex;
@@ -283,6 +283,7 @@ bool ConfrontDog(Coordinate endPoint) {
             MoveCharacter(
                 currentUser -> Mice + i, RadiusRandCell(endPoint)
             );
+            currentUser -> Mice[i].secondary -> inactive = false;
         }
         currentUser -> n = 0;
         currentUser -> feature = (UserProperty){0, 1, -3};
@@ -321,6 +322,7 @@ void ConfrontTrap(void) {
     MoveCharacter(
         currentUser -> Mice + maxIndex, RadiusRandCell(point)
     );
+    currentUser -> Mice[maxIndex].secondary -> inactive = false;
 
     // Reduce Score
     currentUser -> feature.score -= (
