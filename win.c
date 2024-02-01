@@ -108,7 +108,7 @@ void WinScreen() {
     if(!file) return;
     
     for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-        fprintf(file ,"%d\. %s\n", i, CATS[i]);
+        fprintf(file ,"%d\. %s\n", i, CAT_NAMES[i]);
     }
     
     fclose(file);
