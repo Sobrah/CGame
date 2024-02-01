@@ -2,7 +2,7 @@
 
 
 // Default Screen State
-State ScreenState = MENU;
+State ScreenState = WIN;
 
 
 int main(void) { 

@@ -1,6 +1,6 @@
 #include "cgame.h"
 
-#define MEDAL_LENGTH (sizeof(StandNumber) / sizeof(char))
+#define MEDAL_LENGTH (sizeof(MEDAL_PATURES) / sizeof(Pature))
 
 Pature MEDAL_PATURES[] = {
     {"Silver Medal.svg"},
@@ -8,13 +8,41 @@ Pature MEDAL_PATURES[] = {
     {"Bronze Medal.svg"}
 };
 
+char *StandNumber[] ={
+        "2",
+        "1",
+        "3"
+};
+
+char *CATS[] = {
+    "Purple Cat.svg",
+    "Green Cat.svg",
+    "Blue Cat.svg",
+    "Yellow Cat.svg"
+};
+
+int CompareProperty(const void *p1, const void *p2) {
+    const User *u1 = p1; 
+    const User *u2 = p2;
+    if (u1 -> feature.score > u2 -> feature.score) return -1;
+    if (u2 -> feature.score > u1 -> feature.score) return 1;
+    
+    if (u1 -> feature.strength > u2 -> feature.strength) return -1;
+    if (u2 -> feature.strength > u1 -> feature.strength) return 1;
+
+    if (u1 -> feature.energy > u2 -> feature.energy) return -1;
+    if (u2 -> feature.energy > u1 -> feature.energy) return 1;
+
+    return 0;
+}
+
+
 // Win Screen
 void WinScreen() {
-    char *StandNumber[] ={
-        "2th",
-        "1th",
-        "3th"
-    };
+    // Load Medal Texture
+    for (int i = 0; i < MEDAL_LENGTH; i++) {
+        LoadPature("Images/Medal", MEDAL_PATURES + i, 3 * CELL_SIZE);
+    }
 
     // Stand Rectangle
     Rectangle Stands[MEDAL_LENGTH], rectangle={
@@ -43,19 +71,37 @@ void WinScreen() {
     int endX = startX + 9 * CELL_SIZE;
     int y = 11 * CELL_SIZE;
 
-    // Load Medal Texture
-    for (int i = 0; i < MEDAL_LENGTH; i++) {
-        LoadPature("Images/Medal", MEDAL_PATURES + i, 3 * CELL_SIZE);
+    // Check Winners
+    Pature WINNER_PATURES[3];
+    User Users[USERS_NUMBER];
+
+    // Copy Info
+    int order[] = {1, 2, 3, 4};
+    InitScoreBoard(order);
+    for (int i = 0; i < USERS_NUMBER; i++) {
+        Users[i] = ScoreBoard.Users[i];
     }
 
-    // Check Winners
-    // TO DO
+    // Sort
+    qsort(Users, USERS_NUMBER, sizeof(User), CompareProperty);
+    
+    for (int i = 0; i < 3; i++) {
+        int catIndex = Users[i].cat.primary - CharacterSet;
+        WINNER_PATURES[i].path = CATS[i];
+        LoadPature(
+            "Images/Board",
+            WINNER_PATURES + i,
+            3 * CELL_SIZE
+        );
+    }
     
     while(!WindowShouldClose()){
         BeginDrawing();
 
             // Draw Background
             ClearBackground(GROUND_COLOR);
+            DrawScoreBoard();
+            DrawBoard();
 
             //Draw Strands
             for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
@@ -77,41 +123,15 @@ void WinScreen() {
             int x = WINDOW_DELTA + CELL_SIZE; int y = CELL_SIZE;
             for (int i = 0  ; i < MEDAL_LENGTH ; i++)
                 DrawTexture(MEDAL_PATURES[i].texture, x += i * (3 * CELL_SIZE), y, WHITE);
-            
-            // Draw Back To Menu Button And Info
-            DrawRectangleRec(Button, BORDER_COLOR);
 
-            int fontSize = 2 * CELL_SIZE;
-                
-            Vector2 point = GetMousePosition();
-            if (CheckCollisionPointRec(point , Button)) 
-                fontSize = 2.1 * CELL_SIZE;
-
-            //Draw Text 
-            /*
-            int textWidth = MeasureText(StandNumber, fontSize);
-                DrawText(
-                    StandNumber[MEDAL_LENGTH],
-                    Button.x + (Button.width - textWidth) * 0.5,
-                    Button.y + (Button.height - textWidth) * 0.5,
-                    2 * CELL_SIZE,
-                    GOLD
-            */
-
-                // Draw Win Cats
-                //TO DO
-                
-        EndDrawing();
-
-        //Check Click
-        if(CheckCollisionPointRec(point , Button))
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-                MenuScreen();
-            }
+        EndDrawing();            
     };
 
     // Unload Textures
     for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
         UnloadTexture(MEDAL_PATURES[i].texture);
+    }
+    for (int i = 0; i < 3; i++) {
+        UnloadTexture(WINNER_PATURES[i].texture);
     }
 }
