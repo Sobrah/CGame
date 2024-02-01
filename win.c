@@ -94,7 +94,18 @@ void WinScreen() {
         );
     }
     
+    // Save Winners
+    FILE *file = fopen("Data/Winners","wt");
 
+    // File Error
+    if(!file) return;
+    
+    for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
+        fprintf(file ,"%s\n",CATS[i]);
+    }
+    
+    fclose(file);
+    
     while(!WindowShouldClose()){
         if (IsKeyDown(KEY_SPACE)) {
             ScreenState = MENU;
@@ -152,20 +163,7 @@ void WinScreen() {
 
         EndDrawing();            
     };
-
-    // Save Winners
-    FILE *file = fopen("Data/Winners","wt");
-
-    // File Error
-    if(!file) return;
     
-    for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-        fprintf(file ,"%s\n",CATS[i]);
-    }
-    
-    fclose(file);
-    
-
     // Unload Textures
     for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
         UnloadTexture(MEDAL_PATURES[i].texture);
