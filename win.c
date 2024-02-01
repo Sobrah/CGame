@@ -94,7 +94,7 @@ void WinScreen() {
         );
     }
     
-    char *CAT_NAMES = {
+    char *CAT_NAMES[] = {
         "Purple Cat",
         "Green Cat",
         "Blue Cat",
@@ -108,7 +108,7 @@ void WinScreen() {
     if(!file) return;
     
     for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-        fprintf(file ,"%d\. %s\n", i, CAT_NAMES[i]);
+        fprintf(file ,"%d %s\n", i, CAT_NAMES[i]);
     }
     
     fclose(file);
