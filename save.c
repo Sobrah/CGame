@@ -24,12 +24,12 @@ Conduct Inpoint(Coordinate point) {
 
 // Save Game State
 void Save(void) {
+    if (!ScoreBoard.Users[ScoreBoard.turn].cat.primary) return;
+
     FILE *file = fopen("Data/save", "wb");
 
     // File Error
     if (!file) return;
-
-    if (!ScoreBoard.Users[ScoreBoard.turn].cat.primary) return;
     
     // Save Character Set
     for (int i = 0; i < SET_LENGTH; i++) {
