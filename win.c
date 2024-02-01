@@ -47,16 +47,16 @@ void WinScreen() {
 
     // Stand Rectangle
     Rectangle Stands[MEDAL_LENGTH], rectangle={
-        3 * CELL_SIZE + WINDOW_DELTA,
+        1.5 * CELL_SIZE + WINDOW_DELTA,
         8 * CELL_SIZE,
-        3 * CELL_SIZE,
+        4 * CELL_SIZE,
         3 * CELL_SIZE
     };
 
     // Initialize Stands
     for (int i = 0 ; i < MEDAL_LENGTH; i++) {
         Stands[i] = rectangle;
-        Stands[i].x += i * (3 * CELL_SIZE); 
+        Stands[i].x += i * (4 * CELL_SIZE); 
     }
 
     // Initialize Buttons
@@ -143,20 +143,28 @@ void WinScreen() {
 
             // Draw  Win Cats
             // Cat 2
-            DrawTexture(WINNER_PATURES[0].texture,
-            3 * CELL_SIZE + WINDOW_DELTA,
+            DrawTexture(WINNER_PATURES[1].texture,
+            2 * CELL_SIZE + WINDOW_DELTA,
             5 * CELL_SIZE,
             WHITE
             );
+            //Draw Cat 1 Stand
+            DrawRectangle(
+             6 * CELL_SIZE + WINDOW_DELTA,
+             7 * CELL_SIZE,
+             3 * CELL_SIZE,
+             CELL_SIZE   ,
+             BORDER_COLOR
+            );
             // Cat 1 
-            DrawTexture(WINNER_PATURES[1].texture,
+            DrawTexture(WINNER_PATURES[0].texture,
             6 * CELL_SIZE + WINDOW_DELTA,
             4 * CELL_SIZE,
             WHITE
             );
             // Cat 3
             DrawTexture(WINNER_PATURES[2].texture,
-            9 * CELL_SIZE + WINDOW_DELTA,
+            10 * CELL_SIZE + WINDOW_DELTA,
             5 * CELL_SIZE,
             WHITE
             );
