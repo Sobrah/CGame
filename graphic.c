@@ -135,7 +135,7 @@ void DrawUserProperty(Coordinate start, int userIndex, int colorIndex) {
         ScoreBoard.Users[ScoreBoard.turn].cat.primary - CharacterSet
     );
     if (ScreenState == PLAY && catIndex == colorIndex)
-        DrawRectangleLinesEx(rectangle, MID_CELL, LIGHTS[colorIndex]);
+        DrawRectangleLinesEx(rectangle, 10, LIGHTS[colorIndex]);
 
     DrawRectangleLinesEx(rectangle, THICK, BORDER_COLOR);
 
