@@ -37,7 +37,7 @@ int main(void) {
             case MENU: MenuScreen(); break;
             case DICE: DiceScreen(); break;
             case PLAY: PlayScreen(); break;
-            case WIN: break;
+            case WIN: WinScreen(); break;
         }
     }
     

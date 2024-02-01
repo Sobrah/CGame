@@ -131,6 +131,7 @@ extern UserProperty Dogs[USERS_NUMBER];
 void PlayScreen(void);
 void DiceScreen(void);
 void MenuScreen(void);
+void WinScreen(void);
 
 void New(void);
 void Save(void);

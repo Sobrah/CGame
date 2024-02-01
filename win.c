@@ -1,65 +1,55 @@
 #include "cgame.h"
 
-Pature MEDALL_NAME[] = {
-    {"silver medall.svg"},
-    {"gold medall.svg"},
-    {"bronze medall.svg"}
+#define MEDAL_LENGTH (sizeof(StandNumber) / sizeof(char))
+
+Pature MEDAL_PATURES[] = {
+    {"Silver Medal.svg"},
+    {"Gold Medal.svg"},
+    {"Bronze Medal.svg"}
 };
 
 // Win Screen
 void WinScreen() {
-
-    char *BtnLable[] = {
-        "Back to Menu"
+    char *StandNumber[] ={
+        "2th",
+        "1th",
+        "3th"
     };
-   
-   char *StandNumber[] ={
-        "2",
-        "1",
-        "3"
-    };
-    const int MEDALL_LENGTH = sizeof(StandNumber) / sizeof(char *);
-    const int BTNLABLE_LENGTH = sizeof(BtnLable) / sizeof(char *);
-
-    
 
     // Stand Rectangle
-    Rectangle StandOrButton[MEDALL_LENGTH ] , rectangle={
-        WINDOW_DELTA + 3*CELL_SIZE,
+    Rectangle Stands[MEDAL_LENGTH], rectangle={
+        3 * CELL_SIZE + WINDOW_DELTA,
         8 * CELL_SIZE,
         3 * CELL_SIZE,
         3 * CELL_SIZE
     };
 
-    // Intialize Standrec
-    for(int i = 0 ; i < MEDALL_LENGTH ; i++){
-        StandOrButton[i] = rectangle;
-        StandOrButton[i].x += i * ( 3 *CELL_SIZE); 
+    // Initialize Stands
+    for (int i = 0 ; i < MEDAL_LENGTH; i++) {
+        Stands[i] = rectangle;
+        Stands[i].x += i * (3 * CELL_SIZE); 
     }
 
-    // Intialize Button
+    // Initialize Buttons
     Rectangle Button = { 
         WINDOW_DELTA + 5 * CELL_SIZE ,
-        WINDOW_HEIGHT - (7/2) * CELL_SIZE ,
+        WINDOW_HEIGHT - (7 / 2) * CELL_SIZE ,
         5 * CELL_SIZE,
         3 * CELL_SIZE
     };
 
-    //Intialize Line
-    int startx = WINDOW_DELTA + 3*CELL_SIZE;
-    int endx = startx + 9 * CELL_SIZE;
+    // Initialize Line
+    int startX = WINDOW_DELTA + 3*CELL_SIZE;
+    int endX = startX + 9 * CELL_SIZE;
     int y = 11 * CELL_SIZE;
 
-    //Load Medall Texture
-            LoadPatures(
-                "Images/Medalls/",
-                MEDALL_NAME,
-                MEDALL_LENGTH,
-                3 * CELL_SIZE
-            );
+    // Load Medal Texture
+    for (int i = 0; i < MEDAL_LENGTH; i++) {
+        LoadPature("Images/Medal", MEDAL_PATURES + i, 3 * CELL_SIZE);
+    }
 
-    //Check Winers
-    //TO DO
+    // Check Winners
+    // TO DO
     
     while(!WindowShouldClose()){
         BeginDrawing();
@@ -67,46 +57,46 @@ void WinScreen() {
             // Draw Background
             ClearBackground(GROUND_COLOR);
 
-            //Draw Standrec
-            for(int i = 0 ; i < MEDALL_LENGTH ; i++){
-                DrawRectangleRec(StandOrButton[i],BORDER_COLOR);
+            //Draw Strands
+            for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
+                DrawRectangleRec(Stands[i], BORDER_COLOR);
 
-                //Draw Standrec Number
-                int textwidth = MeasureText(StandNumber[i], 2 *CELL_SIZE);
+                // Draw Stands Number
+                int textWidth = MeasureText(StandNumber[i], 2 * CELL_SIZE);
                 DrawText(
-                        StandNumber[i],
-                        StandOrButton[i].x + (StandOrButton[i].width - textwidth) / 2,
-                        StandOrButton[i].y + (StandOrButton[i].height - CELL_SIZE) /2,
-                        2 * CELL_SIZE , WALL_COLOR
+                    StandNumber[i],
+                    Stands[i].x + (Stands[i].width - textWidth) / 2,
+                    Stands[i].y + (Stands[i].height - CELL_SIZE) / 2,
+                    2 * CELL_SIZE , WALL_COLOR
                 );
             }
                 
-                DrawLine(startx,y,endx,y , GROUND_COLOR);
+            DrawLine(startX, y, endX, y, GROUND_COLOR);
 
-            // Draw Medall Texture
+            // Draw Medal Texture
             int x = WINDOW_DELTA + CELL_SIZE; int y = CELL_SIZE;
-            for(int i = 0  ; i < MEDALL_LENGTH ; i++ )
-                DrawTexture(MEDALL_NAME[i].texture, x += i * (3*CELL_SIZE) ,y , WHITE);
+            for (int i = 0  ; i < MEDAL_LENGTH ; i++)
+                DrawTexture(MEDAL_PATURES[i].texture, x += i * (3 * CELL_SIZE), y, WHITE);
             
             // Draw Back To Menu Button And Info
-            DrawRectangleRec(Button,BORDER_COLOR);
-
+            DrawRectangleRec(Button, BORDER_COLOR);
 
             int fontSize = 2 * CELL_SIZE;
                 
-                Vector2 point = GetMousePosition();
-                if(CheckCollisionPointRec(point , Button)) 
+            Vector2 point = GetMousePosition();
+            if (CheckCollisionPointRec(point , Button)) 
                 fontSize = 2.1 * CELL_SIZE;
 
-                //Draw Text 
-                int textwidth = MeasureText(BtnLable, fontSize);
+            //Draw Text 
+            /*
+            int textWidth = MeasureText(StandNumber, fontSize);
                 DrawText(
-                    BtnLable[BTNLABLE_LENGTH],
-                    Button.x + (Button.width - textwidth) * 0.5,
-                    Button.y + (Button.height - textwidth) * 0.5,
+                    StandNumber[MEDAL_LENGTH],
+                    Button.x + (Button.width - textWidth) * 0.5,
+                    Button.y + (Button.height - textWidth) * 0.5,
                     2 * CELL_SIZE,
                     GOLD
-                );
+            */
 
                 // Draw Win Cats
                 //TO DO
@@ -120,8 +110,8 @@ void WinScreen() {
             }
     };
 
-    // Unload Texture From Memory
-    for(int i = 0 ; i < MEDALL_LENGTH ; i++){
-        UnloadTexture(MEDALL_NAME[i].texture);
+    // Unload Textures
+    for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
+        UnloadTexture(MEDAL_PATURES[i].texture);
     }
 }
