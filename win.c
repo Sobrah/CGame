@@ -1,4 +1,5 @@
 #include "cgame.h"
+#include <stdio.h>
 
 #define MEDAL_LENGTH (sizeof(MEDAL_PATURES) / sizeof(Pature))
 
@@ -95,6 +96,7 @@ void WinScreen() {
         );
     }
     
+
     while(!WindowShouldClose()){
         BeginDrawing();
 
@@ -116,16 +118,49 @@ void WinScreen() {
                     2 * CELL_SIZE , WALL_COLOR
                 );
             }
+
+            // Draw  Win Cats
+            // Cat 2
+            DrawTexture(WINNER_PATURES[0].texture,
+            3 * CELL_SIZE + WINDOW_DELTA,
+            5 * CELL_SIZE,
+            WHITE
+            );
+            // Cat 1 
+            DrawTexture(WINNER_PATURES[1].texture,
+            6 * CELL_SIZE + WINDOW_DELTA,
+            4 * CELL_SIZE,
+            WHITE
+            );
+            // Cat 3
+            DrawTexture(WINNER_PATURES[2].texture,
+            9 * CELL_SIZE + WINDOW_DELTA,
+            5 * CELL_SIZE,
+            WHITE
+            );
                 
             DrawLine(startX, y, endX, y, GROUND_COLOR);
 
             // Draw Medal Texture
             int x = WINDOW_DELTA + CELL_SIZE; int y = CELL_SIZE;
             for (int i = 0  ; i < MEDAL_LENGTH ; i++)
-                DrawTexture(MEDAL_PATURES[i].texture, x += i * (3 * CELL_SIZE), y, WHITE);
+                DrawTexture(MEDAL_PATURES[i].texture, x + i * (5 * CELL_SIZE), y, WHITE);
 
         EndDrawing();            
     };
+
+    // Save Winers
+    FILE *file = fopen("Data/Winers","wt");
+
+    // File Error
+    if(!file) /* exit(1) */;
+    else
+        for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
+            fprintf(file ,"%s\n",CATS[i]);
+        }
+    
+    fclose(file);
+    
 
     // Unload Textures
     for (int i = 0 ; i < MEDAL_LENGTH ; i++) {
