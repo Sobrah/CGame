@@ -94,14 +94,21 @@ void WinScreen() {
         );
     }
     
+    char *CAT_NAMES = {
+        "Purple Cat",
+        "Green Cat",
+        "Blue Cat",
+        "Yellow Cat"
+    };
+    
     // Save Winners
-    FILE *file = fopen("Data/Winners","wt");
+    FILE *file = fopen("Data/winners.txt","wt");
 
     // File Error
     if(!file) return;
     
     for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-        fprintf(file ,"%s\n",CATS[i]);
+        fprintf(file ,"%d\. %s\n", i, CATS[i]);
     }
     
     fclose(file);
