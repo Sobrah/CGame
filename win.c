@@ -102,13 +102,14 @@ void WinScreen() {
     };
     
     // Save Winners
-    FILE *file = fopen("Data/winners.txt","wt");
+    FILE *file = fopen("Data/winner.txt","wt");
 
     // File Error
     if(!file) return;
     
     for(int i = 0 ; i < MEDAL_LENGTH ; i++) {
-        fprintf(file ,"%d %s\n", i, CAT_NAMES[i]);
+        int catIndex = Users[i].cat.primary - CharacterSet;
+        fprintf(file ,"%d %s\n", i + 1, CAT_NAMES[catIndex]);
     }
     
     fclose(file);

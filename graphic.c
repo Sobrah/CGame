@@ -145,7 +145,8 @@ void DrawUserProperty(Coordinate start, int userIndex, int colorIndex) {
     int posY = start.y + CELL_SIZE;
 
     for (int i = 0; i < PROPERTY_LENGTH; i++) {
-        const char *text = TextFormat("%-3i", *(property + i));
+        int number = *(property + i) < 0 ? 0: *(property + i);
+        const char *text = TextFormat("%-3i", number);
 
         int textureWidth = ScoreBoard.Patures[i].texture.width;  
         int textWidth = MeasureText(text, fontSize);
